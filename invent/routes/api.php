@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ItemController;
 use App\Http\Controllers\LocationController;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\UsersController;
@@ -18,3 +19,4 @@ Route::apiResource('roles', RolesController::class);
 Route::apiResource('users', UsersController::class);
 Route::apiResource('categories', CategoryController::class);
 Route::apiResource('locations', LocationController::class);
+Route::apiResource('items', ItemController::class);
