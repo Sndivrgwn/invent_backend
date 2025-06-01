@@ -7,7 +7,7 @@ Route::post('/login', [App\Http\Controllers\Auth\LoginController::class, 'action
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/dashboard', function () {
-        return view('dashboard');
+        return view('pages.dashboard');
     })->name('dashboard');
     
     Route::post('/logout', [App\Http\Controllers\Auth\LogoutController::class, 'logout'])->name('logout');

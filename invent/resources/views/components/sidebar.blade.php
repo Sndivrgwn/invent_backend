@@ -1,3 +1,5 @@
+@include('template.head')
+
 <div class="w-80 min-h-screen bg-white border-r border-gray-400 rounded-tr-2xl rounded-br-2xl shadow px-4 py-6 transition-all duration-300" id="sidebar">
     <div class="flex items-center justify-between mb-6 border-b pb-2 border-gray-400">
         <h2 class="text-xl font-bold text-blue-700 sidebar-text">StockFlowICT</h2>
@@ -124,3 +126,5 @@
         }
     });
 </script>
+
+@include('template.footer')
