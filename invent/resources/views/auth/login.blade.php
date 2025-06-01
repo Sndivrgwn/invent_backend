@@ -23,17 +23,30 @@
             <p class="font-bold text-[32px]">StockFlowICT</p>
             <p class="text-[#64748B]">Inventory Management System</p>
             <div class="login_form flex flex-col gap-3 mt-5 ">
-                <label htmlFor="username">Email / Username</label>
-                <input class="border-0 border-b-2 border-gray-400 focus:outline-none" type="text" placeholder='Enter your email or username' />
-                <label htmlFor="password">Password</label>
-                <input class="border-0 border-b-2 border-gray-400 focus:outline-none" type="text" placeholder='Enter your password' />
-                3<fieldset class='fieldset bg-transparent border-none rounded-box flex w-64 border p-4 '>
-                    <label class='label text-[#000000] text-[14px]'>
-                        <input type="checkbox" class='checkbox' />
-                        Remember me
-                    </label>
-                </fieldset>
-                <button class="!bg-[#2563EB] text-[#ffffff]">Login</button>
+                <form method="POST" action="{{ route('login') }}">
+                    @csrf
+
+                    <label htmlFor="username">Email / Username</label>
+                    <input class="border-0 border-b-2 border-gray-400 focus:outline-none" name="email" type="text" placeholder='Enter your email or username' />
+                    <label htmlFor="password">Password</label>
+                    <input class="border-0 border-b-2 border-gray-400 focus:outline-none" name="password" type="password" placeholder='Enter your password' />
+                    <fieldset class='fieldset bg-transparent border-none rounded-box flex w-64 border p-4 '>
+                        <label class='label text-[#000000] text-[14px]'>
+                            <input type="checkbox" class='checkbox' />
+                            Remember me
+                        </label>
+                    </fieldset>
+                    <button class="!bg-[#2563EB] text-[#ffffff]" type="submit">Login</button>
+                    @error('email')
+                    <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
+                    @enderror
+                    @if (session('message'))
+                    <div class="bg-green-100 text-green-800 p-3 rounded mb-4">
+                        {{ session('message') }}
+                    </div>
+                    @endif
+
+                </form>
 
                 <div class="flex mt-3 m-auto text-[12px] items-center text-[#64748B]">
                     <FontAwesomeIcon icon={faCopyright} />itcsmkn5bdg
