@@ -1,14 +1,14 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ItemController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/login', [App\Http\Controllers\Auth\LoginController::class, 'login'])->name('login');
 Route::post('/login', [App\Http\Controllers\Auth\LoginController::class, 'actionlogin']);
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('pages.dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     
     Route::post('/logout', [App\Http\Controllers\Auth\LogoutController::class, 'logout'])->name('logout');
     

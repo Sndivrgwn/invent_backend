@@ -20,7 +20,7 @@
             <div class="bg-white p-4 rounded-lg shadow flex items-center justify-between">
                 <div>
                     <h2 class="text-sm font-medium text-gray-400 mb-2 ">Total Products</h2>
-                    <p class="text-2xl font-semibold">150</p>
+                    <p class="text-2xl font-semibold">{{ $totalItems }}</p>
                     <p class="text-sm font-normal text-gray-400 mb-2 "> <span class="inline-block -rotate-90"> > </span> <span>12% this month</span> </p>
                 </div>
                 <div class="bg-blue-500 bg-opacity-25 text-white p-3 rounded-full flex items-center justify-center"> 
@@ -29,11 +29,11 @@
             </div>
             <div class="bg-white p-4 rounded-lg shadow">
                 <h2 class="text-lg font-semibold mb-2">Total Inventory</h2>
-                <p class="text-2xl font-bold">300</p>
+                <p class="text-2xl font-bold">{{ $totalCategories }}</p>
             </div>
             <div class="bg-white p-4 rounded-lg shadow">
                 <h2 class="text-lg font-semibold mb-2">Total Loans</h2>
-                <p class="text-2xl font-bold">50</p>
+                <p class="text-2xl font-bold">{{ $totalLoans }}</p>
             </div>
         </div>
     </div>

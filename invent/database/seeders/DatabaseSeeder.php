@@ -22,5 +22,11 @@ class DatabaseSeeder extends Seeder
         //     'password' => '123456',
         //     'roles_id' => 1
         // ]);
+        $this->call([
+            RolesSeeder::class,
+            CategorySeeder::class,
+            LocationSeeder::class,
+            ItemSeeder::class,
+        ]);
     }
 }

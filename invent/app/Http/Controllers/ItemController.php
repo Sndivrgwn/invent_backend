@@ -16,6 +16,13 @@ class ItemController extends Controller
         return response()->json(Item::all(), 200);
     }
 
+    public function totalItems() 
+    {
+        $all = Item::all();
+        $totalItems = $all->count();
+        return view('pages.dashboard', compact('totalItems'));
+    }
+
     /**
      * Store a newly created resource in storage.
      */
