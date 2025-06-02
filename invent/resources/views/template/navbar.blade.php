@@ -1,6 +1,6 @@
 @include('template.head')
 
-    <div class="navbar bg-base-100 shadow-sm rounded-b-xl mt-[-24px]">
+    <div class="navbar bg-base-100 shadow-sm rounded-b-xl">
   <div class="flex-1">
     <a class="btn btn-ghost text-xl">Dashboard</a>
   </div>
