@@ -107,6 +107,9 @@
         text-align: center; 
         height: 1.5rem;
         line-height: 1.5rem;
+        display: flex;
+        justify-content: center;
+        align-items: center;
     }
 </style>
 
