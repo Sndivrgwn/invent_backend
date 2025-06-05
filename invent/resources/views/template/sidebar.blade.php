@@ -13,26 +13,30 @@
         <div>
             <p class="text-gray-500 text-xs font-semibold uppercase mb-2 sidebar-text">Management</p>
             <ul class="space-y-1">
-                <li class="rounded-lg active:bg-blue-500">
-                    <a href="/dashboard" class="flex items-center gap-2 px-3 py-2 rounded-lg bg-blue-100 text-blue-700 font-medium hover:bg-blue-200 active:bg-blue-300  transition-colors duration-200">
+                <li class="rounded-lg">
+                    <a href="/dashboard" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-100 active:bg-blue-200 transition-colors duration-200
+    {{ request()->is('dashboard') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-700 hover:text-blue-700 active:text-blue-800' }}">
                         <i class="fa fa-home"></i> 
                         <span class="sidebar-text">Dashboard</span>
                     </a>
                 </li>
                 <li class="rounded-lg">
-                    <a href="/Products" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-100 active:bg-blue-200 text-gray-700 hover:text-blue-700 active:text-blue-800 transition-colors duration-200">
+                    <a href="/products" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-100 active:bg-blue-200 transition-colors duration-200
+        {{ request()->is('products') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-700 hover:text-blue-700 active:text-blue-800' }}">
                         <i class="fa fa-cube"></i> 
                         <span class="sidebar-text">Products</span>
                     </a>
                 </li>
                 <li class="rounded-lg">
-                    <a href="/inventory" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-100 active:bg-blue-200 text-gray-700 hover:text-blue-700 active:text-blue-800 transition-colors duration-200">
+                    <a href="/inventory" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-100 active:bg-blue-200 transition-colors duration-200
+        {{ request()->is('inventory') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-700 hover:text-blue-700 active:text-blue-800' }}">
                         <i class="fa fa-archive"></i> 
                         <span class="sidebar-text">Inventory</span>
                     </a>
                 </li>
                 <li class="rounded-lg">
-                    <a href="/loan" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-100 active:bg-blue-200 text-gray-700 hover:text-blue-700 active:text-blue-800 transition-colors duration-200">
+                    <a href="/loan" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-100 active:bg-blue-200 transition-colors duration-200
+        {{ request()->is('loan') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-700 hover:text-blue-700 active:text-blue-800' }}">
                         <i class="fa fa-exchange"></i> 
                         <span class="sidebar-text">Loan</span>
                     </a>
@@ -45,13 +49,15 @@
             <p class="text-gray-500 text-xs font-semibold uppercase mb-2 sidebar-text">Reports</p>
             <ul class="space-y-1">
                 <li class="rounded-lg">
-                    <a href="/analytics" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-100 active:bg-blue-200 text-gray-700 hover:text-blue-700 active:text-blue-800 transition-colors duration-200">
+                    <a href="/analytics" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-100 active:bg-blue-200 transition-colors duration-200
+        {{ request()->is('analytics') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-700 hover:text-blue-700 active:text-blue-800' }}">
                         <i class="fa fa-line-chart"></i> 
                         <span class="sidebar-text">Analytics</span>
                     </a>
                 </li>
                 <li class="rounded-lg">
-                    <a href="/logs" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-100 active:bg-blue-200 text-gray-700 hover:text-blue-700 active:text-blue-800 transition-colors duration-200">
+                    <a href="/logs" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-100 active:bg-blue-200 transition-colors duration-200
+        {{ request()->is('logs') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-700 hover:text-blue-700 active:text-blue-800' }}">
                         <i class="fa fa-history"></i> 
                         <span class="sidebar-text">History</span>
                     </a>
@@ -64,13 +70,15 @@
             <p class="text-gray-500 text-xs font-semibold uppercase mb-2 sidebar-text">Administration</p>
             <ul class="space-y-1">
                 <li class="rounded-lg">
-                    <a href="/users" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-100 active:bg-blue-200 text-gray-700 hover:text-blue-700 active:text-blue-800 transition-colors duration-200">
+                    <a href="/users" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-100 active:bg-blue-200 transition-colors duration-200
+        {{ request()->is('users') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-700 hover:text-blue-700 active:text-blue-800' }}">
                         <i class="fa fa-users"></i> 
                         <span class="sidebar-text">User Management</span>
                     </a>
                 </li>
                 <li class="rounded-lg">
-                    <a href="/settings" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-100 active:bg-blue-200 text-gray-700 hover:text-blue-700 active:text-blue-800 transition-colors duration-200">
+                    <a href="/settings" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-100 active:bg-blue-200 transition-colors duration-200
+        {{ request()->is('setting') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-700 hover:text-blue-700 active:text-blue-800' }}">
                         <i class="fa fa-cog"></i> 
                         <span class="sidebar-text">System Settings</span>
                     </a>
