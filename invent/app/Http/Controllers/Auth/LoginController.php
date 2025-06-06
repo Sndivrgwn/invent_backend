@@ -8,7 +8,8 @@ use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
-    public function loginapi(Request $request) {
+    public function loginapi(Request $request)
+    {
         $validate =  $request->validate([
             'email' => 'required|email',
             'password' => 'required|string|min:8',
@@ -31,19 +32,23 @@ class LoginController extends Controller
         ], 500);
     }
 
-    public function login(Request $request) {
+    public function login(Request $request)
+    {
         return view('auth.login');
     }
 
-    public function actionlogin(Request $request) {
+    public function actionlogin(Request $request)
+    {
         $credentials = $request->only('email', 'password');
-
-        if (Auth::attempt($credentials)) {      
+        $remember = $request->has('remember');
+        if (Auth::attempt($credentials, $remember)) {
+            session(['last_login_time' => now()]);
             return redirect()->intended('dashboard');
         } else {
             return redirect()->back()->withErrors([
-                'email' => 'The provided credentials do not match our records.',
-            ]);
+                'email' => 'invalid credentials',
+            ])->withInput();
         }
+
     }
 }

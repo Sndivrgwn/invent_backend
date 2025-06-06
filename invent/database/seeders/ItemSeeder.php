@@ -17,9 +17,9 @@ class ItemSeeder extends Seeder
             [
                 'name' => 'Mikrotk',
                 'code' => 'RBG-002',
-                'status' => 'tersedia',
+                'status' => 'READY',
                 'quantity' => 10,
-                'condition' => 'baik',
+                'condition' => 'NOT GOOD',
                 'description' => 'RB 50',
                 'category_id' => 1,
                 'location_id' => 1,
@@ -27,9 +27,9 @@ class ItemSeeder extends Seeder
             [
                 'name' => 'Laptop Asus ROG',
                 'code' => 'RBG-001',
-                'status' => 'tersedia',
+                'status' => 'NOT READY',
                 'quantity' => 3,
-                'condition' => 'baik',
+                'condition' => 'GOOD',
                 'description' => 'Laptop gaming untuk ruang komputer',
                 'category_id' => 1,
                 'location_id' => 1,

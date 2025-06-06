@@ -86,7 +86,6 @@
                 </dialog>
 
             </div>
-
             <!-- table -->
             <table class="table">
                 <thead>
@@ -100,15 +99,16 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @foreach ($items as $item)
                     <tr>
-                        <td class="text-center">MikroTik</td>
-                        <td class="text-center">12345678</td>
+                        <td class="text-center">{{ $item->name }}</td>
+                        <td class="text-center">{{ $item->code }}</td>
                         <td class="flex justify-center">
-                            <img class="size-12 rounded rounded-sm" src="https://picsum.photos/200" />
+                            <img class="size-12 rounded rounded-sm" src="{{ asset('image/' . $item->image  )}}" />
                         </td>
-                        <td class="text-center">GOOD</td>
+                        <td class="text-center">{{ $item->condition }}</td>
                         <td class="text-center">
-                            <div class="badge badge-soft badge-success p-4">READY</div>
+                            <div class="badge badge-soft badge-success p-4">{{ $item->status }}</div>
                         </td>
                         <td class="text-center">
                             <i class="fa fa-trash fa-lg"></i>
@@ -116,102 +116,7 @@
                             <i class="fa-regular fa-eye fa-lg"></i>
                         </td>
                     </tr>
-                    <tr>
-                        <td class="text-center">Acces Point</td>
-                        <td class="text-center">44534576</td>
-                        <td class="flex justify-center">
-                            <img class="size-12 rounded rounded-sm" src="https://picsum.photos/200" />
-                        </td>
-                        <td class="text-center">BAD</td>
-                        <td class="text-center">
-                            <div class="badge badge-soft badge-success p-4">READY</div>
-                        </td>
-                        <td class="text-center">
-                            <i class="fa fa-trash fa-lg"></i>
-                            <i class="fa fa-pen-to-square fa-lg"></i>
-                            <i class="fa-regular fa-eye fa-lg"></i>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="text-center">Cable Tester</td>
-                        <td class="text-center">98734576</td>
-                        <td class="flex justify-center">
-                            <img class="size-12 rounded rounded-sm" src="https://picsum.photos/200" />
-                        </td>
-                        <td class="text-center">GOOD</td>
-                        <td class="text-center">
-                            <div class="badge badge-soft badge-error p-4">NOT READY</div>
-                        </td>
-                        <td class="text-center">
-                            <i class="fa fa-trash fa-lg"></i>
-                            <i class="fa fa-pen-to-square fa-lg"></i>
-                            <i class="fa-regular fa-eye fa-lg"></i>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="text-center">MikroTik</td>
-                        <td class="text-center">12345678</td>
-                        <td class="flex justify-center">
-                            <img class="size-12 rounded rounded-sm" src="https://picsum.photos/200" />
-                        </td>
-                        <td class="text-center">GOOD</td>
-                        <td class="text-center">
-                            <div class="badge badge-soft badge-success p-4">READY</div>
-                        </td>
-                        <td class="text-center">
-                            <i class="fa fa-trash fa-lg"></i>
-                            <i class="fa fa-pen-to-square fa-lg"></i>
-                            <i class="fa-regular fa-eye fa-lg"></i>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="text-center">MikroTik</td>
-                        <td class="text-center">12345678</td>
-                        <td class="flex justify-center">
-                            <img class="size-12 rounded rounded-sm" src="https://picsum.photos/200" />
-                        </td>
-                        <td class="text-center">GOOD</td>
-                        <td class="text-center">
-                            <div class="badge badge-soft badge-success p-4">READY</div>
-                        </td>
-                        <td class="text-center">
-                            <i class="fa fa-trash fa-lg"></i>
-                            <i class="fa fa-pen-to-square fa-lg"></i>
-                            <i class="fa-regular fa-eye fa-lg"></i>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="text-center">MikroTik</td>
-                        <td class="text-center">12345678</td>
-                        <td class="flex justify-center">
-                            <img class="size-12 rounded rounded-sm" src="https://picsum.photos/200" />
-                        </td>
-                        <td class="text-center">GOOD</td>
-                        <td class="text-center">
-                            <div class="badge badge-soft badge-success p-4">READY</div>
-                        </td>
-                        <td class="text-center">
-                            <i class="fa fa-trash fa-lg"></i>
-                            <i class="fa fa-pen-to-square fa-lg"></i>
-                            <i class="fa-regular fa-eye fa-lg"></i>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="text-center">MikroTik</td>
-                        <td class="text-center">12345678</td>
-                        <td class="flex justify-center">
-                            <img class="size-12 rounded rounded-sm" src="https://picsum.photos/200" />
-                        </td>
-                        <td class="text-center">GOOD</td>
-                        <td class="text-center">
-                            <div class="badge badge-soft badge-success p-4">READY</div>
-                        </td>
-                        <td class="text-center">
-                            <i class="fa fa-trash fa-lg"></i>
-                            <i class="fa fa-pen-to-square fa-lg"></i>
-                            <i class="fa-regular fa-eye fa-lg"></i>
-                        </td>
-                    </tr>
+                    @endforeach
                 </tbody>
             </table>
 

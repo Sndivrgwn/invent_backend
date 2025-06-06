@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('status');
             $table->integer('quantity');
             $table->string('condition');
+            $table->string('image')->default('default.png');
             $table->text('description')->nullable();
             $table->timestamps();
 

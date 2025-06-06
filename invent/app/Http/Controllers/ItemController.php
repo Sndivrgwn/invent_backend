@@ -16,6 +16,15 @@ class ItemController extends Controller
         return response()->json(Item::all(), 200);
     }
 
+    public function getAllItems()
+    {
+        $items = Item::with(['category', 'location'])->get();
+        return view('pages.products', compact('items'));
+    }
+
+    /**
+     * Display the total number of items.
+     */
     public function totalItems() 
     {
         $all = Item::all();
