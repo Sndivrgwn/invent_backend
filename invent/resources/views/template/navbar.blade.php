@@ -2,7 +2,7 @@
 
     <div class="navbar bg-base-100 shadow-sm rounded-b-xl">
   <div class="flex-1">
-    <a class="btn btn-ghost text-xl">Dashboard</a>
+    <a class="btn btn-ghost text-xl">StockFlowICT</a>
   </div>
   <div class="flex gap-2">
     {{-- search --}}
