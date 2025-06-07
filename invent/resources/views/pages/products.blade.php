@@ -126,11 +126,17 @@
                         </div>
 
                         <!-- deskripsi -->
-                        <div>
+                        <div class="mb-4">
                             <h1 class="font-medium text-gray-600">DESCRIPTION</h1>
                             <textarea class="textarea text-gray-600" placeholder="Bio" style="width: 100%;">Description</textarea>
                         </div>
-                        
+
+                        <!-- button -->
+                        <div class="w-full flex justify-end items-end gap-4">
+                            <button class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Cancel</button>
+                            <button class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Submit</button>
+                        </div>
+
                         @push('scripts')
                         <script>
                             const data = {
@@ -210,11 +216,11 @@
                             <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
                         </form>
                         <!-- product filter -->
-                        <div>
+                        <div class="mb-4">
                             <h1 class="text-lg font-semibold mb-2">Product</h1>
                             <form class="filter">
                                 <input class="btn mb-1 btn-square" type="reset" value="×" />
-                                <input class="btn mb-1" type="radio" name="frameworks" aria-label="MikroTik" />
+                                <input class="btn mb-1" type="radio" name="frameworks" aria-label="Router" />
                                 <input class="btn mb-1" type="radio" name="frameworks" aria-label="Access Point" />
                                 <input class="btn mb-1" type="radio" name="frameworks" aria-label="Crimping Tool" />
                                 <input class="btn mb-1" type="radio" name="frameworks" aria-label="Switch" />
@@ -222,21 +228,31 @@
                             </form>
                         </div>
                         <!-- condition filter -->
+                        <div class="mb-4">
+                            <h1 class="text-lg font-semibold mb-2">Brand</h1>
+                            <form class="filter">
+                                <input class="btn mb-1 btn-square" type="reset" value="×" />
+                                <input class="btn mb-1" type="radio" name="frameworks" aria-label="MikroTik" />
+                                <input class="btn mb-1" type="radio" name="frameworks" aria-label="TP-Link" />
+                                <input class="btn mb-1" type="radio" name="frameworks" aria-label="Tenda" />
+                            </form>
+                        </div>
+                        <!-- status filter -->
+                        <div class="mb-4">
+                            <h1 class="text-lg font-semibold mb-2">Type</h1>
+                            <form class="filter">
+                                <input class="btn mb-1 btn-square" type="reset" value="×" />
+                                <input class="btn mb-1" type="radio" name="frameworks" aria-label="RB-951" />
+                                <input class="btn mb-1" type="radio" name="frameworks" aria-label="RB-952" />
+                            </form>
+                        </div>
+                        <!-- rack filter -->
                         <div>
                             <h1 class="text-lg font-semibold mb-2">Condition</h1>
                             <form class="filter">
                                 <input class="btn mb-1 btn-square" type="reset" value="×" />
-                                <input class="btn mb-1" type="radio" name="frameworks" aria-label="GOOD" />
-                                <input class="btn mb-1" type="radio" name="frameworks" aria-label="BAD" />
-                            </form>
-                        </div>
-                        <!-- status filter -->
-                        <div>
-                            <h1 class="text-lg font-semibold mb-2">Status</h1>
-                            <form class="filter">
-                                <input class="btn mb-1 btn-square" type="reset" value="×" />
-                                <input class="btn mb-1" type="radio" name="frameworks" aria-label="READY" />
-                                <input class="btn mb-1" type="radio" name="frameworks" aria-label="NOT READY" />
+                                <input class="btn mb-1" type="radio" name="frameworks" aria-label="Good" />
+                                <input class="btn mb-1" type="radio" name="frameworks" aria-label="Not Good" />
                             </form>
                         </div>
                         <!-- rack filter -->
@@ -244,8 +260,8 @@
                             <h1 class="text-lg font-semibold mb-2">Status</h1>
                             <form class="filter">
                                 <input class="btn mb-1 btn-square" type="reset" value="×" />
-                                <input class="btn mb-1" type="radio" name="frameworks" aria-label="READY" />
-                                <input class="btn mb-1" type="radio" name="frameworks" aria-label="NOT READY" />
+                                <input class="btn mb-1" type="radio" name="frameworks" aria-label="Ready" />
+                                <input class="btn mb-1" type="radio" name="frameworks" aria-label="Not Ready" />
                             </form>
                         </div>
                     </div>
