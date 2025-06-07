@@ -17,7 +17,7 @@
 
         <div class="navbar my-6">
             <div class="flex-1">
-                <h1 class="text-2xl font-semibold py-4">Products</h1>
+                <h1 class="text-2xl font-semibold py-4">Inventory Analytics </h1>
             </div>
             <div class="flex-none">
                 {{-- new product --}}
@@ -44,8 +44,8 @@
                     <input type="text" id="search-navbar" class="block w-full p-2 ps-10 text-sm border border-gray-400 rounded-lg" placeholder="Search...">
                 </div>
 
-                <!-- filter -->
-                <button class="btn flex justify-center items-center bg-transparent" onclick="filterProduct.showModal()">All Categories <i class="fa fa-filter" style="display: flex; justify-content: center; align-items: center;"></i></button>
+                <!-- filter --> 
+                {{-- <button class="btn flex justify-center items-center bg-transparent" onclick="filterProduct.showModal()">All Categories <i class="fa fa-filter" style="display: flex; justify-content: center; align-items: center;"></i></button>
                 <dialog id="filterProduct" class="modal">
                     <div class="modal-box">
                         <!-- close button -->
@@ -83,41 +83,23 @@
                             </form>
                         </div>
                     </div>
-                </dialog>
+                </dialog> --}}
 
             </div>
             <!-- table -->
             <table class="table">
                 <thead>
                     <tr>
-                        <th class="text-center font-semibold">NAME</th>
                         <th class="text-center font-semibold">PRODUCT</th>
-                        <th class="text-center font-semibold">BORROW DATE</th>
-                        <th class="text-center font-semibold">DUE DATE</th>
+                        <th class="text-center font-semibold">SERIAL NUMBER</th>
+                        <th class="text-center font-semibold">PHOTO</th>
+                        <th class="text-center font-semibold">CONDITIONAL</th>
                         <th class="text-center font-semibold">STATUS</th>
                         <th class="text-center font-semibold">ACTION</th>
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($items as $item)
-                    <tr>
-                        <td class="text-center">{{ $item->name }}</td>
-                        <td class="text-center">{{ $item->code }}</td>
-                        <td class="flex justify-center">
-                            <img class="size-12 rounded rounded-sm" src="{{ asset('image/' . $item->image  )}}" />
-                        </td>
-                        <td class="text-center">{{ $item->condition }}</td>
-                        <td class="text-center">
-                            <div class="badge badge-soft badge-success p-4">{{ $item->status }}</div>
-                        </td>
-                        <td class="text-center">
-                            <i class="fa fa-trash fa-lg"></i>
-                            <i class="fa fa-pen-to-square fa-lg"></i>
-                            <i class="fa-regular fa-eye fa-lg"></i>
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
+                    
             </table>
 
         </div>

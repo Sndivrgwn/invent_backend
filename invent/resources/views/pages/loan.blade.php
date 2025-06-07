@@ -17,17 +17,9 @@
 
         <div class="navbar my-6">
             <div class="flex-1">
-                <h1 class="text-2xl font-semibold py-4">Products</h1>
+                <h1 class="text-2xl font-semibold py-4">Active Loans</h1>
             </div>
-            <div class="flex-none">
-                {{-- new product --}}
-                <button class="bg-[#2563EB] text-white rounded-lg py-2 px-4 mx-5 hover:bg-blue-400 cursor-pointer flex justify-center items-center">
-                    <div class="gap-2 flex">
-                        <i class="fa fa-plus" style="display: flex; justify-content: center; align-items: center;"></i>
-                        <span>New Product</span>
-                    </div>
-                </button>
-            </div>
+            
         </div>
 
         <div class="list bg-base-100 rounded-box shadow-md">
@@ -45,7 +37,7 @@
                 </div>
 
                 <!-- filter -->
-                <button class="btn flex justify-center items-center bg-transparent" onclick="filterProduct.showModal()">All Categories <i class="fa fa-filter" style="display: flex; justify-content: center; align-items: center;"></i></button>
+                <button class="btn flex justify-center items-center bg-transparent" onclick="filterProduct.showModal()">All Status<i class="fa fa-filter" style="display: flex; justify-content: center; align-items: center;"></i></button>
                 <dialog id="filterProduct" class="modal">
                     <div class="modal-box">
                         <!-- close button -->
@@ -99,25 +91,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @foreach ($items as $item)
-                    <tr>
-                        <td class="text-center">{{ $item->name }}</td>
-                        <td class="text-center">{{ $item->code }}</td>
-                        <td class="flex justify-center">
-                            <img class="size-12 rounded rounded-sm" src="{{ asset('image/' . $item->image  )}}" />
-                        </td>
-                        <td class="text-center">{{ $item->condition }}</td>
-                        <td class="text-center">
-                            <div class="badge badge-soft badge-success p-4">{{ $item->status }}</div>
-                        </td>
-                        <td class="text-center">
-                            <i class="fa fa-trash fa-lg"></i>
-                            <i class="fa fa-pen-to-square fa-lg"></i>
-                            <i class="fa-regular fa-eye fa-lg"></i>
-                        </td>
-                    </tr>
-                    @endforeach
-                </tbody>
+                    
             </table>
 
         </div>

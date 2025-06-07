@@ -13,7 +13,7 @@ class LoanController extends Controller
      */
     public function index()
     {
-        return response()->json(Loan::all(), 200);
+        return View('pages.loan');
     }
 
     /**

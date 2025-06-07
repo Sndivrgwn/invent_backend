@@ -13,7 +13,7 @@ class LocationController extends Controller
      */
     public function index()
     {
-        return response()->json(Location::all(), 200);
+        return View('pages.inventory');
     }
 
     /**

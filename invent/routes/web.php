@@ -2,7 +2,10 @@
 
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductsController;
+use App\Http\Controllers\LocationController;
+use App\Http\Controllers\loanController;
 use App\Http\Controllers\ItemController;
+use App\Http\Controllers\AnalyticsController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -14,6 +17,9 @@ Route::post('/login', [App\Http\Controllers\Auth\LoginController::class, 'action
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/products', [ItemController::class, 'getAllItems'])->name('products');
+    Route::get('/inventory', [LocationController::class, 'index'])->name('inventory');
+    Route::get('/loan', [LoanController::class, 'index'])->name('loan');
+    Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics');
     
     Route::post('/logout', [App\Http\Controllers\Auth\LogoutController::class, 'logout'])->name('logout');
     
