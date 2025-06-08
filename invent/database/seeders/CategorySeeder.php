@@ -18,6 +18,14 @@ class CategorySeeder extends Seeder
                 'name' => 'Barang',
                 'description' => 'Barang Barang'
             ],
+            [
+                'name' => 'item',
+                'description' => 'item item'
+            ],
+            [
+                'name' => 'games',
+                'description' => 'games games'
+            ],
         ]);
     }
 }

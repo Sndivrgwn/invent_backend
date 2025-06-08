@@ -18,6 +18,18 @@ class LocationSeeder extends Seeder
                 'name' => 'Lab TKJ',
                 'description' => 'Lemari Ruang Kang Her'
             ],
+            [
+                'name' => 'Lab TKJ',
+                'description' => 'rak switch',
+            ],
+            [
+                'name' => 'Ruang Guru TKJ',
+                'description' => 'gudang ruang komputer',
+            ],
+            [
+                'name' => 'Ruang Guru TKJ',
+                'description' => 'gudang ruang server',
+            ],
         ]);
     }
 }

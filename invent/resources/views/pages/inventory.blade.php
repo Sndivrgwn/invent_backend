@@ -89,22 +89,26 @@
             <!-- table -->
             <div class="racks grid grid-cols-2 flex justify-center mx-auto w-3/4 gap-5 py-5">
                 {{-- rack 1 --}}
+                @foreach ($AllLocation as $location)
+                    
                 <div class="rack1 card border border-[#64748B]" style="border-radius: 20px">
                     <div class="flex place-content-between p-5">
                         <div>
-                            <p class="text-[#64748B]">rack 1</p>
-                            <p class="text-[#000000] text-3xl font-bold">75</p>
+                            <p class="text-[#64748B]">{{ $location->name . " | " . $location->description }}</p>
+                            <p class="text-[#000000] text-3xl font-bold">{{ $totalItemAtLocation[$location->id] }}</p>
                         </div>
                         <i class="fa fa-server bg-[rgba(37,99,235,0.25)] rounded-3xl text-blue-500 w-5" style="width: 40px; height:40px;"></i>
                     </div>
                     <div class="rack-category flex gap-3 text-[#2563EB] justify-center items-center py-4">
-                        <p class="bg-[#2563EB40] rounded-sm px-1">Mikrotik</p>
-                        <p class="bg-[#2563EB40] rounded-sm px-1">Access Point</p>
-                        <p class="bg-[#2563EB40] rounded-sm px-1">Router</p>
+                        @foreach ($categoryPerLocation[$location->id] ?? [] as $category)
+                        <p class="bg-[#2563EB40] rounded-sm px-1">{{ $category }}</p>
+                        @endforeach
                     </div>
                 </div>
+                @endforeach
+
                 {{-- rack 2 --}}
-                <div class="rack2 card border border-[#64748B]" style="border-radius: 20px">
+                {{-- <div class="rack2 card border border-[#64748B]" style="border-radius: 20px">
                     <div class="flex place-content-between p-5">
                         <div>
                             <p class="text-[#64748B]">rack 2</p>
@@ -117,9 +121,9 @@
                         <p class="bg-[#2563EB40] rounded-sm px-1">Access Point</p>
                         <p class="bg-[#2563EB40] rounded-sm px-1">Router</p>
                     </div>
-                </div>
+                </div> --}}
                 {{-- rack 3 --}}
-                <div class="rack3 card border border-[#64748B]" style="border-radius: 20px">
+                {{-- <div class="rack3 card border border-[#64748B]" style="border-radius: 20px">
                     <div class="flex place-content-between p-5">
                         <div>
                             <p class="text-[#64748B]">rack 3</p>
@@ -132,9 +136,9 @@
                         <p class="bg-[#2563EB40] rounded-sm px-1">Access Point</p>
                         <p class="bg-[#2563EB40] rounded-sm px-1">Router</p>
                     </div>
-                </div>
+                </div> --}}
                 {{-- rack 4 --}}
-                <div class="rack4 card border border-[#64748B]" style="border-radius: 20px">
+                {{-- <div class="rack4 card border border-[#64748B]" style="border-radius: 20px">
                     <div class="flex place-content-between p-5">
                         <div>
                             <p class="text-[#64748B]">rack 4</p>
@@ -147,7 +151,7 @@
                         <p class="bg-[#2563EB40] rounded-sm px-1">Access Point</p>
                         <p class="bg-[#2563EB40] rounded-sm px-1">Router</p>
                     </div>
-                </div>
+                </div> --}}
             </div>
 
         </div>

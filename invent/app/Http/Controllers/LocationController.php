@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Item;
 use App\Models\Location;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class LocationController extends Controller
 {
@@ -13,8 +15,25 @@ class LocationController extends Controller
      */
     public function index()
     {
-        return View('pages.inventory');
+        $AllLocation = Location::all();
+
+        $totalItemAtLocation = Item::selectRaw('location_id, COUNT(*) as total')
+            ->groupBy('location_id')
+            ->pluck('total', 'location_id');
+
+        $categoryPerLocation = DB::table('items')
+            ->join('categories', 'items.category_id', '=', 'categories.id')
+            ->select('items.location_id', 'categories.name as category_name')
+            ->distinct()
+            ->get()
+            ->groupBy('location_id')
+            ->map(function ($items) {
+                return $items->pluck('category_name')->unique()->values();
+            });
+
+        return view('pages.inventory', compact('AllLocation', 'totalItemAtLocation', 'categoryPerLocation'));
     }
+
 
     /**
      * Store a newly created resource in storage.

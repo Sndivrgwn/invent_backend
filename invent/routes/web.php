@@ -3,7 +3,7 @@
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\ProductsController;
 use App\Http\Controllers\LocationController;
-use App\Http\Controllers\loanController;
+use App\Http\Controllers\LoanController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\AnalyticsController;
 use Illuminate\Support\Facades\Route;
