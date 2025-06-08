@@ -21,7 +21,9 @@
             </div>
             <div class="flex-none">
                 {{-- new product --}}
-                <button class="bg-[#2563EB] text-white rounded-lg py-2 px-4 mx-5 hover:bg-blue-400 cursor-pointer flex justify-center items-center" onclick="newProduct.showModal()">
+                <button
+                    class="bg-[#2563EB] text-white rounded-lg py-2 px-4 mx-5 hover:bg-blue-400 cursor-pointer flex justify-center items-center"
+                    onclick="newProduct.showModal()">
                     <div class="gap-2 flex">
                         <i class="fa fa-plus" style="display: flex; justify-content: center; align-items: center;"></i>
                         <span>New Product</span>
@@ -128,13 +130,16 @@
                         <!-- deskripsi -->
                         <div class="mb-4">
                             <h1 class="font-medium text-gray-600">DESCRIPTION</h1>
-                            <textarea class="textarea text-gray-600" placeholder="Bio" style="width: 100%;">Description</textarea>
+                            <textarea class="textarea text-gray-600" placeholder="Bio"
+                                style="width: 100%;">Description</textarea>
                         </div>
 
                         <!-- button -->
                         <div class="w-full flex justify-end items-end gap-4">
-                            <button class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Cancel</button>
-                            <button class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Submit</button>
+                            <button
+                                class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Cancel</button>
+                            <button
+                                class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Submit</button>
                         </div>
 
                         @push('scripts')
@@ -199,16 +204,22 @@
                 <!-- search -->
                 <div class="relative w-full hidden md:block mr-4">
                     <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                        <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                        <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                            viewBox="0 0 20 20">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
                         </svg>
                         <span class="sr-only">Search icon</span>
                     </div>
-                    <input type="text" id="search-navbar" class="block w-full p-2 ps-10 text-sm border border-gray-400 rounded-lg" placeholder="Search...">
+                    <input type="text" id="search-navbar"
+                        class="block w-full p-2 ps-10 text-sm border border-gray-400 rounded-lg"
+                        placeholder="Search...">
                 </div>
 
                 <!-- filter -->
-                <button class="btn flex justify-center items-center bg-transparent" onclick="filterProduct.showModal()">All Categories <i class="fa fa-filter" style="display: flex; justify-content: center; align-items: center;"></i></button>
+                <button class="btn flex justify-center items-center bg-transparent"
+                    onclick="filterProduct.showModal()">All Categories <i class="fa fa-filter"
+                        style="display: flex; justify-content: center; align-items: center;"></i></button>
                 <dialog id="filterProduct" class="modal">
                     <div class="modal-box">
                         <!-- close button -->
@@ -288,14 +299,18 @@
                         <td class="flex justify-center">
                             <img class="size-12 rounded rounded-sm" src="{{ asset('image/' . $item->image  )}}" />
                         </td>
-                        <td class="text-center">Router</td>
                         <td class="text-center">{{ $item->name }}</td>
+                        <td class="text-center">{{ $item->brand }}</td>
                         <td class="text-center">{{ $item->code }}</td>
-                        <td class="text-center">RB-951</td>
+                        <td class="text-center">{{ $item->type }}</td>
                         <td class="text-center">{{ $item->condition }}</td>
                         <td class="text-center">
-                            <div class="badge badge-soft badge-success p-4">{{ $item->status }}</div>
+                            <div
+                                class="badge badge-soft p-4 {{ $item->status === 'READY' ? 'badge-success' : 'badge-error' }}">
+                                {{ $item->status }}
+                            </div>
                         </td>
+
                         <td class="text-center">
                             <i class="fa fa-trash fa-lg"></i>
                             <i class="fa fa-pen-to-square fa-lg"></i>
@@ -303,9 +318,37 @@
                         </td>
                     </tr>
                     @endforeach
-                </tbody>
-            </table>
 
+                </tbody>
+
+            </table>
+            
+            
+        </div>
+        <div class="flex justify-center mt-4">
+            <div class="join">
+                {{-- Previous Page Link --}}
+                @if ($items->onFirstPage())
+                <button class="join-item btn btn-disabled">«</button>
+                @else
+                <a href="{{ $items->previousPageUrl() }}" class="join-item btn">«</a>
+                @endif
+
+                {{-- Pagination Elements --}}
+                @foreach ($items->getUrlRange(1, $items->lastPage()) as $page => $url)
+                <a href="{{ $url }}"
+                    class="join-item btn {{ $items->currentPage() == $page ? 'btn-primary' : '' }}">
+                    {{ $page }}
+                </a>
+                @endforeach
+
+                {{-- Next Page Link --}}
+                @if ($items->hasMorePages())
+                <a href="{{ $items->nextPageUrl() }}" class="join-item btn">»</a>
+                @else
+                <button class="join-item btn btn-disabled">»</button>
+                @endif
+            </div>
         </div>
     </div>
 </div>

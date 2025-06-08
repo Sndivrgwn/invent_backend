@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\DB;
 
@@ -17,8 +16,9 @@ class ItemSeeder extends Seeder
             [
                 'name' => 'Switch Cisco',
                 'code' => 'NET-001',
+                'brand' => 'Cisco',
+                'type' => 'Switch 24 Port',
                 'status' => 'READY',
-                'quantity' => 5,
                 'condition' => 'GOOD',
                 'description' => 'Switch manageable 24 port',
                 'category_id' => 3,
@@ -27,8 +27,9 @@ class ItemSeeder extends Seeder
             [
                 'name' => 'Monitor Dell 24"',
                 'code' => 'SCR-024',
+                'brand' => 'Dell',
+                'type' => '24 Inch',
                 'status' => 'NOT READY',
-                'quantity' => 2,
                 'condition' => 'NOT GOOD',
                 'description' => 'Monitor rusak sebagian',
                 'category_id' => 1,
@@ -37,8 +38,9 @@ class ItemSeeder extends Seeder
             [
                 'name' => 'Monitor Dell 24"',
                 'code' => 'SCR-0224',
+                'brand' => 'Dell',
+                'type' => '24 Inch',
                 'status' => 'READY',
-                'quantity' => 1,
                 'condition' => 'GOOD',
                 'description' => 'Monitor cadangan ruang meeting',
                 'category_id' => 2,
@@ -47,8 +49,9 @@ class ItemSeeder extends Seeder
             [
                 'name' => 'Printer Epson L3110',
                 'code' => 'PRN-110',
+                'brand' => 'Epson',
+                'type' => 'L3110',
                 'status' => 'READY',
-                'quantity' => 1,
                 'condition' => 'GOOD',
                 'description' => 'Digunakan untuk admin kantor',
                 'category_id' => 1,
@@ -57,8 +60,9 @@ class ItemSeeder extends Seeder
             [
                 'name' => 'Printer Epson L3110',
                 'code' => 'PRN-1210',
+                'brand' => 'Epson',
+                'type' => 'L3110',
                 'status' => 'NOT READY',
-                'quantity' => 1,
                 'condition' => 'NOT GOOD',
                 'description' => 'Tidak bisa menarik kertas',
                 'category_id' => 3,
@@ -67,8 +71,9 @@ class ItemSeeder extends Seeder
             [
                 'name' => 'Projector BenQ',
                 'code' => 'PRJ-001',
+                'brand' => 'BenQ',
+                'type' => 'Standard',
                 'status' => 'READY',
-                'quantity' => 1,
                 'condition' => 'GOOD',
                 'description' => 'Digunakan untuk presentasi',
                 'category_id' => 3,
@@ -77,8 +82,9 @@ class ItemSeeder extends Seeder
             [
                 'name' => 'Projector BenQ',
                 'code' => 'PRJ-0011',
+                'brand' => 'BenQ',
+                'type' => 'Standard',
                 'status' => 'READY',
-                'quantity' => 1,
                 'condition' => 'GOOD',
                 'description' => 'Digunakan untuk presentasi',
                 'category_id' => 1,
@@ -87,8 +93,9 @@ class ItemSeeder extends Seeder
             [
                 'name' => 'Laptop Dell XPS 13',
                 'code' => 'LAP-0101',
+                'brand' => 'Dell',
+                'type' => 'XPS 13',
                 'status' => 'READY',
-                'quantity' => 3,
                 'condition' => 'GOOD',
                 'description' => 'Laptop untuk dosen',
                 'category_id' => 3,
@@ -97,8 +104,9 @@ class ItemSeeder extends Seeder
             [
                 'name' => 'Laptop Lenovo ThinkPad',
                 'code' => 'LAP-002',
+                'brand' => 'Lenovo',
+                'type' => 'ThinkPad',
                 'status' => 'NOT READY',
-                'quantity' => 1,
                 'condition' => 'NOT GOOD',
                 'description' => 'Laptop rusak, butuh perbaikan',
                 'category_id' => 2,

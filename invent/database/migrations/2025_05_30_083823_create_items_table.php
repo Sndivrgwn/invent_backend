@@ -15,8 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('code')->unique();
-            $table->string('status');
-            $table->integer('quantity');
+            $table->enum('status', ['READY', 'NOT READY'])->default('READY');
+            $table->string('brand');
+            $table->string('type');
             $table->string('condition');
             $table->string('image')->default('default.png');
             $table->text('description')->nullable();

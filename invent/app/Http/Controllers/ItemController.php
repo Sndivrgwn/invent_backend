@@ -18,7 +18,7 @@ class ItemController extends Controller
 
     public function getAllItems()
     {
-        $items = Item::with(['category', 'location'])->get();
+        $items = Item::with(['category', 'location'])->paginate(5);
         return view('pages.products', compact('items'));
     }
 
