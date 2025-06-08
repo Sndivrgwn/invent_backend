@@ -39,11 +39,12 @@ class ItemController extends Controller
     {
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'code' => 'required|string|unique:items',
-            'status' => 'required|string',
-            'category_id' => 'required|exists:categories,id' ,
-            'quantity' => 'required|integer|min:1',
+            'code' => 'required|string|unique:items,code',
+            'brand' => 'required|string',
+            'type' => 'required|string',
             'condition' => 'required|string',
+            'status' => 'required|in:READY,NOT READY',
+            'category_id' => 'required|exists:categories,id' ,
             'location_id' => 'required|exists:locations,id',
             'description' => 'nullable|string',
         ]);
@@ -77,11 +78,12 @@ class ItemController extends Controller
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'code' => 'required|string|unique:items,code,' . $id,
-            'status' => 'required|string',
-            'category_id' => 'required|exists:categories,id',
-            'quantity' => 'required|integer|min:1',
+            'code' => 'required|string|unique:items,code' . $id,
+            'brand' => 'required|string',
+            'type' => 'required|string',
             'condition' => 'required|string',
+            'status' => 'required|in:READY,NOT READY',
+            'category_id' => 'required|exists:categories,id' ,
             'location_id' => 'required|exists:locations,id',
             'description' => 'nullable|string',
         ]);

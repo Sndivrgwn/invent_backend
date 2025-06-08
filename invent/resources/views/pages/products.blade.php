@@ -32,115 +32,115 @@
                 <dialog id="newProduct" class="modal">
                     <div class="modal-box">
                         <!-- close button -->
-                        <form method="dialog">
+                        <form method="dialog" id="itemForm">
                             <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-                        </form>
-                        <h1 class="font-semibold text-2xl mb-4">New Product</h1>
-                        <div class="flex gap-5 justify-between text-gray-600">
-                            <!-- Product -->
-                            <div class="w-[50%]">
-                                <h1 class="font-medium">PRODUCT</h1>
-                                <div class="mb-2">
+                            <h1 class="font-semibold text-2xl mb-4">New Product</h1>
+                            <div class="flex gap-5 justify-between text-gray-600">
+                                <!-- Product -->
+                                <div class="w-[50%]">
+                                    <h1 class="font-medium">PRODUCT</h1>
+                                    <div class="mb-2">
+                                        <label class="select">
+                                            <select id="product" class="w-[90vw]">
+                                                <option value="">Insert Product</option>
+                                                <option value="Router">Router</option>
+                                                <option value="Access Point">Access Point</option>
+                                            </select>
+                                        </label>
+                                    </div>
+                                </div>
+                                <!-- rack -->
+                                <div class="w-[50%]">
+                                    <h1 class="font-medium">RACK</h1>
                                     <label class="select">
-                                        <select id="product" class="w-[90vw]">
-                                            <option value="">Insert Product</option>
-                                            <option value="Router">Router</option>
-                                            <option value="Access Point">Access Point</option>
+                                        <select id="rack">
+                                            <option>Insert Rack</option>
+                                            <option value="1">Rack 1</option>
+                                            <option value="2">Rack 2</option>
+                                            <option value="3">Rack 3</option>
+                                            <option value="4">Rack 4</option>
                                         </select>
                                     </label>
                                 </div>
                             </div>
-                            <!-- rack -->
-                            <div class="w-[50%]">
-                                <h1 class="font-medium">RACK</h1>
-                                <label class="select">
-                                    <select>
-                                        <option>Insert Rack</option>
-                                        <option>Rack 1</option>
-                                        <option>Rack 2</option>
-                                        <option>Rack 3</option>
-                                        <option>Rack 4</option>
-                                    </select>
-                                </label>
+                            <div class="flex gap-5 justify-between text-gray-600">
+                                <!-- Brand -->
+                                <div class="w-[50%]">
+                                    <h1 class="font-medium">BRAND</h1>
+                                    <div class="mb-2">
+                                        <label class="select">
+                                            <select id="brand">
+                                                <option value="">Insert Brand</option>
+                                            </select>
+                                        </label>
+                                    </div>
+                                </div>
+                                <!-- condition -->
+                                <div class="w-[50%]">
+                                    <h1 class="font-medium">CONDITION</h1>
+                                    <div>
+                                        <label class="select">
+                                            <select id="condition">
+                                                <option>Insert Condition</option>
+                                                <option value="GOOD">Good</option>
+                                                <option value="NOT GOOD">Not Good</option>
+                                            </select>
+                                        </label>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                        <div class="flex gap-5 justify-between text-gray-600">
-                            <!-- Brand -->
-                            <div class="w-[50%]">
-                                <h1 class="font-medium">BRAND</h1>
-                                <div class="mb-2">
-                                    <label class="select">
-                                        <select id="brand">
-                                            <option value="">Insert Brand</option>
-                                        </select>
+                            <div class="flex gap-5 justify-between text-gray-600">
+                                <!-- Type -->
+                                <div class="w-[50%]">
+                                    <h1 class="font-medium">TYPE</h1>
+                                    <div class="mb-2">
+                                        <label class="select">
+                                            <select id="type">
+                                                <option value="">Insert Type</option>
+                                            </select>
+                                        </label>
+                                    </div>
+                                </div>
+                                <!-- status -->
+                                <div class="w-[50%]">
+                                    <h1 class="font-medium">STATUS</h1>
+                                    <div>
+                                        <label class="select">
+                                            <select id="status">
+                                                <option>Insert Status</option>
+                                                <option value="READY">Ready</option>
+                                                <option value="NOT READY">Not Ready</option>
+                                            </select>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- SN -->
+                            <div class="flex w-full mb-2">
+                                <div class="w-full">
+                                    <h1 class="font-medium text-gray-600">SERIAL NUMBER</h1>
+                                    <label class="input flex text-gray-600" style="width: 100%;">
+                                        <input class="w-full" type="text" id="serialNumber" placeholder="Serial Number" />
                                     </label>
                                 </div>
                             </div>
-                            <!-- condition -->
-                            <div class="w-[50%]">
-                                <h1 class="font-medium">CONDITION</h1>
-                                <div>
-                                    <label class="select">
-                                        <select>
-                                            <option>Insert Condition</option>
-                                            <option>Good</option>
-                                            <option>Not Good</option>
-                                        </select>
-                                    </label>
-                                </div>
+                            
+                            <!-- deskripsi -->
+                            <div class="mb-4">
+                                <h1 class="font-medium text-gray-600">DESCRIPTION</h1>
+                                <textarea id="description" class="textarea text-gray-600" placeholder="Description"
+                                style="width: 100%;"></textarea>
                             </div>
-                        </div>
-                        <div class="flex gap-5 justify-between text-gray-600">
-                            <!-- Type -->
-                            <div class="w-[50%]">
-                                <h1 class="font-medium">TYPE</h1>
-                                <div class="mb-2">
-                                    <label class="select">
-                                        <select id="type">
-                                            <option value="">Insert Type</option>
-                                        </select>
-                                    </label>
-                                </div>
-                            </div>
-                            <!-- status -->
-                            <div class="w-[50%]">
-                                <h1 class="font-medium">STATUS</h1>
-                                <div>
-                                    <label class="select">
-                                        <select>
-                                            <option>Insert Status</option>
-                                            <option>Ready</option>
-                                            <option>Not Ready</option>
-                                        </select>
-                                    </label>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- SN -->
-                        <div class="flex w-full mb-2">
-                            <div class="w-full">
-                                <h1 class="font-medium text-gray-600">SERIAL NUMBER</h1>
-                                <label class="input flex text-gray-600" style="width: 100%;">
-                                    <input class="w-full" type="text" placeholder="Serial Number" />
-                                </label>
-                            </div>
-                        </div>
-
-                        <!-- deskripsi -->
-                        <div class="mb-4">
-                            <h1 class="font-medium text-gray-600">DESCRIPTION</h1>
-                            <textarea class="textarea text-gray-600" placeholder="Bio"
-                                style="width: 100%;">Description</textarea>
-                        </div>
-
-                        <!-- button -->
-                        <div class="w-full flex justify-end items-end gap-4">
-                            <button
+                            
+                            <!-- button -->
+                            <div class="w-full flex justify-end items-end gap-4">
+                                <button
                                 class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Cancel</button>
-                            <button
+                                <button
                                 class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Submit</button>
-                        </div>
+                            </div>
+                        </form>
 
                         @push('scripts')
                         <script>
@@ -190,6 +190,47 @@
                                     });
                                 }
                             });
+
+                            document.getElementById("itemForm").addEventListener("submit", function (e) {
+                                e.preventDefault();
+                                const payload = {
+                                    name: productSelect.value + ' ' + typeSelect.value,
+                                    brand: brandSelect.value,
+                                    type: typeSelect.value,
+                                    location_id: document.getElementById("rack").value,
+                                    condition: document.getElementById("condition").value,
+                                    status: document.getElementById("status").value,
+                                    code: document.getElementById("serialNumber").value,
+                                    description: document.getElementById("description").value,
+                                    category_id: 1,
+                                };
+
+                                fetch('/api/items', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'Accept': 'application/json',
+                                    },
+                                    body: JSON.stringify(payload)
+                                })
+                                .then(res => res.json())
+                                .then(data => {
+                                    if (data.errors) {
+                                        console.log(data.errors);
+                                        console.log('Payload :', payload);
+                                        alert("Validation failed. See console for details.");
+                                    } else {
+                                        alert("Item successfully created");
+                                        document.getElementById("itemForm").reset();
+                                        closeModal();
+                                        window.location.reload();
+                                    }
+                                })
+                            });
+
+                            function closeModal() {
+                                document.getElementById('newProduct').close();
+                            }
                         </script>
                         @endpush
 
@@ -297,7 +338,7 @@
                     @foreach ($items as $item)
                     <tr>
                         <td class="flex justify-center">
-                            <img class="size-12 rounded rounded-sm" src="{{ asset('image/' . $item->image  )}}" />
+                            <img class="size-12 rounded-sm" src="{{ asset('image/' . $item->image  )}}" />
                         </td>
                         <td class="text-center">{{ $item->name }}</td>
                         <td class="text-center">{{ $item->brand }}</td>
@@ -312,7 +353,7 @@
                         </td>
 
                         <td class="text-center">
-                            <i class="fa fa-trash fa-lg"></i>
+                            <i class="fa fa-trash fa-lg cursor-pointer" onclick="deleteItem({{ $item->id }})"></i>
                             <i class="fa fa-pen-to-square fa-lg"></i>
                             <i class="fa-regular fa-eye fa-lg"></i>
                         </td>
@@ -322,6 +363,30 @@
                 </tbody>
 
             </table>
+            @push('scripts')
+                <script>
+                    async function deleteItem(id) {
+                        if (!confirm('Are you sure')) return;
+
+                        const res = await fetch(`/api/items/${id}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Accept': 'application/json',
+                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                            }
+                        });
+
+                        if (res.ok) {
+                            alert('item deleted');
+                            window.location.reload();
+                        } else {
+                            const data = await res.json();
+                            alert('Error bray cek console');
+                            console.log(data.message || res.statusText);
+                        }
+                    }
+                </script>
+            @endpush
             
             
         </div>
