@@ -26,12 +26,15 @@
         <div class="list bg-base-100 rounded-box shadow-md">
 
             <div class="tabs tabs-border p-8">
+                <!-- Tab 1 -->
                 <label class="tab text-blue-700 px-10! pb-2! mx-0!">
                     <input type="radio" name="my_tabs_4" checked="checked" />
                     <i class="fa fa-cog mr-1" style="display: flex; justify-content: center;"></i>
                     System Settings
                 </label>
+                <!-- Value Tab 1 -->
                 <div class="tab-content bg-base-100 py-6 mx-5.5! mt-[-2px]!" style="border-top: 1px solid lightgray;">
+                    <!-- Time Zone -->
                     <div class="mb-4">
                         <h1 class="font-medium text-lg mb-1">Time Zone</h1>
                         <label class="select" style="width: 100%;">
@@ -42,20 +45,23 @@
                             </select>
                         </label>
                     </div>
+                    <!-- Calender -->
                     <div>
                         <h1 class="font-medium text-lg mb-1">Fiscal Year Start</h1>
                         <label class="input" style="width: 100%;">
-                            <span class="label">Publish date</span>
+                            <span class="label">Date</span>
                             <input type="date" />
                         </label>
                     </div>
                 </div>
 
+                <!-- Tab 2 -->
                 <label class="tab border-0 text-blue-700 px-10! pb-2! mx-0!">
                     <input type="radio" name="my_tabs_4" />
                     <i class="fa-solid fa-palette mr-2" style="display: flex; justify-content: center;"></i>
                     Appearance
                 </label>
+                <!-- Value Tab 2 -->
                 <div class="tab-content bg-base-100 py-6 mx-5.5! mt-[-2px]!" style="border-top: 1px solid lightgray; ">
                     <div class="mb-4">
                         <h1 class="font-medium text-lg mb-1">Theme</h1>
@@ -80,7 +86,7 @@
                             </label>
                         </div>
 
-                        <!-- DaisyUI Modal -->
+                        <!-- Modal -->
                         <input type="checkbox" id="gradient-modal" class="modal-toggle" />
                         <div class="modal" role="dialog">
                             <div class="modal-box">
