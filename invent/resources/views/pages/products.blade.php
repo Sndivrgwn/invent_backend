@@ -325,7 +325,7 @@
                     <tr>
                         <th class="text-center font-semibold">PHOTO</th>
                         <th class="text-center font-semibold">PRODUCT</th>
-                        <th class="text-center font-semibold">BRAND</th>
+                        <th class="text-center font-semibold">RACK</th>
                         <th class="text-center font-semibold">SERIAL NUMBER</th>
                         <th class="text-center font-semibold">TYPE</th>
                         <th class="text-center font-semibold">CONDITIONAL</th>
@@ -340,7 +340,7 @@
                             <img class="size-12 rounded-sm" src="{{ asset('image/' . $item->image  )}}" />
                         </td>
                         <td class="text-center">{{ $item->name }}</td>
-                        <td class="text-center">{{ $item->brand }}</td>
+                        <td class="text-center">{{ $item->location->description }}</td>
                         <td class="text-center">{{ $item->code }}</td>
                         <td class="text-center">{{ $item->type }}</td>
                         <td class="text-center">{{ $item->condition }}</td>
@@ -389,7 +389,7 @@
             
             
         </div>
-        <div class="flex justify-center mt-4">
+        <div class="flex justify-end mb-4 mt-4">
             <div class="join">
                 {{-- Previous Page Link --}}
                 @if ($items->onFirstPage())
