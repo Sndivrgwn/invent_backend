@@ -4,7 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Models\Item;
+use App\Models\Location;
+use Exception;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
 
 class ItemController extends Controller
 {
@@ -19,7 +23,9 @@ class ItemController extends Controller
     public function getAllItems()
     {
         $items = Item::with(['category', 'location'])->paginate(5);
-        return view('pages.products', compact('items'));
+        $locations = Location::all();
+
+        return view('pages.products', compact('items', 'locations'));
     }
 
     /**
@@ -36,7 +42,9 @@ class ItemController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-    {
+{
+    try {
+        // Validasi input
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'code' => 'required|string|unique:items,code',
@@ -44,14 +52,41 @@ class ItemController extends Controller
             'type' => 'required|string',
             'condition' => 'required|string',
             'status' => 'required|in:READY,NOT READY',
-            'category_id' => 'required|exists:categories,id' ,
+            'category_id' => 'required|exists:categories,id',
             'location_id' => 'required|exists:locations,id',
             'description' => 'nullable|string',
         ]);
 
-        $items = Item::create($validated);
-        return response()->json(['message' => 'Item created successfully', 'data' => $items], 201);
+        // Simpan item
+        $item = Item::create($validated);
+
+        return response()->json([
+            'message' => 'Item created successfully',
+            'data' => $item,
+        ], 201);
+
+    } catch (ValidationException $e) {
+        // Tangkap error validasi
+        return response()->json([
+            'message' => 'Validation failed',
+            'errors' => $e->errors()
+        ], 422);
+
+    } catch (QueryException $e) {
+        // Tangkap error database
+        return response()->json([
+            'message' => 'Database error',
+            'error' => $e->getMessage()
+        ], 500);
+
+    } catch (Exception $e) {
+        // Tangkap error umum lainnya
+        return response()->json([
+            'message' => 'Server error',
+            'error' => $e->getMessage()
+        ], 500);
     }
+}
 
     /**
      * Display the specified resource.

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Item;
 use App\Models\Loan;
+use App\Models\Location;
 use Illuminate\Http\Request;
 
 class ProductsController extends Controller
@@ -20,7 +21,8 @@ class ProductsController extends Controller
         $loans = Loan::all();
         $totalLoans = $loans->count();
         
+        $location = Location::all();
 
-        return view('pages.products', compact('totalItems', 'totalCategories', 'totalLoans'));
+        return view('pages.products', compact('totalItems', 'totalCategories', 'totalLoans' , 'location'));
     }
 }

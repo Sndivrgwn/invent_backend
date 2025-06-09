@@ -33,7 +33,7 @@
                     <div class="modal-box">
                         <!-- close button -->
                         <form method="dialog" id="itemForm">
-                            <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                            <button id="cancel" type="button" onclick="closeModal()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
                             <h1 class="font-semibold text-2xl mb-4">New Product</h1>
                             <div class="flex gap-5 justify-between text-gray-600">
                                 <!-- Product -->
@@ -55,10 +55,9 @@
                                     <label class="select">
                                         <select id="rack">
                                             <option>Insert Rack</option>
-                                            <option value="1">Rack 1</option>
-                                            <option value="2">Rack 2</option>
-                                            <option value="3">Rack 3</option>
-                                            <option value="4">Rack 4</option>
+                                            @foreach ($locations as $location)
+                                            <option value="{{ $location->id }}">{{ $location->name . ' | '. $location->description }}</option>
+                                            @endforeach
                                         </select>
                                     </label>
                                 </div>
@@ -135,7 +134,7 @@
                             
                             <!-- button -->
                             <div class="w-full flex justify-end items-end gap-4">
-                                <button
+                                <button id="cancelButton" type="button" onclick="closeModal()"
                                 class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Cancel</button>
                                 <button
                                 class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Submit</button>
@@ -218,7 +217,7 @@
                                     if (data.errors) {
                                         console.log(data.errors);
                                         console.log('Payload :', payload);
-                                        alert("Validation failed. See console for details.");
+                                        alert("Please fill in all fields correctly");
                                     } else {
                                         alert("Item successfully created");
                                         document.getElementById("itemForm").reset();
