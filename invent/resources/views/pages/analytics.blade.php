@@ -21,10 +21,10 @@
             </div>
             <div class="flex-none">
                 {{-- new product --}}
-                <button class="bg-[#2563EB] text-white rounded-lg py-2 px-4 mx-5 hover:bg-blue-400 cursor-pointer flex justify-center items-center">
+                <button class="bg-[#ffffff] rounded-lg py-2 px-4 mx-5 hover:bg-blue-400 cursor-pointer flex justify-center items-center">
                     <div class="gap-2 flex">
-                        <i class="fa fa-plus" style="display: flex; justify-content: center; align-items: center;"></i>
-                        <span>New Product</span>
+                        <i class="fa fa-download" style="display: flex; justify-content: center; align-items: center;"></i>
+                        <span>Export Report</span>
                     </div>
                 </button>
             </div>
@@ -35,13 +35,7 @@
             <div class="p-4 pb-2 flex">
                 <!-- search -->
                 <div class="relative w-full hidden md:block mr-4">
-                    <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                        <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
-                        </svg>
-                        <span class="sr-only">Search icon</span>
-                    </div>
-                    <input type="text" id="search-navbar" class="block w-full p-2 ps-10 text-sm border border-gray-400 rounded-lg" placeholder="Search...">
+                    <p class="font-medium text-xl ms-12">Category Overview</p>
                 </div>
 
                 <!-- filter --> 
@@ -90,15 +84,21 @@
             <table class="table">
                 <thead>
                     <tr>
-                        <th class="text-center font-semibold">PRODUCT</th>
-                        <th class="text-center font-semibold">SERIAL NUMBER</th>
-                        <th class="text-center font-semibold">PHOTO</th>
-                        <th class="text-center font-semibold">CONDITIONAL</th>
-                        <th class="text-center font-semibold">STATUS</th>
-                        <th class="text-center font-semibold">ACTION</th>
+                        <th class="text-center font-semibold">CATEGORY</th>
+                        <th class="text-center font-semibold">QUANTITY</th>
+                        <th class="text-center font-semibold">AVAILABLE</th>
+                        <th class="text-center font-semibold">LOANED</th>
+                        <th class="text-center font-semibold">LOW STOCK</th>
                     </tr>
                 </thead>
                 <tbody>
+                    <tr>
+                        <td class="text-center">Router</td>
+                        <td class="text-center">120</td>
+                        <td class="text-center">100</td>
+                        <td class="text-center">20</td>
+                        <td class="text-center">NO</td>
+                    </tr>
                     
             </table>
 
