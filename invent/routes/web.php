@@ -7,6 +7,7 @@ use App\Http\Controllers\LoanController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\HistoryController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -22,6 +23,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/loan', [LoanController::class, 'index'])->name('loan');
     Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics');
     Route::get('/settings', [SettingController::class, 'index'])->name('setting');
+    Route::get('/history', [HistoryController::class, 'index'])->name('history');
     
     Route::post('/logout', [App\Http\Controllers\Auth\LogoutController::class, 'logout'])->name('logout');
     
