@@ -6,6 +6,7 @@ use App\Exports\CategoryExport;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use App\Models\Item;
+use App\Models\Loan;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 
@@ -16,15 +17,27 @@ class AnalyticsController extends Controller
      */
     public function index()
     {
+        // Ambil semua kategori dengan jumlah item
         $categories = Category::withCount('items')->get();
 
-        // Tambahkan properti "low_stock" berdasarkan items_count
+        // Ambil semua data peminjaman
+        $loans = Loan::with('item')->get();
+
+        // Hitung per kategori
         foreach ($categories as $category) {
-            $category->low_stock = $category->items_count < 3 ? 'Yes' : 'No';
+            // Ambil semua loan yang item-nya termasuk dalam kategori ini
+            
+            $loanCount = $loans->filter(function ($loan) use ($category) {
+                return $loan->item && $loan->item->category_id === $category->id;
+            })->count();
+            $category->loan_count = $loanCount;
+            $category->available_count = $category->items_count - $loanCount;
+            $category->low_stock = $category->available_count < 3 ? 'Yes' : 'No';
         }
 
         return view('pages.analytics', compact('categories'));
     }
+
 
 
     public function export()

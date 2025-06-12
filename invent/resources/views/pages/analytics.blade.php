@@ -96,8 +96,8 @@
                         <tr>
                             <td class="text-center">{{ $category->name }}</td>
                             <td class="text-center">{{ $category->items_count }}</td>
-                            <td class="text-center">{{ $category->available }}</td>
-                            <td class="text-center">{{ $category->loaned }}</td>
+                            <td class="text-center">{{ $category->available_count }}</td>
+                            <td class="text-center">{{ $category->loan_count }}</td>
                             <td class="text-center">{{ $category->low_stock }}</td>
                         </tr>
                         

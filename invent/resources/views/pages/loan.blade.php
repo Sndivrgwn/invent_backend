@@ -100,19 +100,20 @@
                                 </tr>
                             </thead>
                             <tbody>
-                               
-                                <tr>
-                                    <td class="text-center">SANDI</td>
-                                    <td class="text-center">MIKROTIK</td>
-                                    <td class="text-center">TANGGAL</td>
-                                    <td class="text-center">TANGGAL</td>
-                                    <td class="text-center">LOANED</td>
-                                    
-                                    <td class="text-center">
-                                        <i class="fa fa-pen-to-square fa-lg"></i>
-                                        <i class="fa-regular fa-eye fa-lg"></i>
-                                    </td>
-                                </tr>
+                               @foreach ($loans as $loan)
+                               <tr>
+                                   <td class="text-center">{{ $loan->user->name }}</td>
+                                   <td class="text-center">{{ $loan->item->name }}</td>
+                                   <td class="text-center">{{ $loan->loan_date }}</td>
+                                   <td class="text-center">{{ $loan->return_date }}</td>
+                                   <td class="text-center">{{ $loan->status }}</td>
+                                   
+                                   <td class="text-center">
+                                       <i class="fa fa-pen-to-square fa-lg"></i>
+                                       <i class="fa-regular fa-eye fa-lg"></i>
+                                   </td>
+                               </tr>
+                               @endforeach
                             </tbody>
 
                         </table>
