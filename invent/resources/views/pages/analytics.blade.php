@@ -24,7 +24,7 @@
                 <button class="bg-[#ffffff] rounded-lg py-2 px-4 mx-5 hover:bg-blue-400 cursor-pointer flex justify-center items-center">
                     <div class="gap-2 flex">
                         <i class="fa fa-download" style="display: flex; justify-content: center; align-items: center;"></i>
-                        <span>Export Report</span>
+                        <a href="{{ route('analytics.export') }}">Export Report</a>
                     </div>
                 </button>
             </div>
@@ -92,13 +92,16 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
-                        <td class="text-center">Router</td>
-                        <td class="text-center">120</td>
-                        <td class="text-center">100</td>
-                        <td class="text-center">20</td>
-                        <td class="text-center">NO</td>
-                    </tr>
+                    @foreach($categories as $category)
+                        <tr>
+                            <td class="text-center">{{ $category->name }}</td>
+                            <td class="text-center">{{ $category->items_count }}</td>
+                            <td class="text-center">{{ $category->available }}</td>
+                            <td class="text-center">{{ $category->loaned }}</td>
+                            <td class="text-center">{{ $category->low_stock }}</td>
+                        </tr>
+                        
+                    @endforeach
                     
             </table>
 

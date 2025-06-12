@@ -16,6 +16,10 @@ class CategoryController extends Controller
         return response()->json(Category::all(), 200);
     }
 
+    public function getAllItems() {
+        $categories = Category::all();
+        return response()->json(['data' => $categories], 200);
+    }
     /**
      * Store a newly created resource in storage.
      */
