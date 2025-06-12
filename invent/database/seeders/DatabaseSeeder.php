@@ -28,6 +28,8 @@ class DatabaseSeeder extends Seeder
             LocationSeeder::class,
             ItemSeeder::class,
             UserSeeder::class,
+            LoanSeeder::class,
+            ItemLoanSeeder::class,
         ]);
     }
 }

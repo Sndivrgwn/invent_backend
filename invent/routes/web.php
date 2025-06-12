@@ -26,7 +26,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/settings', [SettingController::class, 'index'])->name('setting');
     Route::get('/history', [HistoryController::class, 'index'])->name('history');
     Route::get('/newLoan', [NewLoanController::class, 'index'])->name('newLoan');
-    
+    Route::get('/analytics/export', [AnalyticsController::class, 'export'])->name('analytics.export');
     Route::post('/logout', [App\Http\Controllers\Auth\LogoutController::class, 'logout'])->name('logout');
     
     Route::get('/batre', function () {

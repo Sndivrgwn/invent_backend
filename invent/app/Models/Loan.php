@@ -19,11 +19,13 @@ class Loan extends Model
         'status',
     ];
 
-    public function user() {
+    public function user()
+    {
         return $this->belongsTo(User::class);
     }
 
-    public function item() {
-        return $this->belongsTo(Item::class);
+    public function items()
+    {
+        return $this->belongsToMany(Item::class, 'item_loan')->withPivot('quantity')->withTimestamps();
     }
 }
