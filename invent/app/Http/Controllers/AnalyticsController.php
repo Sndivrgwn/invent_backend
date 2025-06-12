@@ -21,18 +21,21 @@ class AnalyticsController extends Controller
         $categories = Category::withCount('items')->get();
 
         // Ambil semua data peminjaman
-        $loans = Loan::with('item')->get();
+        $loans = Loan::with('items')->get();
 
         // Hitung per kategori
         foreach ($categories as $category) {
             // Ambil semua loan yang item-nya termasuk dalam kategori ini
-            
+
             $loanCount = $loans->filter(function ($loan) use ($category) {
-                return $loan->item && $loan->item->category_id === $category->id;
+                return $loan->items->contains(function ($item) use ($category) {
+                    return $item->category_id === $category->id;
+                });
             })->count();
             $category->loan_count = $loanCount;
             $category->available_count = $category->items_count - $loanCount;
             $category->low_stock = $category->available_count < 3 ? 'Yes' : 'No';
+
         }
 
         return view('pages.analytics', compact('categories'));

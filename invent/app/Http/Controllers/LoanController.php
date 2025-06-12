@@ -13,7 +13,7 @@ class LoanController extends Controller
      */
     public function index()
     {
-        $loans = Loan::with(['user', 'item'])->get();
+        $loans = Loan::with(['user', 'items'])->get();
         return View('pages.loan', compact('loans'));
     }
 

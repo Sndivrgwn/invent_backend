@@ -21,11 +21,18 @@ class Item extends Model
         'description',
     ];
 
-    public function category() {
+    public function category()
+    {
         return $this->belongsTo(Category::class);
     }
 
-    public function location() {
+    public function location()
+    {
         return $this->belongsTo(Location::class);
+    }
+
+    public function loans()
+    {
+        return $this->belongsToMany(Loan::class, 'item_loan')->withPivot('quantity')->withTimestamps();
     }
 }
