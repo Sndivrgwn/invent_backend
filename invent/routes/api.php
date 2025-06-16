@@ -15,6 +15,10 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
+// routes/api.php
+Route::get('/search-items', [ItemController::class, 'search']);
+// routes/api.php atau routes/web.php (sesuai penggunaan)
+
 Route::post('/login', [App\Http\Controllers\Auth\LoginController::class, 'loginapi']);
 Route::post('/register', [App\Http\Controllers\Auth\RegisterController::class, 'registerapi']);
 Route::apiResource('roles', RolesController::class);

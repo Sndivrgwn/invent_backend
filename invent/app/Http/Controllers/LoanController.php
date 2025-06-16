@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Item;
 use App\Models\Loan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class LoanController extends Controller
 {
@@ -24,18 +26,61 @@ class LoanController extends Controller
     {
         $request->validate([
             'user_id' => 'required|exists:users,id',
-            'item_id' => 'required|exists:items,id',
-            'quantity' => 'required|integer|min:1',
             'code_loans' => 'required|string|unique:loans',
             'loan_date' => 'required|date',
-            'return_date' => 'required|date|after_or_equal:loan_date',
-            'status' => 'required|in:dipinjam,dikembalikan,terlambat',
+            'return_date' => 'required|date',
+            'status' => 'required|string',
+            'loaner_name' => 'required|string',
+            'description' => 'nullable|string',
+            'items' => 'required|array',
+            'items.*.item_id' => 'required|exists:items,id',
+            'items.*.quantity' => 'required|integer|min:1',
         ]);
 
-        $loan = Loan::create($request->all());
-        return response()->json(['message' => 'Loan created', 'loan' => $loan], 201);
+        DB::beginTransaction();
+        try {
+            // 1. Simpan loan utama
+            $loan = Loan::create([
+                'user_id' => $request->user_id,
+                'code_loans' => $request->code_loans,
+                'loan_date' => $request->loan_date,
+                'return_date' => $request->return_date,
+                'status' => $request->status,
+                'loaner_name' => $request->loaner_name,
+                'description' => $request->description,
+            ]);
+
+            // 2. Simpan item ke pivot table loan_item
+            foreach ($request->items as $item) {
+                $loan->items()->attach($item['item_id'], [
+                    'quantity' => $item['quantity'],
+                ]);
+            }
+
+            DB::commit();
+            return response()->json(['message' => 'Loan berhasil disimpan']);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(['error' => $e->getMessage()], 500);
+        }
     }
 
+
+
+
+    public function search(Request $request)
+    {
+        $keyword = $request->query('q');
+
+        $items = Item::where('code', 'LIKE', "%$keyword%")
+            ->orWhere('name', 'LIKE', "%$keyword%")
+            ->orWhere('brand', 'LIKE', "%$keyword%")
+            ->orWhere('type', 'LIKE', "%$keyword%")
+            ->limit(10)
+            ->get();
+
+        return response()->json($items);
+    }
     /**
      * Display the specified resource.
      */

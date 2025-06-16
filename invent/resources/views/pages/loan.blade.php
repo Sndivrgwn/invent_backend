@@ -108,7 +108,7 @@
                         <tbody>
                             @foreach ($loans as $loan)
                             <tr>
-                                <td class="text-center">{{ $loan->user->name }}</td>
+                                <td class="text-center">{{ $loan->loaner_name }}</td>
                                 <td class="text-center">@foreach ($loan->items as $item)
                                     {{ $item->name }}{{ !$loop->last ? ', ' : '' }}
                                     @endforeach</td>

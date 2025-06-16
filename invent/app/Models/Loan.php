@@ -10,14 +10,17 @@ class Loan extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
-        'item_id',
-        'quantity',
-        'code_loans',
-        'loan_date',
-        'return_date',
-        'status',
-    ];
+    'user_id',
+    'code_loans',
+    'loan_date',
+    'return_date',
+    'status',
+    'loaner_name',
+    'description',
+];
+
+
+
 
     public function user()
     {
@@ -25,7 +28,8 @@ class Loan extends Model
     }
 
     public function items()
-    {
-        return $this->belongsToMany(Item::class, 'item_loan')->withPivot('quantity')->withTimestamps();
-    }
+{
+    return $this->belongsToMany(Item::class)->withPivot('quantity')->withTimestamps();
+}
+
 }

@@ -20,6 +20,26 @@ class ItemController extends Controller
         return response()->json(Item::all(), 200);
     }
 
+    public function search(Request $request)
+    {
+        $keyword = $request->query('q');
+        $items = Item::where('code', 'LIKE', "%$keyword%")
+            ->orWhere('name', 'LIKE', "%$keyword%")
+            ->orWhere('brand', 'LIKE', "%$keyword%")
+            ->orWhere('type', 'LIKE', "%$keyword%")
+            ->limit(10)
+            ->get();
+
+        return response()->json($items);
+    }
+
+    public function getAll()
+    {
+        $items = Item::with(['category', 'location'])->get();
+
+        return $items;
+    }
+
     public function getAllItems()
     {
         $items = Item::with(['category', 'location'])->paginate(5);

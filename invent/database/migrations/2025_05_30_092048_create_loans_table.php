@@ -20,7 +20,6 @@ return new class extends Migration
             $table->string('loaner_name');
             $table->text('description')->nullable();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('item_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }
