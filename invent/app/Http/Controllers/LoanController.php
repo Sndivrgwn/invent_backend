@@ -7,6 +7,8 @@ use App\Models\Item;
 use App\Models\Loan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use App\Exports\HistoryExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class LoanController extends Controller
 {
@@ -78,6 +80,11 @@ class LoanController extends Controller
 
 
 
+
+    public function exportHistory()
+    {
+        return Excel::download(new HistoryExport, 'loan_history.xlsx');
+    }
 
 
 

@@ -24,7 +24,7 @@
                 <button class="bg-[#ffffff] rounded-lg py-2 px-4 mx-5 hover:bg-blue-400 cursor-pointer flex justify-center items-center">
                     <div class="gap-2 flex">
                         <i class="fa fa-download" style="display: flex; justify-content: center; align-items: center;"></i>
-                        <span>Export Report</span>
+                        <a href="{{ route('loans.exportHistory') }}">Export Report</a>
                     </div>
                 </button>
             </div>
@@ -41,7 +41,19 @@
                                 </svg>
                                 <span class="sr-only">Search icon</span>
                             </div>
-                            <input type="text" id="search-navbar" class="block w-full p-2 ps-10 text-sm border border-gray-400 rounded-lg" placeholder="Search...">
+                            <form method="GET" action="{{ route('history') }}" class="relative w-full md:block">
+                                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                                    <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                        fill="none" viewBox="0 0 20 20">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                            stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                                    </svg>
+                                    <span class="sr-only">Search icon</span>
+                                </div>
+                                <input type="text" name="search" value="{{ request('search') }}"
+                                    class="block w-full p-2 ps-10 text-sm border border-gray-400 rounded-lg"
+                                    placeholder="Search...">
+                            </form>
                         </div>
 
                 <!-- filter --> 

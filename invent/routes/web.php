@@ -28,6 +28,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/newLoan', [NewLoanController::class, 'index'])->name('newLoan');
     Route::post('/loans', [LoanController::class, 'store']);
 
+    Route::get('/items/filter', [ItemController::class, 'filter']);
+// routes/web.php
+
+
+    Route::get('/loans/export-history', [LoanController::class, 'exportHistory'])->name('loans.exportHistory');
     Route::get('/analytics/export', [AnalyticsController::class, 'export'])->name('analytics.export');
     Route::post('/logout', [App\Http\Controllers\Auth\LogoutController::class, 'logout'])->name('logout');
 

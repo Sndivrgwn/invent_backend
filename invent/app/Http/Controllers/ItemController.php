@@ -27,6 +27,7 @@ class ItemController extends Controller
             ->orWhere('name', 'LIKE', "%$keyword%")
             ->orWhere('brand', 'LIKE', "%$keyword%")
             ->orWhere('type', 'LIKE', "%$keyword%")
+            ->orWhere('condition', 'LIKE', "%$keyword%")
             ->limit(10)
             ->get();
 
@@ -40,18 +41,53 @@ class ItemController extends Controller
         return $items;
     }
 
-    public function getAllItems()
-    {
-        $items = Item::with(['category', 'location'])->paginate(20);
-        $locations = Location::all();
+    public function getAllItems(Request $request)
+{
+    $query = Item::with(['category', 'location']);
 
-        return view('pages.products', compact('items', 'locations'));
+    if ($request->has('search-navbar') && $request->filled('search-navbar')) {
+        $search = $request->input('search-navbar');
+
+        $query->where(function ($q) use ($search) {
+            $q->where('name', 'like', "%{$search}%") // PRODUCT
+              ->orWhere('code', 'like', "%{$search}%") // SERIAL NUMBER
+              ->orWhere('brand', 'like', "%{$search}%") // BRAND
+              ->orWhereHas('category', function ($q) use ($search) {
+                  $q->where('name', 'like', "%{$search}%"); // CATEGORY
+              })
+              ->orWhereHas('location', function ($q) use ($search) {  
+                  $q->where('description', 'like', "%{$search}%"); // LOCATION
+              })
+              ->orWhere('type', 'like', "%{$search}%") // TYPE
+              ->orWhere('condition', 'like', "%{$search}%") // CONDITIONAL
+              ->orWhere('status', 'like', "%{$search}%"); // STATUS
+        });
+    }
+
+    $items = $query->paginate(20);
+    $locations = Location::all();
+
+    return view('pages.products', compact('items', 'locations'));
+}
+
+
+    public function filter(Request $request)
+    {
+        $items = Item::with('location')->when($request->brand, fn($q) => $q->where('brand', $request->brand))
+            ->when($request->category, fn($q) => $q->whereHas('category', fn($q) => $q->where('name', $request->category)))
+            ->when($request->location, fn($q) => $q->whereHas('location', fn($q) => $q->where('description', $request->location)))
+            ->when($request->type, fn($q) => $q->where('type', $request->type))
+            ->when($request->condition, fn($q) => $q->where('condition', $request->condition))
+            ->when($request->status, fn($q) => $q->where('status', $request->status))
+            ->get();
+
+        return response()->json($items);
     }
 
     /**
      * Display the total number of items.
      */
-    public function totalItems() 
+    public function totalItems()
     {
         $all = Item::all();
         $totalItems = $all->count();
@@ -62,51 +98,48 @@ class ItemController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-{
-    try {
-        // Validasi input
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'code' => 'required|string|unique:items,code',
-            'brand' => 'required|string',
-            'type' => 'required|string',
-            'condition' => 'required|string',
-            'status' => 'required|in:READY,NOT READY',
-            'category_id' => 'required|exists:categories,id',
-            'location_id' => 'required|exists:locations,id',
-            'description' => 'nullable|string',
-        ]);
+    {
+        try {
+            // Validasi input
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'code' => 'required|string|unique:items,code',
+                'brand' => 'required|string',
+                'type' => 'required|string',
+                'condition' => 'required|string',
+                'status' => 'required|in:READY,NOT READY',
+                'category_id' => 'required|exists:categories,id',
+                'location_id' => 'required|exists:locations,id',
+                'description' => 'nullable|string',
+            ]);
 
-        // Simpan item
-        $item = Item::create($validated);
+            // Simpan item
+            $item = Item::create($validated);
 
-        return response()->json([
-            'message' => 'Item created successfully',
-            'data' => $item,
-        ], 201);
-
-    } catch (ValidationException $e) {
-        // Tangkap error validasi
-        return response()->json([
-            'message' => 'Validation failed',
-            'errors' => $e->errors()
-        ], 422);
-
-    } catch (QueryException $e) {
-        // Tangkap error database
-        return response()->json([
-            'message' => 'Database error',
-            'error' => $e->getMessage()
-        ], 500);
-
-    } catch (Exception $e) {
-        // Tangkap error umum lainnya
-        return response()->json([
-            'message' => 'Server error',
-            'error' => $e->getMessage()
-        ], 500);
+            return response()->json([
+                'message' => 'Item created successfully',
+                'data' => $item,
+            ], 201);
+        } catch (ValidationException $e) {
+            // Tangkap error validasi
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (QueryException $e) {
+            // Tangkap error database
+            return response()->json([
+                'message' => 'Database error',
+                'error' => $e->getMessage()
+            ], 500);
+        } catch (Exception $e) {
+            // Tangkap error umum lainnya
+            return response()->json([
+                'message' => 'Server error',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
-}
 
     /**
      * Display the specified resource.
@@ -138,7 +171,7 @@ class ItemController extends Controller
             'type' => 'required|string',
             'condition' => 'required|string',
             'status' => 'required|in:READY,NOT READY',
-            'category_id' => 'required|exists:categories,id' ,
+            'category_id' => 'required|exists:categories,id',
             'location_id' => 'required|exists:locations,id',
             'description' => 'nullable|string',
         ]);

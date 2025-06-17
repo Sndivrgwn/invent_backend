@@ -70,22 +70,26 @@
                                 </svg>
                                 <span class="sr-only">Search icon</span>
                             </div>
-                            <input type="text" id="search-navbar"
-                                class="block w-full p-2 ps-10 text-sm border border-gray-400 rounded-lg"
-                                placeholder="Search...">
+                            <form method="GET" action="{{ route('dashboard') }}" class="relative w-full md:block">
+                                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                                    <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                                        fill="none" viewBox="0 0 20 20">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                            stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                                    </svg>
+                                    <span class="sr-only">Search icon</span>
+                                </div>
+                                <input type="text" name="search" value="{{ request('search') }}"
+                                    class="block w-full p-2 ps-10 text-sm border border-gray-400 rounded-lg"
+                                    placeholder="Search...">
+                            </form>
+
                         </div>
 
-                        <!-- Filter -->
-                        <select class="select select-bordered w-full md:w-40">
-                            <option selected>All Status</option>
-                            <option>Ready</option>
-                            <option>Not Ready</option>
-                        </select>
+                        
 
                         <!-- Export Button -->
-                        <button class="btn btn-outline w-full md:w-auto">
-                            Export
-                        </button>
+
                     </div>
                 </div>
 
@@ -96,6 +100,7 @@
                         <thead class="text-gray-500 text-sm font-semibold border-b">
                             <tr>
                                 <th>DATE</th>
+                                <th>LOANER NAME</th>
                                 <th>SERIAL NUMBER</th>
                                 <th>PRODUCT</th>
                                 <th>CONDITION</th>
@@ -112,6 +117,7 @@
                                 <td rowspan="{{ count($loan->items) }}">{{ $loan->loan_date }}</td>
                                 @endif
 
+                                <td>{{ $loan->loaner_name }}</td>
                                 <td class="font-semibold">{{ $item->code }}</td>
                                 <td>{{ $item->name }}</td>
                                 <td>{{ $item->condition }}</td>

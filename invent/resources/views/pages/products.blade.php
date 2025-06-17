@@ -33,7 +33,8 @@
                     <div class="modal-box">
                         <!-- close button -->
                         <form method="dialog" id="itemForm">
-                            <button id="cancel" type="button" onclick="closeModal()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                            <button id="cancel" type="button" onclick="closeModal()"
+                                class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
                             <h1 class="font-semibold text-2xl mb-4">New Product</h1>
                             <div class="flex gap-5 justify-between text-gray-600">
                                 <!-- Product -->
@@ -56,7 +57,8 @@
                                         <select id="rack">
                                             <option>Insert Rack</option>
                                             @foreach ($locations as $location)
-                                            <option value="{{ $location->id }}">{{ $location->name . ' | '. $location->description }}</option>
+                                            <option value="{{ $location->id }}">{{ $location->name . ' | '.
+                                                $location->description }}</option>
                                             @endforeach
                                         </select>
                                     </label>
@@ -114,30 +116,31 @@
                                     </div>
                                 </div>
                             </div>
-                            
+
                             <!-- SN -->
                             <div class="flex w-full mb-2">
                                 <div class="w-full">
                                     <h1 class="font-medium text-gray-600">SERIAL NUMBER</h1>
                                     <label class="input flex text-gray-600" style="width: 100%;">
-                                        <input class="w-full" type="text" id="serialNumber" placeholder="Serial Number" />
+                                        <input class="w-full" type="text" id="serialNumber"
+                                            placeholder="Serial Number" />
                                     </label>
                                 </div>
                             </div>
-                            
+
                             <!-- deskripsi -->
                             <div class="mb-4">
                                 <h1 class="font-medium text-gray-600">DESCRIPTION</h1>
                                 <textarea id="description" class="textarea text-gray-600" placeholder="Description"
-                                style="width: 100%;"></textarea>
+                                    style="width: 100%;"></textarea>
                             </div>
-                            
+
                             <!-- button -->
                             <div class="w-full flex justify-end items-end gap-4">
                                 <button id="cancelButton" type="button" onclick="closeModal()"
-                                class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Cancel</button>
+                                    class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Cancel</button>
                                 <button
-                                class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Submit</button>
+                                    class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Submit</button>
                             </div>
                         </form>
 
@@ -145,14 +148,14 @@
                         <script>
                             const data = {
                                 Router: {
-                                    MikroTik: ["RB-951", "RB-952"],
-                                    Tenda: ["F3", "AC6"],
-                                    "TP-Link": ["Archer C5"]
-                                },
-                                "Access Point": {
-                                    "TP-Link": ["RE450", "RE455"],
-                                    Tenda: ["A9"],
-                                    MikroTik: ["cAP lite"]
+                                    MikroTik: ["RB-951", "RB-952"]
+                                    , Tenda: ["F3", "AC6"]
+                                    , "TP-Link": ["Archer C5"]
+                                }
+                                , "Access Point": {
+                                    "TP-Link": ["RE450", "RE455"]
+                                    , Tenda: ["A9"]
+                                    , MikroTik: ["cAP lite"]
                                 }
                             };
 
@@ -190,47 +193,52 @@
                                 }
                             });
 
-                            document.getElementById("itemForm").addEventListener("submit", function (e) {
+                            document.getElementById("itemForm").addEventListener("submit", function(e) {
                                 e.preventDefault();
                                 const payload = {
-                                    name: productSelect.value + ' ' + typeSelect.value,
-                                    brand: brandSelect.value,
-                                    type: typeSelect.value,
-                                    location_id: document.getElementById("rack").value,
-                                    condition: document.getElementById("condition").value,
-                                    status: document.getElementById("status").value,
-                                    code: document.getElementById("serialNumber").value,
-                                    description: document.getElementById("description").value,
-                                    category_id: 1,
-                                };
+                                    name: productSelect.value + ' ' + typeSelect.value
+                                    , brand: brandSelect.value
+                                    , type: typeSelect.value
+                                    , location_id: document.getElementById("rack").value
+                                    , condition: document.getElementById("condition").value
+                                    , status: document.getElementById("status").value
+                                    , code: document.getElementById("serialNumber").value
+                                    , description: document.getElementById("description").value
+                                    , category_id: 1
+                                , };
 
                                 fetch('/api/items', {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                        'Accept': 'application/json',
-                                    },
-                                    body: JSON.stringify(payload)
-                                })
-                                .then(res => res.json())
-                                .then(data => {
-                                    if (data.errors) {
-                                        console.log(data.errors);
-                                        console.log('Payload :', payload);
-                                        alert("Please fill in all fields correctly");
-                                    } else {
-                                        alert("Item successfully created");
-                                        document.getElementById("itemForm").reset();
-                                        closeModal();
-                                        window.location.reload();
-                                    }
-                                })
+                                        method: 'POST'
+                                        , headers: {
+                                            'Content-Type': 'application/json'
+                                            , 'Accept': 'application/json'
+                                        , }
+                                        , body: JSON.stringify(payload)
+                                    })
+                                    .then(res => res.json())
+                                    .then(data => {
+                                        if (data.errors) {
+                                            console.log(data.errors);
+                                            console.log('Payload :', payload);
+                                            alert("Please fill in all fields correctly");
+                                        } else {
+                                            alert("Item successfully created");
+                                            document.getElementById("itemForm").reset();
+                                            closeModal();
+                                            window.location.reload();
+                                        }
+                                    })
                             });
 
                             function closeModal() {
                                 document.getElementById('newProduct').close();
                             }
+
+                            
+
                         </script>
+
+
                         @endpush
 
                     </div>
@@ -251,9 +259,21 @@
                         </svg>
                         <span class="sr-only">Search icon</span>
                     </div>
-                    <input type="text" id="search-navbar"
-                        class="block w-full p-2 ps-10 text-sm border border-gray-400 rounded-lg"
-                        placeholder="Search...">
+                    <form method="GET" action="{{ route('products') }}" class="relative w-full md:block">
+                        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                            <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                viewBox="0 0 20 20">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                    stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                            </svg>
+                            <span class="sr-only">Search icon</span>
+                        </div>
+                        <input type="text" name="search-navbar" value="{{ request('search-navbar') }}"
+                            class="block w-full p-2 ps-10 text-sm border border-gray-400 rounded-lg"
+                            placeholder="Search...">
+
+                    </form>
+
                 </div>
 
                 <!-- filter -->
@@ -266,128 +286,163 @@
                         <form method="dialog">
                             <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
                         </form>
-                        <!-- product filter -->
-                        <div class="mb-4">
-                            <h1 class="text-lg font-semibold mb-2">Product</h1>
-                            <form class="filter">
-                                <input class="btn mb-1 btn-square" type="reset" value="×" />
-                                <input class="btn mb-1" type="radio" name="frameworks" aria-label="Router" />
-                                <input class="btn mb-1" type="radio" name="frameworks" aria-label="Access Point" />
-                                <input class="btn mb-1" type="radio" name="frameworks" aria-label="Crimping Tool" />
-                                <input class="btn mb-1" type="radio" name="frameworks" aria-label="Switch" />
-                                <input class="btn mb-1" type="radio" name="frameworks" aria-label="Cable Tester" />
-                            </form>
-                        </div>
-                        <!-- condition filter -->
-                        <div class="mb-4">
-                            <h1 class="text-lg font-semibold mb-2">Brand</h1>
-                            <form class="filter">
-                                <input class="btn mb-1 btn-square" type="reset" value="×" />
-                                <input class="btn mb-1" type="radio" name="frameworks" aria-label="MikroTik" />
-                                <input class="btn mb-1" type="radio" name="frameworks" aria-label="TP-Link" />
-                                <input class="btn mb-1" type="radio" name="frameworks" aria-label="Tenda" />
-                            </form>
-                        </div>
-                        <!-- status filter -->
-                        <div class="mb-4">
-                            <h1 class="text-lg font-semibold mb-2">Type</h1>
-                            <form class="filter">
-                                <input class="btn mb-1 btn-square" type="reset" value="×" />
-                                <input class="btn mb-1" type="radio" name="frameworks" aria-label="RB-951" />
-                                <input class="btn mb-1" type="radio" name="frameworks" aria-label="RB-952" />
-                            </form>
-                        </div>
-                        <!-- rack filter -->
-                        <div>
-                            <h1 class="text-lg font-semibold mb-2">Condition</h1>
-                            <form class="filter">
-                                <input class="btn mb-1 btn-square" type="reset" value="×" />
-                                <input class="btn mb-1" type="radio" name="frameworks" aria-label="Good" />
-                                <input class="btn mb-1" type="radio" name="frameworks" aria-label="Not Good" />
-                            </form>
-                        </div>
-                        <!-- rack filter -->
-                        <div>
-                            <h1 class="text-lg font-semibold mb-2">Status</h1>
-                            <form class="filter">
-                                <input class="btn mb-1 btn-square" type="reset" value="×" />
-                                <input class="btn mb-1" type="radio" name="frameworks" aria-label="Ready" />
-                                <input class="btn mb-1" type="radio" name="frameworks" aria-label="Not Ready" />
-                            </form>
-                        </div>
+
+                        <form id="filterForm">
+                            <!-- product (brand) filter -->
+                            <div class="mb-4">
+                                <h1 class="text-lg font-semibold mb-2">Brand</h1>
+                                <div class="flex flex-wrap gap-1">
+                                    <input class="btn btn-square" type="reset" value="×"
+                                        onclick="resetFilter('brand')" />
+                                    @foreach($items->pluck('brand')->unique() as $brand)
+                                    <input class="btn" type="radio" name="brand" value="{{ $brand }}"
+                                        aria-label="{{ $brand }}" />
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            <!-- category filter -->
+                            <div class="mb-4">
+                                <h1 class="text-lg font-semibold mb-2">Category</h1>
+                                <div class="flex flex-wrap gap-1">
+                                    <input class="btn btn-square" type="reset" value="×"
+                                        onclick="resetFilter('category')" />
+                                    @foreach($items->pluck('category.name')->unique() as $category)
+                                    <input class="btn" type="radio" name="category" value="{{ $category }}"
+                                        aria-label="{{ $category }}" />
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            <!-- type filter -->
+                            <div class="mb-4">
+                                <h1 class="text-lg font-semibold mb-2">Type</h1>
+                                <div class="flex flex-wrap gap-1">
+                                    <input class="btn btn-square" type="reset" value="×"
+                                        onclick="resetFilter('type')" />
+                                    @foreach($items->pluck('type')->unique() as $type)
+                                    <input class="btn" type="radio" name="type" value="{{ $type }}"
+                                        aria-label="{{ $type }}" />
+                                    @endforeach
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <h1 class="text-lg font-semibold mb-2">Location</h1>
+                                <div class="flex flex-wrap gap-1">
+                                    <input class="btn btn-square" type="reset" value="×"
+                                        onclick="resetFilter('type')" />
+                                    @foreach($locations->pluck('description')->unique() as $type)
+                                    <input class="btn" type="radio" name="location" value="{{ $type }}"
+                                        aria-label="{{ $type }}" />
+                                    @endforeach
+                                </div>
+                            </div>
+                            <!-- condition filter -->
+                            <div class="mb-4">
+                                <h1 class="text-lg font-semibold mb-2">Condition</h1>
+                                <div class="flex flex-wrap gap-1">
+                                    <input class="btn btn-square" type="reset" value="×"
+                                        onclick="resetFilter('condition')" />
+                                    <input class="btn" type="radio" name="condition" value="GOOD" aria-label="GOOD" />
+                                    <input class="btn" type="radio" name="condition" value="NOT GOOD"
+                                        aria-label="NOT GOOD" />
+                                </div>
+                            </div>
+
+
+                            <!-- status filter -->
+                            <div class="mb-4">
+                                <h1 class="text-lg font-semibold mb-2">Status</h1>
+                                <div class="flex flex-wrap gap-1">
+                                    <input class="btn btn-square" type="reset" value="×"
+                                        onclick="resetFilter('status')" />
+                                    <input class="btn" type="radio" name="status" value="READY" aria-label="READY" />
+                                    <input class="btn" type="radio" name="status" value="NOT READY"
+                                        aria-label="NOT READY" />
+                                </div>
+                            </div>
+
+                            <!-- Apply Button -->
+                            <button type="button" class="btn btn-primary mt-4" onclick="applyFilter()">Apply</button>
+                        </form>
                     </div>
                 </dialog>
 
+
+
+
             </div>
             <!-- table -->
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th class="text-center font-semibold">PHOTO</th>
-                        <th class="text-center font-semibold">PRODUCT</th>
-                        <th class="text-center font-semibold">RACK</th>
-                        <th class="text-center font-semibold">SERIAL NUMBER</th>
-                        <th class="text-center font-semibold">TYPE</th>
-                        <th class="text-center font-semibold">CONDITIONAL</th>
-                        <th class="text-center font-semibold">STATUS</th>
-                        <th class="text-center font-semibold">ACTION</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($items as $item)
-                    <tr>
-                        <td class="flex justify-center">
-                            <img class="size-12 rounded-sm" src="{{ asset('image/' . $item->image  )}}" />
-                        </td>
-                        <td class="text-center">{{ $item->name }}</td>
-                        <td class="text-center">{{ $item->location->description }}</td>
-                        <td class="text-center">{{ $item->code }}</td>
-                        <td class="text-center">{{ $item->type }}</td>
-                        <td class="text-center">{{ $item->condition }}</td>
-                        <td class="text-center">
-                            <div
-                                class="badge badge-soft p-4 {{ $item->status === 'READY' ? 'badge-success' : 'badge-error' }}">
-                                {{ $item->status }}
-                            </div>
-                        </td>
+            <div id="itemTableContainer">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th class="text-center font-semibold">PHOTO</th>
+                            <th class="text-center font-semibold">PRODUCT</th>
+                            <th class="text-center font-semibold">RACK</th>
+                            <th class="text-center font-semibold">SERIAL NUMBER</th>
+                            <th class="text-center font-semibold">TYPE</th>
+                            <th class="text-center font-semibold">CONDITIONAL</th>
+                            <th class="text-center font-semibold">STATUS</th>
+                            <th class="text-center font-semibold">ACTION</th>
+                        </tr>
+                    </thead>
+                    <tbody id="itemTableBody">
+                        @foreach ($items as $item)
+                        <tr>
+                            <td class="flex justify-center">
+                                <img class="size-12 rounded-sm" src="{{ asset('image/' . $item->image) }}" />
+                            </td>
+                            <td class="text-center">{{ $item->name }}</td>
+                            <td class="text-center">{{ $item->location->description }}</td>
+                            <td class="text-center">{{ $item->code }}</td>
+                            <td class="text-center">{{ $item->type }}</td>
+                            <td class="text-center">{{ $item->condition }}</td>
+                            <td class="text-center">
+                                <div
+                                    class="badge badge-soft p-4 {{ $item->status === 'READY' ? 'badge-success' : 'badge-error' }}">
+                                    {{ $item->status }}
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <i class="fa fa-trash fa-lg cursor-pointer" onclick="deleteItem({{ $item->id }})"></i>
+                                <i class="fa fa-pen-to-square fa-lg"></i>
+                                <i class="fa-regular fa-eye fa-lg"></i>
+                            </td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
 
-                        <td class="text-center">
-                            <i class="fa fa-trash fa-lg cursor-pointer" onclick="deleteItem({{ $item->id }})"></i>
-                            <i class="fa fa-pen-to-square fa-lg"></i>
-                            <i class="fa-regular fa-eye fa-lg"></i>
-                        </td>
-                    </tr>
-                    @endforeach
-
-                </tbody>
-
-            </table>
             @push('scripts')
-                <script>
-                    async function deleteItem(id) {
-                        if (!confirm('Are you sure')) return;
+            <script>
+                async function deleteItem(id) {
+                    if (!confirm('Are you sure')) return;
 
-                        const res = await fetch(`/api/items/${id}`, {
-                            method: 'DELETE',
-                            headers: {
-                                'Accept': 'application/json',
-                                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                            }
-                        });
-
-                        if (res.ok) {
-                            alert('item deleted');
-                            window.location.reload();
-                        } else {
-                            const data = await res.json();
-                            alert('Error bray cek console');
-                            console.log(data.message || res.statusText);
+                    const res = await fetch(`/api/items/${id}`, {
+                        method: 'DELETE'
+                        , headers: {
+                            'Accept': 'application/json'
+                            , 'X-CSRF-TOKEN': '{{ csrf_token() }}'
                         }
+                    });
+
+                    if (res.ok) {
+                        alert('item deleted');
+                        window.location.reload();
+                    } else {
+                        const data = await res.json();
+                        alert('Error bray cek console');
+                        console.log(data.message || res.statusText);
                     }
-                </script>
+                }
+
+            </script>
             @endpush
-            
-            
+
+
         </div>
         <div class="flex justify-end mb-4 mt-4">
             <div class="join">
@@ -400,8 +455,7 @@
 
                 {{-- Pagination Elements --}}
                 @foreach ($items->getUrlRange(1, $items->lastPage()) as $page => $url)
-                <a href="{{ $url }}"
-                    class="join-item btn {{ $items->currentPage() == $page ? 'btn-primary' : '' }}">
+                <a href="{{ $url }}" class="join-item btn {{ $items->currentPage() == $page ? 'btn-primary' : '' }}">
                     {{ $page }}
                 </a>
                 @endforeach
@@ -416,6 +470,100 @@
         </div>
     </div>
 </div>
+
+<script>
+    function applyFilter() {
+    const form = document.getElementById('filterForm');
+    const formData = new FormData(form);
+    const params = new URLSearchParams();
+
+    for (const [key, value] of formData.entries()) {
+        params.append(key, value);
+    }
+
+    fetch(`/items/filter?${params.toString()}`)
+        .then(res => res.json())
+        .then(data => {
+            const tbody = document.getElementById("itemTableBody");
+            tbody.innerHTML = ""; // Kosongkan isi lama
+
+            if (data.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" class="text-center text-gray-500">No items found</td></tr>`;
+                return;
+            }
+
+            data.forEach(item => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="flex justify-center">
+                            <img class="size-12 rounded-sm" src="/image/${item.image}" />
+                        </td>
+                        <td class="text-center">${item.name}</td>
+                        <td class="text-center">${item.location.description}</td>
+                        <td class="text-center">${item.code}</td>
+                        <td class="text-center">${item.type}</td>
+                        <td class="text-center">${item.condition}</td>
+                        <td class="text-center">
+                            <div class="badge badge-soft p-4 ${item.status === 'READY' ? 'badge-success' : 'badge-error'}">
+                                ${item.status}
+                            </div>
+                        </td>
+                        <td class="text-center">
+                            <i class="fa fa-trash fa-lg cursor-pointer" onclick="deleteItem(${item.id})"></i>
+                            <i class="fa fa-pen-to-square fa-lg"></i>
+                            <i class="fa-regular fa-eye fa-lg"></i>
+                        </td>
+                    </tr>
+                `;
+            });
+        })
+        .catch(error => {
+            console.error("Error:", error);
+        });
+}
+</script>
+<script>
+    document.getElementById('search-navbar').addEventListener('input', function () {
+        const keyword = this.value;
+
+        fetch(`/items/search?q=${encodeURIComponent(keyword)}`)
+            .then(res => res.json())
+            .then(items => {
+                const tbody = document.querySelector('table tbody');
+                tbody.innerHTML = ''; // Kosongkan dulu
+
+                if (items.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="8" class="text-center">No items found</td></tr>`;
+                    return;
+                }
+
+                items.forEach(item => {
+                    tbody.innerHTML += `
+                        <tr>
+                            <td class="flex justify-center">
+                                <img class="size-12 rounded-sm" src="/image/${item.image}" />
+                            </td>
+                            <td class="text-center">${item.name}</td>
+                            <td class="text-center">${item.location?.description || '-'}</td>
+                            <td class="text-center">${item.code}</td>
+                            <td class="text-center">${item.type}</td>
+                            <td class="text-center">${item.condition}</td>
+                            <td class="text-center">
+                                <div class="badge badge-soft p-4 ${item.status === 'READY' ? 'badge-success' : 'badge-error'}">
+                                    ${item.status}
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <i class="fa fa-trash fa-lg cursor-pointer" onclick="deleteItem(${item.id})"></i>
+                                <i class="fa fa-pen-to-square fa-lg"></i>
+                                <i class="fa-regular fa-eye fa-lg"></i>
+                            </td>
+                        </tr>`;
+                });
+            })
+            .catch(err => console.error(err));
+    });
+</script>
 
 @stack('scripts')
 @include('template.footer')
