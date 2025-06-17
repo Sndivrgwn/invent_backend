@@ -16,30 +16,48 @@ class AnalyticsController extends Controller
      * Display a listing of the resource.
      */
     public function index()
-    {
-        // Ambil semua kategori dengan jumlah item
-        $categories = Category::withCount('items')->get();
+{
+    // Ambil semua kategori beserta item dan loan
+    $categories = Category::with(['items', 'items.loans'])->get();
 
-        // Ambil semua data peminjaman
-        $loans = Loan::with('items')->get();
+    foreach ($categories as $category) {
+        // Hitung total item dalam kategori
+        $category->items_count = $category->items->count();
 
-        // Hitung per kategori
-        foreach ($categories as $category) {
-            // Ambil semua loan yang item-nya termasuk dalam kategori ini
+        // Hitung jumlah peminjaman dalam kategori
+        $category->loan_count = $category->items->reduce(function ($carry, $item) {
+            return $carry + $item->loans->count();
+        }, 0);
 
-            $loanCount = $loans->filter(function ($loan) use ($category) {
-                return $loan->items->contains(function ($item) use ($category) {
-                    return $item->category_id === $category->id;
-                });
-            })->count();
-            $category->loan_count = $loanCount;
-            $category->available_count = $category->items_count - $loanCount;
-            $category->low_stock = $category->available_count < 3 ? 'Yes' : 'No';
+        // Hitung jumlah tersedia
+        $category->available_count = $category->items_count - $category->loan_count;
 
-        }
+        // Tandai stok rendah
+        $category->low_stock = $category->available_count < 3 ? 'Yes' : 'No';
 
-        return view('pages.analytics', compact('categories'));
+        // Kelompokkan item berdasarkan tipe
+        $types = $category->items->groupBy('type')->map(function ($items) {
+            $total = $items->count();
+            $loaned = $items->reduce(fn($carry, $item) => $carry + $item->loans->count(), 0);
+            $available = $total - $loaned;
+            $lowStock = $available < 3 ? 'Yes' : 'No';
+
+            return [
+                'type' => $items->first()->type,
+                'quantity' => $total,
+                'available' => $available,
+                'loaned' => $loaned,
+                'low_stock' => $lowStock,
+            ];
+        });
+
+        // Simpan data ke kategori
+        $category->type_summaries = $types->values(); // array numerik untuk loop di Blade
     }
+
+    return view('pages.analytics', compact('categories'));
+}
+
 
 
 

@@ -15,8 +15,10 @@ class LoanController extends Controller
      */
     public function index()
     {
-        $loans = Loan::with(['user', 'items'])->get();
-        return View('pages.loan', compact('loans'));
+        $incomingLoans = Loan::with('items')->where('status', 'RETURNED')->paginate(20);
+        $outgoingLoans = Loan::with('items')->where('status', '!=', 'RETURNED')->paginate(20);
+
+        return view('pages.loan', compact('incomingLoans', 'outgoingLoans'));
     }
 
     /**
@@ -39,7 +41,6 @@ class LoanController extends Controller
 
         DB::beginTransaction();
         try {
-            // 1. Simpan loan utama
             $loan = Loan::create([
                 'user_id' => $request->user_id,
                 'code_loans' => $request->code_loans,
@@ -50,20 +51,32 @@ class LoanController extends Controller
                 'description' => $request->description,
             ]);
 
-            // 2. Simpan item ke pivot table loan_item
             foreach ($request->items as $item) {
+                $itemModel = Item::findOrFail($item['item_id']);
+
+                // Cek apakah item sedang dipinjam
+                if ($itemModel->status === 'NOT READY') {
+                    throw new \Exception("Item '{$itemModel->name}' sedang dipinjam dan tidak bisa dipinjam kembali.");
+                }
+
+                // Simpan ke pivot
                 $loan->items()->attach($item['item_id'], [
                     'quantity' => $item['quantity'],
                 ]);
+
+                // Update status item jadi dipinjam
+                $itemModel->update(['status' => 'NOT READY']);
             }
 
             DB::commit();
             return response()->json(['message' => 'Loan berhasil disimpan']);
         } catch (\Exception $e) {
             DB::rollBack();
-            return response()->json(['error' => $e->getMessage()], 500);
+            return response()->json(['error' => $e->getMessage()], 400);
         }
     }
+
+
 
 
 

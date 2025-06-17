@@ -17,9 +17,9 @@ class DashboardController extends Controller
         $categories = Category::all();
         $totalCategories = $categories->count();
 
-        $loans = Loan::all();
+        $loans = Loan::paginate(20);
         $totalLoans = $loans->count();
 
-        return view('pages.dashboard', compact('totalItems', 'totalCategories', 'totalLoans'));
+        return view('pages.dashboard', compact('totalItems', 'totalCategories', 'totalLoans', 'loans'));
     }
 }

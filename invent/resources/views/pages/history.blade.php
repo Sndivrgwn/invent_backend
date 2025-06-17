@@ -99,31 +99,81 @@
 
             </div>
             <!-- table -->
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th class="text-center font-semibold">DATE</th>
-                        <th class="text-center font-semibold">LOCATION</th>
-                        <th class="text-center font-semibold">PRODUCT</th>
-                        <th class="text-center font-semibold">NAME</th>
-                        <th class="text-center font-semibold">QUANTITY</th>
-                        <th class="text-center font-semibold">ACTIONS</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td class="text-center">TANGGAL</td>
-                        <td class="text-center">RACK 1</td>
-                        <td class="text-center">Mikrotik</td>
-                        <td class="text-center">Sandi</td>
-                        <td class="text-center">7</td>
-                        <td class="text-center">
-                            <i class="fa fa-pen-to-square fa-lg"></i>
-                            <i class="fa-regular fa-eye fa-lg"></i>
-                        </td>
-                    </tr>
-                    
-            </table>
+            <div class="overflow-x-auto">
+                    <table class="table w-full">
+                        <thead class="text-gray-500 text-sm font-semibold border-b">
+                            <tr>
+                                <th>DATE</th>
+                                <th>CODE</th>
+                                <th>NAME</th>
+                                <th>SERIAL NUMBER</th>
+                                <th>PRODUCT</th>
+                                <th>STATUS</th>
+                                <th>RETURN DATE</th>
+                                <th class="text-center">ACTIONS</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm">
+                            @foreach($loans as $loan)
+                            @foreach ($loan->items as $index => $item)
+                            <tr class="hover">
+                                {{-- Tampilkan loan_date hanya di baris pertama --}}
+                                @if ($index === 0)
+                                <td rowspan="{{ count($loan->items) }}">{{ $loan->loan_date }}</td>
+                                @endif
+
+                                <td>{{ $loan->code_loans }}</td>
+                                <td>{{ $loan->loaner_name }}</td>
+                                <td class="font-semibold">{{ $item->code }}</td>
+                                <td>{{ $item->name }}</td>
+                                <td>
+                                    <span class="badge badge-warning text-xs">{{$loan->status}}</span>
+                                </td>
+                                <td>{{ $loan->return_date }}</td>
+
+                                {{-- Tampilkan action hanya di baris pertama --}}
+                                @if ($index === 0)
+                                <td class="text-center" rowspan="{{ count($loan->items) }}">
+                                    <i class="fa fa-trash fa-lg"></i>
+                                    <i class="fa fa-pen-to-square fa-lg"></i>
+                                    <i class="fa-regular fa-eye fa-lg"></i>
+                                </td>
+                                @endif
+                            </tr>
+                            @endforeach
+                            @endforeach
+                        </tbody>
+
+                    </table>
+                </div>
+
+                <!-- Footer Pagination -->
+                <div class="flex justify-end mb-4 mt-4">
+                    <div class="join">
+                        {{-- Previous Page Link --}}
+                        @if ($loans->onFirstPage())
+                        <button class="join-item btn btn-disabled">«</button>
+                        @else
+                        <a href="{{ $loans->previousPageUrl() }}" class="join-item btn">«</a>
+                        @endif
+
+                        {{-- Pagination Elements --}}
+                        @foreach ($loans->getUrlRange(1, $loans->lastPage()) as $page => $url)
+                        <a href="{{ $url }}"
+                            class="join-item btn {{ $loans->currentPage() == $page ? 'btn-primary' : '' }}">
+                            {{ $page }}
+                        </a>
+                        @endforeach
+
+                        {{-- Next Page Link --}}
+                        @if ($loans->hasMorePages())
+                        <a href="{{ $loans->nextPageUrl() }}" class="join-item btn">»</a>
+                        @else
+                        <button class="join-item btn btn-disabled">»</button>
+                        @endif
+                    </div>
+                </div>
+            </div>
 
         </div>
     </div>

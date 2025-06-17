@@ -21,9 +21,11 @@
             </div>
             <div class="flex-none">
                 {{-- new product --}}
-                <button class="bg-[#ffffff] rounded-lg py-2 px-4 mx-5 hover:bg-blue-400 cursor-pointer flex justify-center items-center">
+                <button
+                    class="bg-[#ffffff] rounded-lg py-2 px-4 mx-5 hover:bg-blue-400 cursor-pointer flex justify-center items-center">
                     <div class="gap-2 flex">
-                        <i class="fa fa-download" style="display: flex; justify-content: center; align-items: center;"></i>
+                        <i class="fa fa-download"
+                            style="display: flex; justify-content: center; align-items: center;"></i>
                         <a href="{{ route('analytics.export') }}">Export Report</a>
                     </div>
                 </button>
@@ -38,8 +40,10 @@
                     <p class="font-medium text-xl ms-12">Category Overview</p>
                 </div>
 
-                <!-- filter --> 
-                {{-- <button class="btn flex justify-center items-center bg-transparent" onclick="filterProduct.showModal()">All Categories <i class="fa fa-filter" style="display: flex; justify-content: center; align-items: center;"></i></button>
+                <!-- filter -->
+                {{-- <button class="btn flex justify-center items-center bg-transparent"
+                    onclick="filterProduct.showModal()">All Categories <i class="fa fa-filter"
+                        style="display: flex; justify-content: center; align-items: center;"></i></button>
                 <dialog id="filterProduct" class="modal">
                     <div class="modal-box">
                         <!-- close button -->
@@ -81,29 +85,34 @@
 
             </div>
             <!-- table -->
-            <table class="table">
-                <thead>
-                    <tr>
-                        <th class="text-center font-semibold">CATEGORY</th>
-                        <th class="text-center font-semibold">QUANTITY</th>
-                        <th class="text-center font-semibold">AVAILABLE</th>
-                        <th class="text-center font-semibold">LOANED</th>
-                        <th class="text-center font-semibold">LOW STOCK</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($categories as $category)
+            @foreach($categories as $category)
+            <div class="mb-6 d-flex flex-col gap-4">
+                <h2 class="text-lg ms-12 font-bold mb-2">{{ $category->name }}</h2>
+                <table class="table w-full bg-white rounded shadow-md">
+                    <thead>
                         <tr>
-                            <td class="text-center">{{ $category->name }}</td>
-                            <td class="text-center">{{ $category->items_count }}</td>
-                            <td class="text-center">{{ $category->available_count }}</td>
-                            <td class="text-center">{{ $category->loan_count }}</td>
-                            <td class="text-center">{{ $category->low_stock }}</td>
+                            <th class="text-center">TYPE</th>
+                            <th class="text-center">QUANTITY</th>
+                            <th class="text-center">AVAILABLE</th>
+                            <th class="text-center">LOANED</th>
+                            <th class="text-center">LOW STOCK</th>
                         </tr>
-                        
-                    @endforeach
-                    
-            </table>
+                    </thead>
+                    <tbody>
+                        @foreach($category->type_summaries as $type)
+                        <tr>
+                            <td class="text-center">{{ $type['type'] }}</td>
+                            <td class="text-center">{{ $type['quantity'] }}</td>
+                            <td class="text-center">{{ $type['available'] }}</td>
+                            <td class="text-center">{{ $type['loaned'] }}</td>
+                            <td class="text-center">{{ $type['low_stock'] }}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            @endforeach
+
 
         </div>
     </div>

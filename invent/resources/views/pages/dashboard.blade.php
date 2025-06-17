@@ -35,7 +35,8 @@
                         <p class="text-2xl font-semibold">{{ $totalCategories }}</p>
                         <p class="text-sm text-gray-400 mt-1">Recorded inventory categories or types.</p>
                     </div>
-                    <div class="bg-green-500 bg-opacity-25 text-white p-4 rounded-full flex items-center justify-center">
+                    <div
+                        class="bg-green-500 bg-opacity-25 text-white p-4 rounded-full flex items-center justify-center">
                         <i class="fa fa-boxes bg-green-500" style="display: flex; justify-content: center;"></i>
                     </div>
                 </div>
@@ -46,7 +47,8 @@
                         <p class="text-2xl font-semibold">{{ $totalLoans }}</p>
                         <p class="text-sm text-gray-400 mt-1">Items currently on loaned.</p>
                     </div>
-                    <div class="bg-yellow-500 bg-opacity-25 text-white p-4 rounded-full flex items-center justify-center">
+                    <div
+                        class="bg-yellow-500 bg-opacity-25 text-white p-4 rounded-full flex items-center justify-center">
                         <i class="fa fa-handshake bg-yellow-500" style="display: flex; justify-content: center;"></i>
                     </div>
                 </div>
@@ -61,12 +63,16 @@
                         <!-- Search -->
                         <div class="relative w-full md:block">
                             <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                                <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                                <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
+                                    viewBox="0 0 20 20">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
+                                        stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
                                 </svg>
                                 <span class="sr-only">Search icon</span>
                             </div>
-                            <input type="text" id="search-navbar" class="block w-full p-2 ps-10 text-sm border border-gray-400 rounded-lg" placeholder="Search...">
+                            <input type="text" id="search-navbar"
+                                class="block w-full p-2 ps-10 text-sm border border-gray-400 rounded-lg"
+                                placeholder="Search...">
                         </div>
 
                         <!-- Filter -->
@@ -98,81 +104,61 @@
                             </tr>
                         </thead>
                         <tbody class="text-sm">
-                            <!-- Data Statik -->
+                            @foreach($loans as $loan)
+                            @foreach ($loan->items as $index => $item)
                             <tr class="hover">
-                                <td>2025-03-15</td>
-                                <td class="font-semibold">PRD-001</td>
-                                <td>Mikrotik</td>
-                                <td>GOOD</td>
+                                {{-- Tampilkan loan_date hanya di baris pertama --}}
+                                @if ($index === 0)
+                                <td rowspan="{{ count($loan->items) }}">{{ $loan->loan_date }}</td>
+                                @endif
+
+                                <td class="font-semibold">{{ $item->code }}</td>
+                                <td>{{ $item->name }}</td>
+                                <td>{{ $item->condition }}</td>
                                 <td>
-                                    <span class="badge badge-warning text-xs">Not Ready</span>
+                                    <span class="badge badge-warning text-xs">{{$item->status}}</span>
                                 </td>
-                                <td class="text-center">
+
+                                {{-- Tampilkan action hanya di baris pertama --}}
+                                @if ($index === 0)
+                                <td class="text-center" rowspan="{{ count($loan->items) }}">
                                     <i class="fa fa-trash fa-lg"></i>
                                     <i class="fa fa-pen-to-square fa-lg"></i>
                                     <i class="fa-regular fa-eye fa-lg"></i>
                                 </td>
+                                @endif
                             </tr>
-                            <tr class="hover">
-                                <td>2025-03-15</td>
-                                <td class="font-semibold">PRD-002</td>
-                                <td>Mikrotik</td>
-                                <td>GOOD</td>
-                                <td><span class="badge badge-warning text-xs">Not Ready</span></td>
-                                <td class="text-center">
-                                    <i class="fa fa-trash fa-lg"></i>
-                                    <i class="fa fa-pen-to-square fa-lg"></i>
-                                    <i class="fa-regular fa-eye fa-lg"></i>
-                                </td>
-                            </tr>
-                            <tr class="hover">
-                                <td>2025-03-15</td>
-                                <td class="font-semibold">PRD-002</td>
-                                <td>Mikrotik</td>
-                                <td>GOOD</td>
-                                <td><span class="badge badge-warning text-xs">Not Ready</span></td>
-                                <td class="text-center">
-                                    <i class="fa fa-trash fa-lg"></i>
-                                    <i class="fa fa-pen-to-square fa-lg"></i>
-                                    <i class="fa-regular fa-eye fa-lg"></i>
-                                </td>
-                            </tr>
-                            <tr class="hover">
-                                <td>2025-03-15</td>
-                                <td class="font-semibold">PRD-002</td>
-                                <td>Mikrotik</td>
-                                <td>GOOD</td>
-                                <td><span class="badge badge-warning text-xs">Not Ready</span></td>
-                                <td class="text-center">
-                                    <i class="fa fa-trash fa-lg"></i>
-                                    <i class="fa fa-pen-to-square fa-lg"></i>
-                                    <i class="fa-regular fa-eye fa-lg"></i>
-                                </td>
-                            </tr>
-                            <tr class="hover">
-                                <td>2025-03-15</td>
-                                <td class="font-semibold">PRD-002</td>
-                                <td>Mikrotik</td>
-                                <td>GOOD</td>
-                                <td><span class="badge badge-warning text-xs">Not Ready</span></td>
-                                <td class="text-center">
-                                    <i class="fa fa-trash fa-lg"></i>
-                                    <i class="fa fa-pen-to-square fa-lg"></i>
-                                    <i class="fa-regular fa-eye fa-lg"></i>
-                                </td>
-                            </tr>
+                            @endforeach
+                            @endforeach
                         </tbody>
+
                     </table>
                 </div>
 
                 <!-- Footer Pagination -->
-                <div class="flex justify-between items-center mt-4 text-sm text-gray-500">
-                    <p>Showing 1 to 10 of 120 entries</p>
+                <div class="flex justify-end mb-4 mt-4">
                     <div class="join">
-                        <button class="join-item btn btn-sm btn-ghost">Previous</button>
-                        <button class="join-item btn btn-sm btn-primary">1</button>
-                        <button class="join-item btn btn-sm btn-ghost">2</button>
-                        <button class="join-item btn btn-sm btn-ghost">Next</button>
+                        {{-- Previous Page Link --}}
+                        @if ($loans->onFirstPage())
+                        <button class="join-item btn btn-disabled">«</button>
+                        @else
+                        <a href="{{ $loans->previousPageUrl() }}" class="join-item btn">«</a>
+                        @endif
+
+                        {{-- Pagination Elements --}}
+                        @foreach ($loans->getUrlRange(1, $loans->lastPage()) as $page => $url)
+                        <a href="{{ $url }}"
+                            class="join-item btn {{ $loans->currentPage() == $page ? 'btn-primary' : '' }}">
+                            {{ $page }}
+                        </a>
+                        @endforeach
+
+                        {{-- Next Page Link --}}
+                        @if ($loans->hasMorePages())
+                        <a href="{{ $loans->nextPageUrl() }}" class="join-item btn">»</a>
+                        @else
+                        <button class="join-item btn btn-disabled">»</button>
+                        @endif
                     </div>
                 </div>
             </div>

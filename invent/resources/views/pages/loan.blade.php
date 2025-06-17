@@ -106,7 +106,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($loans as $loan)
+                            @foreach ($incomingLoans as $loan)
                             <tr>
                                 <td class="text-center">{{ $loan->loaner_name }}</td>
                                 <td class="text-center">@foreach ($loan->items as $item)
@@ -125,6 +125,31 @@
                         </tbody>
 
                     </table>
+                    <div class="flex justify-end mb-4 mt-4">
+                        <div class="join">
+                            {{-- Previous Page Link --}}
+                            @if ($incomingLoans->onFirstPage())
+                            <button class="join-item btn btn-disabled">«</button>
+                            @else
+                            <a href="{{ $incomingLoans->previousPageUrl() }}" class="join-item btn">«</a>
+                            @endif
+
+                            {{-- Pagination Elements --}}
+                            @foreach ($incomingLoans->getUrlRange(1, $incomingLoans->lastPage()) as $page => $url)
+                            <a href="{{ $url }}"
+                                class="join-item btn {{ $incomingLoans->currentPage() == $page ? 'btn-primary' : '' }}">
+                                {{ $page }}
+                            </a>
+                            @endforeach
+
+                            {{-- Next Page Link --}}
+                            @if ($incomingLoans->hasMorePages())
+                            <a href="{{ $incomingLoans->nextPageUrl() }}" class="join-item btn">»</a>
+                            @else
+                            <button class="join-item btn btn-disabled">»</button>
+                            @endif
+                        </div>
+                    </div>
                 </div>
 
                 <!-- Tab 2 -->
@@ -207,55 +232,52 @@
                             </tr>
                         </thead>
                         <tbody>
-
+                            @foreach ($outgoingLoans as $loan)
                             <tr>
-                                <td class="text-center">SANDI</td>
-                                <td class="text-center">MIKROTIK</td>
-                                <td class="text-center">TANGGAL</td>
-                                <td class="text-center">TANGGAL</td>
-                                <td class="text-center">READY</td>
+                                <td class="text-center">{{ $loan->loaner_name }}</td>
+                                <td class="text-center">@foreach ($loan->items as $item)
+                                    {{ $item->name }}{{ !$loop->last ? ', ' : '' }}
+                                    @endforeach</td>
+                                <td class="text-center">{{ $loan->loan_date }}</td>
+                                <td class="text-center">{{ $loan->return_date }}</td>
+                                <td class="text-center">{{ $loan->status }}</td>
 
                                 <td class="text-center">
-                                    <i class="fa fa-pen-to-square fa-lg text-blue-600 hover:text-blue-800 cursor-pointer"></i>
-                                        <button>
-                                        <i class="fa-regular fa-eye fa-lg text-green-600 hover:text-green-800 cursor-pointer"
-                                            onclick="openPopover()"></i>
-                                        </button>
+                                    <i class="fa fa-pen-to-square fa-lg"></i>
+                                    <i class="fa-regular fa-eye fa-lg"></i>
                                 </td>
-                                    {{-- modal --}}
-                                    <div id="popoverModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
-                                        <div class="bg-white rounded-lg shadow-lg w-full max-w-sm p-5 relative">
-                                            <button onclick="closePopover()" class="absolute top-2 right-3 text-black text-lg font-bold hover:text-red-500">&times;</button>
-                                            <img src="{{ asset('storage/products/sample.jpg') }}" alt="Product Image"
-                                                class="rounded-md mb-4 w-full h-48 object-cover" />
-                                            <div class="space-y-1 text-sm">
-                                                <p><strong>PRODUCT:</strong> Access Point</p>
-                                                <p><strong>RACK:</strong> Rack 1</p>
-                                                <p><strong>BRAND:</strong> TP-Link</p>
-                                                <p><strong>STATUS:</strong> Ready</p>
-                                                <p><strong>TYPE:</strong> TL-WR840N</p>
-                                                <p><strong>CONDITION:</strong> Good</p>
-                                                <p><strong>SERIAL NUMBER:</strong> A1B2C3D4E5F6G7H</p>
-                                                <p><strong>DESCRIPTION:</strong> Router serbaguna yang menjadi favorit para pengguna, Single band, 300 Mbps</p>
-                                            </div>
-                                        </div>
-                                        @push('scripts')
-                                                <script>
-                                                    function openPopover() {
-                                                        document.getElementById('popoverModal').classList.remove('hidden');
-                                                    }
-    
-                                                    function closePopover() {
-                                                        document.getElementById('popoverModal').classList.add('hidden');
-                                                    }
-                                                </script>
-                                                @endpush
-                                    </div>
-
                             </tr>
+                            @endforeach
                         </tbody>
 
+
                     </table>
+
+                    <div class="flex justify-end mb-4 mt-4">
+                        <div class="join">
+                            {{-- Previous Page Link --}}
+                            @if ($outgoingLoans->onFirstPage())
+                            <button class="join-item btn btn-disabled">«</button>
+                            @else
+                            <a href="{{ $outgoingLoans->previousPageUrl() }}" class="join-item btn">«</a>
+                            @endif
+
+                            {{-- Pagination Elements --}}
+                            @foreach ($outgoingLoans->getUrlRange(1, $outgoingLoans->lastPage()) as $page => $url)
+                            <a href="{{ $url }}"
+                                class="join-item btn {{ $outgoingLoans->currentPage() == $page ? 'btn-primary' : '' }}">
+                                {{ $page }}
+                            </a>
+                            @endforeach
+
+                            {{-- Next Page Link --}}
+                            @if ($outgoingLoans->hasMorePages())
+                            <a href="{{ $outgoingLoans->nextPageUrl() }}" class="join-item btn">»</a>
+                            @else
+                            <button class="join-item btn btn-disabled">»</button>
+                            @endif
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

@@ -60,7 +60,7 @@
 
                 <!-- Action -->
                 <div class="w-full flex justify-end gap-4 mt-6">
-                   <button type="button" class="btn btn-primary" onclick="submitLoan()">Submit</button>
+                    <button type="button" class="btn btn-primary" onclick="submitLoan()">Submit</button>
 
                 </div>
             </form>
@@ -175,15 +175,20 @@
                         })
                         .then(res => res.json())
                         .then(data => {
-                                console.log(data); // ← Tambahkan ini
+                            console.log(data); // ← Tambahkan ini
 
                             if (data.errors) {
                                 alert("Validasi gagal");
                                 console.error(data.errors);
+                            } else if (data.error) {
+                                alert(data.error);
+                                console.error(data.error);
                             } else {
+                                // ✅ Loan berhasil
                                 alert("Loan berhasil ditambahkan!");
                                 window.location.reload();
                             }
+
                         })
                         .catch(err => {
                             console.error(err);
