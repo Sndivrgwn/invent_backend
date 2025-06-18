@@ -37,7 +37,7 @@
             <div class="p-4 pb-2 flex">
                 <!-- search -->
                 <div class="relative w-full hidden md:block mr-4">
-                    <p class="font-medium text-xl ms-12">Category Overview</p>
+                    <p class="font-medium text-xl ms-5">Category Overview</p>
                 </div>
 
                 <!-- filter -->
