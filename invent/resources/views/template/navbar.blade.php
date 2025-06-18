@@ -25,14 +25,12 @@
     <button data-collapse-toggle="navbar-search" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm rounded-lg md:hidden focus:outline-none focus:ring-2" aria-controls="navbar-search" aria-expanded="false">
 
     {{-- new loan --}}
-    <button class="bg-[#2563EB] text-white rounded-lg p-2 w-2/4 mx-5 hover:bg-blue-400 cursor-pointer flex justify-center items-center">
-        <a href="newLoan">
-          <div class="gap-2 flex">
-              <i class="fa fa-plus" style="display: flex; justify-content: center; align-items: center;"></i>
-              <span>New Loan</span>
-          </div>
-        </a>
-    </button>
+    <a href="newLoan" class="w-2/4 mx-5">
+        <button class="bg-[#2563EB] text-white rounded-lg p-2 w-full hover:bg-blue-400 cursor-pointer flex justify-center items-center gap-2">
+            <i class="fa-regular fa-plus flex justify-center items-center"></i>
+            <span>New Loan</span>
+        </button>
+    </a>
 <dialog id="newLoans" class="modal">
     <div class="modal-box">
         <form method="dialog" id="loanForm"> <button type="button" onclick="document.getElementById('newLoan').close();" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
