@@ -9,6 +9,7 @@ use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\NewLoanController;
+use App\Http\Controllers\ManageLoanController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -26,6 +27,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/settings', [SettingController::class, 'index'])->name('setting');
     Route::get('/history', [HistoryController::class, 'index'])->name('history');
     Route::get('/newLoan', [NewLoanController::class, 'index'])->name('newLoan');
+    Route::get('/manageLoan', [ManageLoanController::class, 'index'])->name('manageLoan');
     Route::post('/loans', [LoanController::class, 'store']);
 
     Route::get('/items/filter', [ItemController::class, 'filter']);

@@ -17,15 +17,7 @@
 
         <div class="navbar my-6">
             <div class="flex-1">
-                <h1 class="text-2xl font-semibold py-4">Active Loans</h1>
-            </div>
-            <div class="flex-none">
-                <a href="manageLoan" class="">
-                    <button class="bg-[#2563EB] text-white rounded-lg p-2 px-5 w-full hover:bg-blue-400 cursor-pointer flex justify-center items-center gap-2">
-                        <i class="fa fa-screwdriver-wrench flex justify-center items-center"></i>
-                        <span>Manage Loan</span>
-                    </button>
-                </a>
+                <h1 class="text-2xl font-semibold py-4">Manage Loans</h1>
             </div>
         </div>
 
@@ -37,7 +29,7 @@
                 <label class="tab text-blue-700 px-10! pb-2! mx-0!">
                     <input type="radio" name="my_tabs_4" checked="checked" />
                     <i class="fa fa-circle-arrow-down mr-1" style="display: flex; justify-content: center;"></i>
-                    Incoming Product
+                    Current Loan
                 </label>
                 <!-- Value Tab 1 -->
                 <div class="tab-content bg-base-100" style="border-top: 1px solid lightgray;">
@@ -109,15 +101,15 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($incomingLoans as $loan)
+                            {{-- @foreach ($incomingLoans as $loan) --}}
                             <tr>
-                                <td class="text-center">{{ $loan->loaner_name }}</td>
+                                {{-- <td class="text-center">{{ $loan->loaner_name }}</td>
                                 <td class="text-center">@foreach ($loan->items as $item)
                                     {{ $item->name }}{{ !$loop->last ? ', ' : '' }}
                                     @endforeach</td>
                                 <td class="text-center">{{ $loan->loan_date }}</td>
                                 <td class="text-center">{{ $loan->return_date }}</td>
-                                <td class="text-center">{{ $loan->status }}</td>
+                                <td class="text-center">{{ $loan->status }}</td> --}}
 
                                 <td class="text-center">
                                     <i class="fa fa-pen-to-square fa-lg cursor-pointer" onclick="document.getElementById('editProduct').showModal()"></i>
@@ -252,32 +244,32 @@
                             </dialog>
                             {{-- tampilan preview --}}
                             </tr>
-                            @endforeach
+                            {{-- @endforeach --}}
                         </tbody>
 
                     </table>
                     <div class="flex justify-end mb-4 mt-4">
                         <div class="join">
                             {{-- Previous Page Link --}}
-                            @if ($incomingLoans->onFirstPage())
+                            {{-- @if ($incomingLoans->onFirstPage())
                             <button class="join-item btn btn-disabled">«</button>
                             @else
                             <a href="{{ $incomingLoans->previousPageUrl() }}" class="join-item btn">«</a>
-                            @endif
+                            @endif --}}
 
                             {{-- Pagination Elements --}}
-                            @foreach ($incomingLoans->getUrlRange(1, $incomingLoans->lastPage()) as $page => $url)
+                            {{-- @foreach ($incomingLoans->getUrlRange(1, $incomingLoans->lastPage()) as $page => $url)
                             <a href="{{ $url }}" class="join-item btn {{ $incomingLoans->currentPage() == $page ? 'btn-primary' : '' }}">
                                 {{ $page }}
                             </a>
-                            @endforeach
+                            @endforeach --}}
 
                             {{-- Next Page Link --}}
-                            @if ($incomingLoans->hasMorePages())
+                            {{-- @if ($incomingLoans->hasMorePages())
                             <a href="{{ $incomingLoans->appends(request()->query())->previousPageUrl() }}" class="join-item btn">«</a>
                             @else
                             <button class="join-item btn btn-disabled">»</button>
-                            @endif
+                            @endif --}}
                         </div>
                     </div>
                 </div>
@@ -286,7 +278,7 @@
                 <label class="tab border-0 text-blue-700 px-10! pb-2! mx-0!">
                     <input type="radio" name="my_tabs_4" />
                     <i class="fa-solid fa-circle-arrow-up mr-2" style="display: flex; justify-content: center;"></i>
-                    Outgoing Product
+                    Return Product
                 </label>
                 <!-- Value Tab 2 -->
                 <div class="tab-content bg-base-100" style="border-top: 1px solid lightgray; ">
@@ -359,15 +351,15 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($outgoingLoans as $loan)
+                            {{-- @foreach ($outgoingLoans as $loan) --}}
                             <tr>
-                                <td class="text-center">{{ $loan->loaner_name }}</td>
+                                {{-- <td class="text-center">{{ $loan->loaner_name }}</td>
                                 <td class="text-center">@foreach ($loan->items as $item)
                                     {{ $item->name }}{{ !$loop->last ? ', ' : '' }}
                                     @endforeach</td>
                                 <td class="text-center">{{ $loan->loan_date }}</td>
                                 <td class="text-center">{{ $loan->return_date }}</td>
-                                <td class="text-center">{{ $loan->status }}</td>
+                                <td class="text-center">{{ $loan->status }}</td> --}}
 
                                 <td class="text-center">
                                     <i class="fa fa-pen-to-square fa-lg cursor-pointer" onclick="document.getElementById('editProduct').showModal()"></i>
@@ -523,7 +515,7 @@
                             </dialog>
                             {{-- tampilan preview --}}
                             </tr>
-                            @endforeach
+                            {{-- @endforeach --}}
                         </tbody>
 
 
@@ -532,25 +524,25 @@
                     <div class="flex justify-end mb-4 mt-4">
                         <div class="join">
                             {{-- Previous Page Link --}}
-                            @if ($outgoingLoans->onFirstPage())
+                            {{-- @if ($outgoingLoans->onFirstPage())
                             <button class="join-item btn btn-disabled">«</button>
                             @else
                             <a href="{{ $outgoingLoans->previousPageUrl() }}" class="join-item btn">«</a>
-                            @endif
+                            @endif --}}
 
                             {{-- Pagination Elements --}}
-                            @foreach ($outgoingLoans->getUrlRange(1, $outgoingLoans->lastPage()) as $page => $url)
+                            {{-- @foreach ($outgoingLoans->getUrlRange(1, $outgoingLoans->lastPage()) as $page => $url)
                             <a href="{{ $url }}" class="join-item btn {{ $outgoingLoans->currentPage() == $page ? 'btn-primary' : '' }}">
                                 {{ $page }}
                             </a>
-                            @endforeach
+                            @endforeach --}}
 
                             {{-- Next Page Link --}}
-                            @if ($outgoingLoans->hasMorePages())
+                            {{-- @if ($outgoingLoans->hasMorePages())
                             <a href="{{ $outgoingLoans->appends(request()->query())->previousPageUrl() }}" class="join-item btn">«</a>
                             @else
                             <button class="join-item btn btn-disabled">»</button>
-                            @endif
+                            @endif --}}
                         </div>
                     </div>
                 </div>
