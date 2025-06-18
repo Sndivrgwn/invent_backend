@@ -24,19 +24,35 @@
 
         <!-- Filters and Actions -->
         <div class="list bg-base-100 rounded-box shadow-md">
-            <div class="p-4 pb-2 flex flex-wrap gap-3">
-                <!-- Search -->
-                <form method="GET" action="{{ route('history') }}" class="relative w-full md:w-auto">
-                    <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
-                        </svg>
-                    </div>
-                    <input type="text" name="search" value="{{ request('search') }}" class="block w-full p-2 ps-10 text-sm border border-gray-400 rounded-lg" placeholder="Search...">
-                </form>
-
-                <!-- Filter Button -->
-                <button class="btn bg-transparent" onclick="filterProduct.showModal()">All Categories <i class="fa fa-filter ml-2"></i></button>
+            <div class="flex place-content-between">
+                <div class="p-4 pb-2 flex flex-wrap gap-3">
+                    <!-- Search -->
+                    <form method="GET" action="{{ route('history') }}" class="relative w-full md:w-auto">
+                        <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                            <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                            </svg>
+                        </div>
+                        <input type="text" name="search" value="{{ request('search') }}" class="block w-full p-2 ps-10 text-sm border border-gray-400 rounded-lg" placeholder="Search...">
+                    </form>
+    
+                    <!-- Filter Button -->
+                    <button class="btn bg-transparent" onclick="filterProduct.showModal()">All Categories <i class="fa fa-filter ml-2"></i></button>
+    
+                </div>
+                <div class="calender px-5">
+                    <!-- Date Filter Section -->
+                    <!-- Filter Date -->
+                    <form method="GET" action="{{ route('history') }}" class="flex flex-wrap items-center gap-3 mt-4">
+                        <div>
+                            <input type="date" name="start_date" value="{{ request('start_date') }}" class="input input-bordered w-full max-w-xs" />
+                        </div>
+                        <div class="self-end">
+                            <button type="submit" class="btn btn-primary">Filter Date</button>
+                            <a href="{{ route('history') }}" class="btn btn-primary">Reset Filter</a>
+                        </div>
+                    </form>
+                </div>
             </div>
 
             <!-- Filter Modal -->
@@ -117,25 +133,13 @@
 
                         <!-- Date Filter -->
 
-
                         <button type="button" class="btn btn-primary mt-4" onclick="applyFilter()">Apply</button>
 
                     </form>
                 </div>
             </dialog>
 
-            <!-- Date Filter Section -->
-            <!-- Filter Date -->
-            <form method="GET" action="{{ route('history') }}" class="flex flex-wrap items-center gap-3 mt-4">
-                <div>
-                    <label class="text-sm font-semibold">Loan Date</label>
-                    <input type="date" name="start_date" value="{{ request('start_date') }}" class="input input-bordered w-full max-w-xs" />
-                </div>
-                <div class="self-end">
-                    <button type="submit" class="btn btn-primary">Filter Date</button>
-                    <a href="{{ route('history') }}" class="btn btn-primary">Reset Filter</a>
-                </div>
-            </form>
+           
 
 
             <!-- Table Section -->
@@ -167,11 +171,162 @@
                             <td><span class="badge badge-warning text-xs">{{ $loan->status }}</span></td>
                             <td>{{ $loan->return_date }}</td>
                             @if ($index === 0)
-                            <td class="text-center" rowspan="{{ count($loan->items) }}">
-                                <i class="fa fa-trash fa-lg cursor-pointer"></i>
-                                <i class="fa fa-pen-to-square fa-lg mx-2 cursor-pointer"></i>
-                                <i class="fa-regular fa-eye fa-lg cursor-pointer"></i>
+                            <td class="text-center whitespace-nowrap" rowspan="{{ count($loan->items) }}">
+                                <div class="flex justify-center items-center">
+                                    <i class="fa fa-trash fa-lg cursor-pointer !leading-none" onclick="deleteItem({{ $item->id }})"></i>
+                                    <i class="fa fa-pen-to-square fa-lg cursor-pointer !leading-none" onclick="document.getElementById('editProduct').showModal()"></i>
+                                    <i class="fa-regular fa-eye fa-lg cursor-pointer" onclick="document.getElementById('viewProduct').showModal()"></i>
+                                </div>
                             </td>
+                            {{-- tampilan delete --}}
+                            <dialog id="confirmDeleteDialog" class="modal">
+                                <div class="modal-box">
+                                    <form method="dialog">
+                                        <!-- Close Button -->
+                                        <button type="button" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
+                                            onclick="closeDeleteDialog()">✕</button>
+                                        <!-- Konten -->
+                                        <h1 class="text-xl font-bold text-center mb-4">Delete Item?</h1>
+                                        <p class="text-center text-gray-600">Are you sure you want to delete this item? This action cannot be undone.</p>
+                                        <!-- Tombol -->
+                                        <div class="flex justify-end gap-3 mt-6">
+                                            <button type="button" onclick="closeDeleteDialog()"
+                                                class="bg-gray-300 text-gray-800 rounded-lg px-4 py-2 hover:bg-gray-400">Cancel</button>
+                                            <button type="button" onclick="confirmDelete()"
+                                                class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-red-600">Yes, Delete</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </dialog>
+
+                            {{-- tampilan edit --}}
+                            <dialog id="editProduct" class="modal">
+                                <div class="modal-box">
+                                    <form method="dialog" id="editForm">
+                                        <button id="cancel" type="button" onclick="closeEditModal()"
+                                            class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                                        <h1 class="font-semibold text-2xl mb-4">Edit Product</h1>
+
+                                        <div class="flex gap-5 justify-between text-gray-600">
+                                            <div class="w-[50%]">
+                                                <h1 class="font-medium">PRODUCT</h1>
+                                                <input type="text" id="edit_product" class="input w-full" placeholder="Insert Product">
+                                            </div>
+                                            <div class="w-[50%]">
+                                                <h1 class="font-medium">RACK</h1>
+                                                <input type="text" id="edit_rack" class="input w-full" placeholder="Insert Rack">
+                                            </div>
+                                        </div>
+
+                                        <div class="flex gap-5 justify-between text-gray-600 mt-3">
+                                            <div class="w-[50%]">
+                                                <h1 class="font-medium">BRAND</h1>
+                                                <input type="text" id="edit_brand" class="input w-full" placeholder="Insert Brand">
+                                            </div>
+                                            <div class="w-[50%]">
+                                                <h1 class="font-medium">CONDITION</h1>
+                                                <input type="text" id="edit_condition" class="input w-full" placeholder="Insert Condition">
+                                            </div>
+                                        </div>
+
+                                        <div class="flex gap-5 justify-between text-gray-600 mt-3">
+                                            <div class="w-[50%]">
+                                                <h1 class="font-medium">TYPE</h1>
+                                                <input type="text" id="edit_type" class="input w-full" placeholder="Insert Type">
+                                            </div>
+                                            <div class="w-[50%]">
+                                                <h1 class="font-medium">STATUS</h1>
+                                                <input type="text" id="edit_status" class="input w-full" placeholder="Insert Status">
+                                            </div>
+                                        </div>
+
+                                        <div class="w-full mt-3">
+                                            <h1 class="font-medium text-gray-600">SERIAL NUMBER</h1>
+                                            <input type="text" id="edit_serial" class="input w-full" placeholder="Serial Number">
+                                        </div>
+
+                                        <div class="w-full mt-3">
+                                            <h1 class="font-medium text-gray-600">DESCRIPTION</h1>
+                                            <textarea id="edit_description" class="textarea w-full text-gray-600" placeholder="Description"></textarea>
+                                        </div>
+
+                                        <div class="w-full flex justify-end items-end gap-4 mt-4">
+                                            <button type="button" onclick="closeEditModal()"
+                                                class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Cancel</button>
+                                            <button type="submit"
+                                                class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Edit</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </dialog>
+                            {{-- tampilan edit --}}
+
+                            {{-- tampilan preview --}}
+                            <dialog id="viewProduct" class="modal">
+                                <div class="modal-box">
+                                    <form method="dialog" id="viewForm">
+                                        <!-- Gambar atas -->
+                                        <div class="w-full mb-4">
+                                            <img src="{{ asset('image/cyrene.jpg') }}" alt="Preview" class="w-full h-[180px] object-cover rounded-lg">
+                                        </div>
+
+                                        <!-- Tombol close -->
+                                        <button type="button" onclick="document.getElementById('viewProduct').close()"
+                                            class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+
+                                        <h1 class="font-semibold text-2xl mb-4">Product Details</h1>
+
+                                        <div class="flex gap-5 justify-between text-gray-600">
+                                            <div class="w-[50%]">
+                                                <h1 class="font-medium">PRODUCT</h1>
+                                                <p>Access Point</p>
+                                            </div>
+                                            <div class="w-[50%]">
+                                                <h1 class="font-medium">RACK</h1>
+                                                <p>Rack 1</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex gap-5 justify-between text-gray-600 mt-3">
+                                            <div class="w-[50%]">
+                                                <h1 class="font-medium">BRAND</h1>
+                                                <p>TP-Link</p>
+                                            </div>
+                                            <div class="w-[50%]">
+                                                <h1 class="font-medium">CONDITION</h1>
+                                                <p>Good</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex gap-5 justify-between text-gray-600 mt-3">
+                                            <div class="w-[50%]">
+                                                <h1 class="font-medium">TYPE</h1>
+                                                <p>TL-WR840N</p>
+                                            </div>
+                                            <div class="w-[50%]">
+                                                <h1 class="font-medium">STATUS</h1>
+                                                <p>Ready</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="w-full mt-3">
+                                            <h1 class="font-medium text-gray-600">SERIAL NUMBER</h1>
+                                            <p>A1B2C3D4E5F6G7H</p>
+                                        </div>
+
+                                        <div class="w-full mt-3">
+                                            <h1 class="font-medium text-gray-600">DESCRIPTION</h1>
+                                            <p class="text-gray-600">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vel enim eget lacus fermentum suscipit ut non ex.</p>
+                                        </div>
+
+                                        <div class="w-full flex justify-end items-end gap-4 mt-4">
+                                            <button type="button" onclick="document.getElementById('viewProduct').close()"
+                                                class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Close</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </dialog>
+                            {{-- tampilan preview --}}
                             @endif
                         </tr>
                         @endforeach
@@ -273,6 +428,69 @@
             });
     }
 
+
+    // delete
+    let deleteTargetId = null;
+
+    async function deleteItem(id) {
+        deleteTargetId = id;
+        document.getElementById("confirmDeleteDialog").showModal();
+    }
+
+    async function confirmDelete() {
+        if (!deleteTargetId) return;
+
+        const res = await fetch(`/api/items/${deleteTargetId}`, {
+            method: 'DELETE',
+            headers: {
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            }
+        });
+
+        if (res.ok) {
+            alert('Item deleted');
+            window.location.reload();
+        } else {
+            const data = await res.json();
+            alert('Error bray cek console');
+            console.log(data.message || res.statusText);
+        }
+
+        deleteTargetId = null;
+        closeDeleteDialog();
+    }
+
+    function closeDeleteDialog() {
+        document.getElementById("confirmDeleteDialog").close();
+        deleteTargetId = null;
+    }
+// edit product
+    function closeEditModal() {
+        document.getElementById('editProduct').close();
+    }
+
+    document.getElementById("editForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+
+        const payload = {
+            product: document.getElementById("edit_product").value,
+            rack: document.getElementById("edit_rack").value,
+            brand: document.getElementById("edit_brand").value,
+            condition: document.getElementById("edit_condition").value,
+            type: document.getElementById("edit_type").value,
+            status: document.getElementById("edit_status").value,
+            serial: document.getElementById("edit_serial").value,
+            description: document.getElementById("edit_description").value,
+        };
+
+        console.log("Edit payload:", payload);
+        alert("Simulasi update berhasil. Kirim ke API sesuai kebutuhan.");
+
+        document.getElementById("editForm").reset();
+        closeEditModal();
+    });
 </script>
 
+@stack('scripts')
 @include('template.footer')
