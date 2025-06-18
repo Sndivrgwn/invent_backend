@@ -37,23 +37,19 @@
                     <div class="p-4 pb-2 flex">
                         <!-- search -->
                         <div class="relative w-full hidden md:block mr-4">
-                            <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                                <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                    viewBox="0 0 20 20">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                        stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
-                                </svg>
-                                <span class="sr-only">Search icon</span>
-                            </div>
-                            <input type="text" id="search-navbar"
-                                class="block w-full p-2 ps-10 text-sm border border-gray-400 rounded-lg"
-                                placeholder="Search...">
+                            <form method="GET" action="{{ route('loan') }}" class="relative w-full md:block">
+                                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                                    <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                                    </svg>
+                                    <span class="sr-only">Search icon</span>
+                                </div>
+                                <input type="text" name="search-navbar" value="{{ request('search-navbar') }}" class="block w-full p-2 ps-10 text-sm border border-gray-400 rounded-lg" placeholder="Search...">
+
+                            </form>
                         </div>
 
-                        <!-- filter -->
-                        <button class="btn flex justify-center items-center bg-transparent"
-                            onclick="filterProduct.showModal()">All Status <i class="fa fa-filter"
-                                style="display: flex; justify-content: center; align-items: center;"></i></button>
+                        </button>
                         <dialog id="filterProduct" class="modal">
                             <div class="modal-box">
                                 <!-- close button -->
@@ -136,15 +132,14 @@
 
                             {{-- Pagination Elements --}}
                             @foreach ($incomingLoans->getUrlRange(1, $incomingLoans->lastPage()) as $page => $url)
-                            <a href="{{ $url }}"
-                                class="join-item btn {{ $incomingLoans->currentPage() == $page ? 'btn-primary' : '' }}">
+                            <a href="{{ $url }}" class="join-item btn {{ $incomingLoans->currentPage() == $page ? 'btn-primary' : '' }}">
                                 {{ $page }}
                             </a>
                             @endforeach
 
                             {{-- Next Page Link --}}
                             @if ($incomingLoans->hasMorePages())
-                            <a href="{{ $incomingLoans->nextPageUrl() }}" class="join-item btn">»</a>
+                            <a href="{{ $incomingLoans->appends(request()->query())->previousPageUrl() }}" class="join-item btn">«</a>
                             @else
                             <button class="join-item btn btn-disabled">»</button>
                             @endif
@@ -163,23 +158,20 @@
                     <div class="p-4 pb-2 flex">
                         <!-- search -->
                         <div class="relative w-full hidden md:block mr-4">
-                            <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                                <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                    viewBox="0 0 20 20">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                        stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
-                                </svg>
-                                <span class="sr-only">Search icon</span>
-                            </div>
-                            <input type="text" id="search-navbar"
-                                class="block w-full p-2 ps-10 text-sm border border-gray-400 rounded-lg"
-                                placeholder="Search...">
+                            <form method="GET" action="{{ route('loan') }}" class="relative w-full md:block">
+                                <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
+                                    <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                                    </svg>
+                                    <span class="sr-only">Search icon</span>
+                                </div>
+                                <input type="text" name="search-navbar" value="{{ request('search-navbar') }}" class="block w-full p-2 ps-10 text-sm border border-gray-400 rounded-lg" placeholder="Search...">
+
+                            </form>
                         </div>
 
                         <!-- filter -->
-                        <button class="btn flex justify-center items-center bg-transparent"
-                            onclick="filterProduct.showModal()">All Status <i class="fa fa-filter"
-                                style="display: flex; justify-content: center; align-items: center;"></i></button>
+
                         <dialog id="filterProduct" class="modal">
                             <div class="modal-box">
                                 <!-- close button -->
@@ -264,15 +256,14 @@
 
                             {{-- Pagination Elements --}}
                             @foreach ($outgoingLoans->getUrlRange(1, $outgoingLoans->lastPage()) as $page => $url)
-                            <a href="{{ $url }}"
-                                class="join-item btn {{ $outgoingLoans->currentPage() == $page ? 'btn-primary' : '' }}">
+                            <a href="{{ $url }}" class="join-item btn {{ $outgoingLoans->currentPage() == $page ? 'btn-primary' : '' }}">
                                 {{ $page }}
                             </a>
                             @endforeach
 
                             {{-- Next Page Link --}}
                             @if ($outgoingLoans->hasMorePages())
-                            <a href="{{ $outgoingLoans->nextPageUrl() }}" class="join-item btn">»</a>
+                            <a href="{{ $outgoingLoans->appends(request()->query())->previousPageUrl() }}" class="join-item btn">«</a>
                             @else
                             <button class="join-item btn btn-disabled">»</button>
                             @endif

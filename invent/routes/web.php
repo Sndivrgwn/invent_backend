@@ -29,6 +29,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/loans', [LoanController::class, 'store']);
 
     Route::get('/items/filter', [ItemController::class, 'filter']);
+    
+    Route::get('/history/filter', [HistoryController::class, 'filter'])->name('history.filter');
+
 // routes/web.php
 
 

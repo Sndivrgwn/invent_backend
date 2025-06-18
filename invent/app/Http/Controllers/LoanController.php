@@ -15,13 +15,43 @@ class LoanController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        $incomingLoans = Loan::with('items')->where('status', 'RETURNED')->paginate(20);
-        $outgoingLoans = Loan::with('items')->where('status', '!=', 'RETURNED')->paginate(20);
+    public function index(Request $request)
+{
+    $search = $request->input('search-navbar');
 
-        return view('pages.loan', compact('incomingLoans', 'outgoingLoans'));
-    }
+    $incomingLoans = Loan::with('items')
+        ->where('status', 'RETURNED')
+        ->when($search, function ($query) use ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('loaner_name', 'like', "%{$search}%")
+                    ->orWhere('loan_date', 'like', "%{$search}%")
+                    ->orWhere('return_date', 'like', "%{$search}%")
+                    ->orWhereHas('items', function ($itemQuery) use ($search) {
+                        $itemQuery->where('name', 'like', "%{$search}%");
+                    });
+            });
+        })
+        ->paginate(20);
+
+    $outgoingLoans = Loan::with('items')
+        ->where('status', '!=', 'RETURNED')
+        ->when($search, function ($query) use ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('loaner_name', 'like', "%{$search}%")
+                    ->orWhere('loan_date', 'like', "%{$search}%")
+                    ->orWhere('return_date', 'like', "%{$search}%")
+                    ->orWhere('status', 'like', "%{$search}%")
+                    ->orWhereHas('items', function ($itemQuery) use ($search) {
+                        $itemQuery->where('name', 'like', "%{$search}%");
+                    });
+            });
+        })
+        ->paginate(20);
+
+    return view('pages.loan', compact('incomingLoans', 'outgoingLoans'));
+}
+
+
 
     /**
      * Store a newly created resource in storage.
