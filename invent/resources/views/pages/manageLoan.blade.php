@@ -94,9 +94,8 @@
                             <tr>
                                 <th class="text-center font-semibold">NAME</th>
                                 <th class="text-center font-semibold">PRODUCT</th>
-                                <th class="text-center font-semibold">BORROW DATE</th>
-                                <th class="text-center font-semibold">DUE DATE</th>
-                                <th class="text-center font-semibold">STATUS</th>
+                                <th class="text-center font-semibold">CONDITION</th>
+                                <th class="text-center font-semibold">NOTE</th>
                                 <th class="text-center font-semibold">ACTIONS</th>
                             </tr>
                         </thead>
