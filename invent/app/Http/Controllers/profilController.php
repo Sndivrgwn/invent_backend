@@ -2,13 +2,26 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use App\Models\Returns; // pastikan ini sesuai
+use App\Models\Loan;
 
-class profilController extends Controller
+class ProfilController extends Controller
 {
     public function index()
     {
-        return view('pages.profil');
+        $user = auth()->user();
+
+        $totalLoans = $user->loans()->count();
+
+        $totalReturns = Returns::whereIn('loan_id', function ($query) use ($user) {
+            $query->select('id')
+                  ->from('loans')
+                  ->where('user_id', $user->id);
+        })->count();
+
+        return view('pages.profil', compact('user', 'totalLoans', 'totalReturns'));
     }
-};
+    
+    
+}

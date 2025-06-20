@@ -43,7 +43,7 @@
                                 </div>
                                 <div>
                                     <h1 class="text-xl font-semibold">Name</h1>
-                                    <h1 class="text-lg font-medium">Riyan Handriyana</h1>
+                                    <h1 class="text-lg font-medium">{{$user->name}}</h1>
                                 </div>
                             </div>
                             <div class="flex justify-center align-middle p-4.5 ">
@@ -61,7 +61,7 @@
                                 </div>
                                 <div>
                                     <h1 class="text-xl font-semibold">Email</h1>
-                                    <h1 class="text-lg font-medium">ryhandriyana@gmail.com</h1>
+                                    <h1 class="text-lg font-medium">{{$user->email}}</h1>
                                 </div>
                             </div>
                             <div class="flex justify-center align-middle p-4.5 ">
@@ -80,7 +80,7 @@
                             </div>
                             <div>
                                 <h1 class="text-xl font-semibold">Jumlah Loan</h1>
-                                <h1 class="text-lg font-medium">20</h1>
+                                <h1 class="text-lg font-medium">{{$totalLoans}}</h1>
                             </div>
                         </div>
                         <div class="flex">
@@ -91,7 +91,7 @@
                             </div>
                             <div>
                                 <h1 class="text-xl font-semibold">Jumlah Return</h1>
-                                <h1 class="text-lg font-medium">18</h1>
+                                <h1 class="text-lg font-medium">{{$totalReturns}}</h1>
                             </div>
                         </div>
                     </div>

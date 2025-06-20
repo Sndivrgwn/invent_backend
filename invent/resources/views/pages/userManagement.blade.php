@@ -163,22 +163,17 @@
                             <th class="text-center font-semibold">NAME</th>
                             <th class="text-center font-semibold">EMAIL</th>
                             <th class="text-center font-semibold">ROLE</th>
-                            <th class="text-center font-semibold">STATUS</th>
                             <th class="text-center font-semibold">LAST ACTIVE</th>
                             <th class="text-center font-semibold">ACTION</th>
                         </tr>
                     </thead>
                     <tbody id="itemTableBody">
+                        @foreach ($user as $usr)
                         <tr>
-                            <td class="text-center">Riyan Handriyana</td>
-                            <td class="text-center">ryhandriyana@gmail.com</td>
-                            <td class="text-center">Admin</td>
-                            <td class="text-center">
-                                <div class="badge badge-soft p-4 badge-success">
-                                    ACTIVE
-                                </div>
-                            </td>
-                            <td class="text-center">Active</td>
+                            <td class="text-center">{{ $usr->name }}</td>
+                            <td class="text-center">{{ $usr->email }}</td>
+                            <td class="text-center">{{ $usr->roles->name }}</td>
+                            <td class="text-center">{{ $usr->last_active_at }}</td>
                             <td class="text-center flex justify-center  ">
                                 <div class="flex justify-center items-center">
                                     <i class="fa fa-trash fa-lg cursor-pointer !leading-none"></i>
@@ -187,42 +182,8 @@
                                 </div>
                             </td>
                         </tr>
-                        <tr>
-                            <td class="text-center">Sandi Virgiawan</td>
-                            <td class="text-center">sandiv@gmail.com</td>
-                            <td class="text-center">Super Admin</td>
-                            <td class="text-center">
-                                <div class="badge badge-soft p-4 badge-warning">
-                                    NOT ACTIVE
-                                </div>
-                            </td>
-                            <td class="text-center">1 Hour ago</td>
-                            <td class="text-center flex justify-center  ">
-                                <div class="flex justify-center items-center">
-                                    <i class="fa fa-trash fa-lg cursor-pointer !leading-none"></i>
-                                    <i class="fa fa-pen-to-square fa-lg cursor-pointer !leading-none"></i>
-                                    <i class="fa-regular fa-eye fa-lg cursor-pointer"></i>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="text-center">Wandi Apriansyah</td>
-                            <td class="text-center">wandi@gmail.com</td>
-                            <td class="text-center">User</td>
-                            <td class="text-center">
-                                <div class="badge badge-soft p-4 badge-warning">
-                                    NOT ACTIVE
-                                </div>
-                            </td>
-                            <td class="text-center">5 Hour ago</td>
-                            <td class="text-center flex justify-center  ">
-                                <div class="flex justify-center items-center">
-                                    <i class="fa fa-trash fa-lg cursor-pointer !leading-none"></i>
-                                    <i class="fa fa-pen-to-square fa-lg cursor-pointer !leading-none"></i>
-                                    <i class="fa-regular fa-eye fa-lg cursor-pointer"></i>
-                                </div>
-                            </td>
-                        </tr>
+                        @endforeach
+                        
                     </tbody>
                 </table>
             </div>

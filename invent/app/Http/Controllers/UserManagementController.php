@@ -5,22 +5,30 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Item;
 use App\Models\Loan;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class UserManagementController extends Controller
 {
     public function index()
     {
-        $items = item::all();
-        $totalItems = $items->count();
+        $user = User::with('roles')->get();
 
-        $categories = Category::all();
-        $totalCategories = $categories->count();
+        return view('pages.userManagement', compact('user'));
+    }
 
-        $loans = Loan::all();
-        $totalLoans = $loans->count();
-        
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|email|unique:users,email',
+            'password' => 'required|string|min:8|confirmed',
+            'roles_id' => 'required|',
+        ]);
 
-        return view('pages.userManagement', compact('totalItems', 'totalCategories', 'totalLoans'));
+        $validated['password'] = bcrypt($validated['password']);
+        $user = User::create($validated);
+
+        return response()->json(['message' => 'User created successfully', 'data' => $user], 201);
     }
 }

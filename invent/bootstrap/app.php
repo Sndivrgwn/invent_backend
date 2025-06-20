@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\AutoLogoutAfterTwoDays;
+use App\Http\Middleware\UpdateLastActive;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -23,6 +24,7 @@ return Application::configure(basePath: dirname(__DIR__))
             ShareErrorsFromSession::class,
             VerifyCsrfToken::class,
             AutoLogoutAfterTwoDays::class,
+            UpdateLastActive::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
