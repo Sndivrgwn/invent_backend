@@ -34,7 +34,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/settings', [SettingController::class, 'index'])->name('setting');
     Route::get('/profil', [profilController::class, 'index'])->name('profil');
 
-
+    Route::post('/users/store', [UserManagementController::class, 'store'])->name('users.store');
     Route::post('/locations', [LocationController::class, 'store']);
 
 

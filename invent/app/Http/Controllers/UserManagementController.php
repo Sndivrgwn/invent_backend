@@ -5,17 +5,40 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Item;
 use App\Models\Loan;
+use App\Models\Roles;
 use App\Models\User;
 use Illuminate\Http\Request;
 
 class UserManagementController extends Controller
 {
-    public function index()
-    {
-        $user = User::with('roles')->get();
+   public function index(Request $request)
+{
+    $query = User::with('roles');
+    $roles = Roles::all();
 
-        return view('pages.userManagement', compact('user'));
+    if ($request->filled('search')) {
+        $search = $request->search;
+        $query->where(function ($q) use ($search) {
+            $q->where('name', 'like', "%$search%")
+              ->orWhere('email', 'like', "%$search%");
+        });
     }
+
+    if ($request->filled('role')) {
+        $query->whereHas('roles', function ($q) use ($request) {
+            $q->where('name', $request->role);
+        });
+    }
+
+    if ($request->ajax()) {
+        return response()->json(['data' => $query->get()]);
+    }
+
+    $user = $query->get();
+    return view('pages.userManagement', compact('user' , 'roles'));
+}
+
+
 
     public function store(Request $request)
     {
@@ -29,6 +52,7 @@ class UserManagementController extends Controller
         $validated['password'] = bcrypt($validated['password']);
         $user = User::create($validated);
 
-        return response()->json(['message' => 'User created successfully', 'data' => $user], 201);
+        return redirect()->route('users')->with('success', 'User created successfully');
+
     }
 }
