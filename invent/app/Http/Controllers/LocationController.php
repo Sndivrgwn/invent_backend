@@ -54,13 +54,34 @@ class LocationController extends Controller
      */
     public function show(string $id)
     {
-        $location = Location::find($id);
+        $location = Location::with('items.category')->find($id);
+
         if (!$location) {
             return response()->json(['message' => 'Location not found'], 404);
         }
 
-        return response()->json($location, 200);
+        $uniqueCategories = $location->items
+            ->pluck('category.name')
+            ->filter()
+            ->unique()
+            ->values();
+
+        return response()->json([
+            'location' => $location,
+            'items' => $location->items->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'name' => $item->name,
+                    'code' => $item->code,
+                    'condition' => $item->condition,
+                    'category' => $item->category?->name,
+                ];
+            }),
+            'categories' => $uniqueCategories, // ← ini penting
+        ], 200);
     }
+
+
 
     /**
      * Update the specified resource in storage.

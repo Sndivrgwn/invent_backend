@@ -26,4 +26,7 @@
     }
 </style>
 
+@php
+use Vinkla\Hashids\Facades\Hashids;
+@endphp
 <body>

@@ -18,6 +18,8 @@ Route::get('/user', function (Request $request) {
 // routes/api.php
 Route::get('/search-items', [ItemController::class, 'search']);
 // routes/api.php atau routes/web.php (sesuai penggunaan)
+    Route::get('/location/{id}', [LocationController::class, 'show']);
+
 
 Route::post('/login', [App\Http\Controllers\Auth\LoginController::class, 'loginapi']);
 Route::post('/register', [App\Http\Controllers\Auth\RegisterController::class, 'registerapi']);
