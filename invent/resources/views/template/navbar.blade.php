@@ -44,7 +44,7 @@
         tabindex="0"
         class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
         <li>
-          <a class="justify-between">
+          <a href="/profil" class="justify-between">
             Profile
             <span class="badge">New</span>
           </a>

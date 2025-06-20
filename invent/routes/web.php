@@ -11,6 +11,7 @@ use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\NewLoanController;
 use App\Http\Controllers\ManageLoanController;
 use App\Http\Controllers\UserManagementController;
+use App\Http\Controllers\profilController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -31,6 +32,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/loans', [LoanController::class, 'store']);
     Route::get('/users', [UserManagementController::class, 'index'])->name('users');
     Route::get('/settings', [SettingController::class, 'index'])->name('setting');
+    Route::get('/profil', [profilController::class, 'index'])->name('profil');
+
 
     Route::post('/locations', [LocationController::class, 'store']);
 
