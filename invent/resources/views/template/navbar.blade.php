@@ -25,8 +25,8 @@
     <button data-collapse-toggle="navbar-search" type="button" class="inline-flex items-center p-2 w-10 h-10 justify-center text-sm rounded-lg md:hidden focus:outline-none focus:ring-2" aria-controls="navbar-search" aria-expanded="false"> --}}
 
         {{-- new loan --}}
-        <a href="newLoan" class="w-100 mx-5">
-            <button class="bg-[#2563EB] text-white rounded-lg p-2 w-full hover:bg-blue-400 cursor-pointer flex justify-center items-center gap-2">
+        <a href="newLoan" class="w-2/3 mx-5">
+            <button class="bg-[#2563EB] text-white rounded-lg p-2 px-5 w-full hover:bg-blue-400 cursor-pointer flex justify-center items-center gap-2">
                 <i class="fa-regular fa-plus flex justify-center items-center"></i>
                 <span>New Loan</span>
             </button>
