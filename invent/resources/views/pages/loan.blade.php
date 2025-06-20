@@ -20,7 +20,7 @@
                 <h1 class="text-2xl font-semibold py-4">Active Loans</h1>
             </div>
             <div class="flex-none">
-                <a href="manageLoan" class="">
+                <a href="{{ route('pages.manageLoan') }}" class="">
                     <button class="bg-[#2563EB] text-white rounded-lg p-2 px-5 w-full hover:bg-blue-400 cursor-pointer flex justify-center items-center gap-2">
                         <i class="fa fa-screwdriver-wrench flex justify-center items-center"></i>
                         <span>Manage Loan</span>

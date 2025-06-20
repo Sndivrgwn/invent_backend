@@ -9,6 +9,6 @@ class ManageLoanController extends Controller
 {
      public function index()
     {
-        return view('pages.Manageloan'); 
+        return view('pages.manageLoan'); 
     }
 }

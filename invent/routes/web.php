@@ -27,7 +27,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/settings', [SettingController::class, 'index'])->name('setting');
     Route::get('/history', [HistoryController::class, 'index'])->name('history');
     Route::get('/newLoan', [NewLoanController::class, 'index'])->name('newLoan');
-    Route::get('/manageLoan', [ManageLoanController::class, 'index'])->name('manageLoan');
+    Route::get('/manageLoan', [ManageLoanController::class, 'index'])->name('pages.manageLoan');
     Route::post('/loans', [LoanController::class, 'store']);
 
     Route::get('/items/filter', [ItemController::class, 'filter']);

@@ -49,7 +49,7 @@
                         </div>
                         <div class="self-end">
                             <button type="submit" class="btn btn-primary">Filter Date</button>
-                            <a href="{{ route('history') }}" class="btn btn-primary">Reset Filter</a>
+                            <a href="{{ route('history') }}" class="btn btn-secondary">Reset Filter</a>
                         </div>
                     </form>
                 </div>
