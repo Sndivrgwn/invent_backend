@@ -120,14 +120,14 @@
                                 <td class="text-center">{{ $loan->status }}</td>
 
                                 <td class="text-center">
-                                    <i class="fa fa-pen-to-square fa-lg cursor-pointer" onclick="document.getElementById('editProduct').showModal()"></i>
-                                    <i class="fa-regular fa-eye fa-lg cursor-pointer" onclick="document.getElementById('viewProduct').showModal()"></i>
+                                    <i class="fa fa-pen-to-square fa-lg cursor-pointer" onclick="document.getElementById('editProductIncome').showModal()"></i>
+                                    <i class="fa-regular fa-eye fa-lg cursor-pointer" onclick="document.getElementById('viewProductIncome').showModal()"></i>
                                 </td>
                                 {{-- tampilan edit --}}
-                            <dialog id="editProduct" class="modal">
+                            <dialog id="editProductIncome" class="modal">
                                 <div class="modal-box">
                                     <form method="dialog" id="editForm">
-                                        <button id="cancel" type="button" onclick="closeEditModal()"
+                                        <button id="cancel" type="button" onclick="closeEditModalIncome()"
                                             class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
                                         <h1 class="font-semibold text-2xl mb-4">Edit Product</h1>
 
@@ -175,7 +175,7 @@
                                         </div>
 
                                         <div class="w-full flex justify-end items-end gap-4 mt-4">
-                                            <button type="button" onclick="closeEditModal()"
+                                            <button type="button" onclick="closeEditModalIncome()"
                                                 class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Cancel</button>
                                             <button type="submit"
                                                 class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Edit</button>
@@ -186,7 +186,7 @@
                             {{-- tampilan edit --}}
 
                             {{-- tampilan preview --}}
-                            <dialog id="viewProduct" class="modal">
+                            <dialog id="viewProductIncome" class="modal">
                                 <div class="modal-box">
                                     <form method="dialog" id="viewForm">
                                         <!-- Gambar atas -->
@@ -195,7 +195,7 @@
                                         </div>
 
                                         <!-- Tombol close -->
-                                        <button type="button" onclick="document.getElementById('viewProduct').close()"
+                                        <button type="button" onclick="document.getElementById('viewProductIncome').close()"
                                             class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
 
                                         <h1 class="font-semibold text-2xl mb-4">Product Details</h1>
@@ -244,7 +244,7 @@
                                         </div>
 
                                         <div class="w-full flex justify-end items-end gap-4 mt-4">
-                                            <button type="button" onclick="document.getElementById('viewProduct').close()"
+                                            <button type="button" onclick="document.getElementById('viewProductIncome').close()"
                                                 class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Close</button>
                                         </div>
                                     </form>
@@ -370,8 +370,8 @@
                                 <td class="text-center">{{ $loan->status }}</td>
 
                                 <td class="text-center">
-                                    <i class="fa fa-pen-to-square fa-lg cursor-pointer" onclick="document.getElementById('editProduct').showModal()"></i>
-                                    <i class="fa-regular fa-eye fa-lg cursor-pointer" onclick="document.getElementById('viewProduct').showModal()"></i>
+                                    <i class="fa fa-pen-to-square fa-lg cursor-pointer" onclick="document.getElementById('editProductOutgoing').showModal()"></i>
+                                    <i class="fa-regular fa-eye fa-lg cursor-pointer" onclick="document.getElementById('viewProductOutgoing').showModal()"></i>
                                 </td>
                                 {{-- tampilan delete --}}
                             <dialog id="confirmDeleteDialog" class="modal">
@@ -395,7 +395,7 @@
                             </dialog>
 
                                 {{-- tampilan edit --}}
-                            <dialog id="editProduct" class="modal">
+                            <dialog id="editProductOutgoing" class="modal">
                                 <div class="modal-box">
                                     <form method="dialog" id="editForm">
                                         <button id="cancel" type="button" onclick="closeEditModal()"
@@ -446,7 +446,7 @@
                                         </div>
 
                                         <div class="w-full flex justify-end items-end gap-4 mt-4">
-                                            <button type="button" onclick="closeEditModal()"
+                                                <button type="button" onclick="closeEditModal()"
                                                 class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Cancel</button>
                                             <button type="submit"
                                                 class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Edit</button>
@@ -457,7 +457,7 @@
                             {{-- tampilan edit --}}
 
                             {{-- tampilan preview --}}
-                            <dialog id="viewProduct" class="modal">
+                            <dialog id="viewProductOutgoing" class="modal">
                                 <div class="modal-box">
                                     <form method="dialog" id="viewForm">
                                         <!-- Gambar atas -->
@@ -466,7 +466,7 @@
                                         </div>
 
                                         <!-- Tombol close -->
-                                        <button type="button" onclick="document.getElementById('viewProduct').close()"
+                                            <button type="button" onclick="document.getElementById('viewProductOutgoing').close()"
                                             class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
 
                                         <h1 class="font-semibold text-2xl mb-4">Product Details</h1>
@@ -515,7 +515,7 @@
                                         </div>
 
                                         <div class="w-full flex justify-end items-end gap-4 mt-4">
-                                            <button type="button" onclick="document.getElementById('viewProduct').close()"
+                                            <button type="button" onclick="document.getElementById('viewProductOutgoing').close()"
                                                 class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Close</button>
                                         </div>
                                     </form>
@@ -565,7 +565,10 @@
 
 // edit product
     function closeEditModal() {
-        document.getElementById('editProduct').close();
+        document.getElementById('editProductOutgoing').close();
+    }
+    function closeEditModalIncome() {
+        document.getElementById('editProductIncome').close();
     }
 
     document.getElementById("editForm").addEventListener("submit", function (e) {
