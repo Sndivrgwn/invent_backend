@@ -111,7 +111,7 @@
     </div>
 
     <!-- LOGOUT -->
-    <div class="mt-8">
+    <div class="mt-3">
         <form action="/logout" method="POST">
             @csrf
             <button
