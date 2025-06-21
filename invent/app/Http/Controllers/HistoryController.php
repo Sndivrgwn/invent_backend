@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\Loan;
 use App\Models\Location;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Log;
 
 class HistoryController extends Controller
 {
@@ -15,8 +18,10 @@ class HistoryController extends Controller
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
 
-        $loans = Loan::query();
+        $loans = Loan::query()->where('status', 'returned')
+            ->with(['items.category', 'items.location']);
         $locations = Location::all();
+        $categories = Category::all();
 
         if ($search) {
             $loans->where(function ($query) use ($search) {
@@ -48,7 +53,7 @@ class HistoryController extends Controller
 
         $loans = $loans->with('items.category')->paginate(20);
 
-        return view('pages.history', compact('loans', 'search', 'locations'));
+        return view('pages.history', compact('loans', 'search', 'locations' , 'categories'));
     }
 
 
@@ -70,5 +75,57 @@ class HistoryController extends Controller
             ->get();
 
         return response()->json($loans);
+    }
+
+    public function show($id): JsonResponse
+{
+    try {
+        $loan = Loan::with([
+            'items.category:id,name',
+            'items.location:id,name',
+            'user:id,name',
+            'items' // Ensure items are loaded
+        ])->findOrFail($id);
+
+        return response()->json([
+            'success' => true,
+            'data' => $loan
+        ]);
+
+    } catch (\Exception $e) {
+        Log::error("Failed to fetch loan {$id}: " . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'message' => 'Loan not found'
+        ], 404);
+    }
+}
+
+    public function destroy($id): JsonResponse
+    {
+        try {
+            $loan = Loan::findOrFail($id);
+
+            // Check if loan can be deleted (you might add business logic here)
+            if ($loan->status === 'borrowed') {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Cannot delete an active loan'
+                ], 403);
+            }
+
+            $loan->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Loan deleted successfully'
+            ]);
+        } catch (\Exception $e) {
+            Log::error("Failed to delete loan {$id}: " . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Failed to delete loan'
+            ], 500);
+        }
     }
 }
