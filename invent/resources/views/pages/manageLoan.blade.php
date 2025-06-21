@@ -94,8 +94,9 @@
                             <tr>
                                 <th class="text-center font-semibold">NAME</th>
                                 <th class="text-center font-semibold">PRODUCT</th>
-                                <th class="text-center font-semibold">CONDITION</th>
-                                <th class="text-center font-semibold">NOTE</th>
+                                <th class="text-center font-semibold">BORROW DATE</th>
+                                <th class="text-center font-semibold">DUE DATE</th>
+                                <th class="text-center font-semibold">STATUS</th>
                                 <th class="text-center font-semibold">ACTIONS</th>
                             </tr>
                         </thead>
@@ -109,9 +110,13 @@
                                 <td class="text-center">{{ $loan->loan_date }}</td>
                                 <td class="text-center">{{ $loan->return_date }}</td>
                                 <td class="text-center">{{ $loan->status }}</td> --}}
-
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
                                 <td class="text-center">
-                                    <i class="fa fa-pen-to-square fa-lg cursor-pointer" onclick="document.getElementById('editProduct').showModal()"></i>
+                                    <i class="fa fa-right-left fa-lg cursor-pointer" onclick="document.getElementById('returnProduct').showModal()"></i>
                                     <i class="fa-regular fa-eye fa-lg cursor-pointer" onclick="document.getElementById('viewProduct').showModal()"></i>
                                 </td>
                                 {{-- tampilan delete --}}
@@ -135,67 +140,57 @@
                                 </div>
                             </dialog>
 
-                                {{-- tampilan edit --}}
-                            <dialog id="editProduct" class="modal">
-                                <div class="modal-box">
-                                    <form method="dialog" id="editForm">
-                                        <button id="cancel" type="button" onclick="closeEditModal()"
-                                            class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-                                        <h1 class="font-semibold text-2xl mb-4">Edit Product</h1>
-
-                                        <div class="flex gap-5 justify-between text-gray-600">
-                                            <div class="w-[50%]">
-                                                <h1 class="font-medium">PRODUCT</h1>
-                                                <input type="text" id="edit_product" class="input w-full" placeholder="Insert Product">
-                                            </div>
-                                            <div class="w-[50%]">
-                                                <h1 class="font-medium">RACK</h1>
-                                                <input type="text" id="edit_rack" class="input w-full" placeholder="Insert Rack">
-                                            </div>
+                            {{-- tampilan return --}}
+                            <!-- View Product Modal -->
+                            <dialog id="returnProduct" class="modal">
+                                <div class="modal-box max-w-xl">
+                                    <form method="dialog" id="returnForm">
+                                        <!-- Product Image -->
+                                        <div class="w-full mb-4">
+                                            <img src="{{ asset('image/cyrene.jpg') }}" alt="Preview" class="w-full h-[180px] object-cover rounded-lg">
                                         </div>
 
-                                        <div class="flex gap-5 justify-between text-gray-600 mt-3">
-                                            <div class="w-[50%]">
-                                                <h1 class="font-medium">BRAND</h1>
-                                                <input type="text" id="edit_brand" class="input w-full" placeholder="Insert Brand">
-                                            </div>
-                                            <div class="w-[50%]">
-                                                <h1 class="font-medium">CONDITION</h1>
-                                                <input type="text" id="edit_condition" class="input w-full" placeholder="Insert Condition">
-                                            </div>
-                                        </div>
+                                        <!-- Close Button -->
+                                        <button type="button" onclick="document.getElementById('returnProduct').close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
 
-                                        <div class="flex gap-5 justify-between text-gray-600 mt-3">
-                                            <div class="w-[50%]">
-                                                <h1 class="font-medium">TYPE</h1>
-                                                <input type="text" id="edit_type" class="input w-full" placeholder="Insert Type">
-                                            </div>
-                                            <div class="w-[50%]">
-                                                <h1 class="font-medium">STATUS</h1>
-                                                <input type="text" id="edit_status" class="input w-full" placeholder="Insert Status">
-                                            </div>
-                                        </div>
+                                        <h1 class="font-semibold text-2xl mb-2">Product Details</h1>
+                                        <h2 class="font-semibold text-xl text-blue-600 mb-4" id="modalLocationName">-</h2>
 
-                                        <div class="w-full mt-3">
-                                            <h1 class="font-medium text-gray-600">SERIAL NUMBER</h1>
-                                            <input type="text" id="edit_serial" class="input w-full" placeholder="Serial Number">
-                                        </div>
-
+                                        <!-- Location Description -->
                                         <div class="w-full mt-3">
                                             <h1 class="font-medium text-gray-600">DESCRIPTION</h1>
-                                            <textarea id="edit_description" class="textarea w-full text-gray-600" placeholder="Description"></textarea>
+                                            <p class="text-gray-600" id="modalLocationDescription">-</p>
                                         </div>
 
-                                        <div class="w-full flex justify-end items-end gap-4 mt-4">
-                                            <button type="button" onclick="closeEditModal()"
-                                                class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Cancel</button>
-                                            <button type="submit"
-                                                class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Edit</button>
+                                        <!-- Items -->
+                                        <div class="w-full mt-4">
+                                            <h1 class="font-medium text-gray-600 mb-2">ITEMS (Preview)</h1>
+                                            <ul id="modalItemList" class="list-disc pl-5 space-y-1 text-gray-700 text-sm max-h-40 overflow-y-auto">
+                                                <!-- Show only 5 items -->
+                                            </ul>
+
+                                            <button id="viewAllBtn" class="text-sm text-blue-600 mt-2 hover:underline hidden" onclick="openAllItemsModal()">
+                                                Lihat Semua Item →
+                                            </button>
+                                        </div>
+
+
+                                        <!-- Unique Categories -->
+                                        <div class="w-full mt-4">
+                                            <h1 class="font-medium text-gray-600 mb-2">CATEGORIES</h1>
+                                            <div id="modalCategoryList" class="flex flex-wrap gap-2">
+                                                <!-- Category badges -->
+                                            </div>
+                                        </div>
+
+                                        <div class="w-full flex justify-end items-end gap-4 mt-6">
+                                            <button type="button" onclick="document.getElementById('returnProduct').close()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Close</button>
+                                            <button type="button" class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer" id="confirmReturnButton">Return Product</button>
                                         </div>
                                     </form>
                                 </div>
                             </dialog>
-                            {{-- tampilan edit --}}
+                            {{-- tampilan return --}}
 
                             {{-- tampilan preview --}}
                             <dialog id="viewProduct" class="modal">
