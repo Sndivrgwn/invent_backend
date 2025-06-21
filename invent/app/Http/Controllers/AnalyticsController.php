@@ -72,7 +72,14 @@ class AnalyticsController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+        ]);
+
+        $category = Category::create($request->only('name', 'description'));
+
+        return redirect()->route('analytics')->with('success', 'Category created successfully.'); 
     }
 
     /**

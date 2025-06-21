@@ -88,7 +88,7 @@ class LoanController extends Controller
 
                 // Cek apakah item sedang dipinjam
                 if ($itemModel->status === 'NOT READY') {
-                    throw new \Exception("Item '{$itemModel->name}' sedang dipinjam dan tidak bisa dipinjam kembali.");
+                    throw new \Exception("Item '{$itemModel->name}' | '{$itemModel->code}' borrowed item cannot loaned repeatedly.");
                 }
 
                 // Simpan ke pivot
@@ -161,7 +161,7 @@ class LoanController extends Controller
             'code_loans' => 'sometimes|string|unique:loans,code_loans,' . $id,
             'loan_date' => 'sometimes|date',
             'return_date' => 'sometimes|date|after_or_equal:loan_date',
-            'status' => 'sometimes|in:dipinjam,dikembalikan,terlambat',
+            'status' => 'sometimes|in:borrowed,returned',
         ]);
 
         $loan->update($request->all());

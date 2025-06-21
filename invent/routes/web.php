@@ -25,7 +25,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/products', [ItemController::class, 'getAllItems'])->name('products');
     Route::get('/inventory', [LocationController::class, 'index'])->name('inventory');
     Route::get('/loan', [LoanController::class, 'index'])->name('loan');
+
     Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics');
+    Route::post('/analytics', [AnalyticsController::class, 'store'])->name('analytics.store');
+
     Route::get('/history', [HistoryController::class, 'index'])->name('history');
     Route::get('/newLoan', [NewLoanController::class, 'index'])->name('newLoan');
     Route::get('/manageLoan', [ManageLoanController::class, 'index'])->name('pages.manageLoan');

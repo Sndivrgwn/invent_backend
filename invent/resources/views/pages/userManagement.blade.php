@@ -133,7 +133,6 @@
 
 
                             <!-- STATUS -->
-
                         </form>
                             <!-- Apply Button -->
                     </div>
@@ -181,6 +180,11 @@
 </div>
 
 <script>
+    document.getElementById('searchInput').addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') {
+            e.preventDefault(); // Mencegah form disubmit
+        }
+    });
     document.addEventListener('DOMContentLoaded', function() {
         const searchInput = document.getElementById('searchInput');
         const roleFilter = document.getElementById('roleFilter');
