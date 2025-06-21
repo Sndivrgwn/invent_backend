@@ -41,12 +41,17 @@ Route::get('/loans/{id}', [ManageLoanController::class, 'show']);
 Route::get('/loans', [ManageLoanController::class, 'index']);
 Route::post('/return/{id}', [ManageLoanController::class, 'returnLoan']);
 
+Route::apiResource('locations', LocationController::class);
+
+// Other specific location routes
+Route::get('/location/{id}', [LocationController::class, 'show']);
+Route::delete('/location/{id}', [LocationController::class, 'destroy']);
+
 Route::post('/login', [App\Http\Controllers\Auth\LoginController::class, 'loginapi']);
 Route::post('/register', [App\Http\Controllers\Auth\RegisterController::class, 'registerapi']);
 Route::apiResource('roles', RolesController::class);
 Route::apiResource('users', UsersController::class);
 Route::apiResource('categories', CategoryController::class);
-Route::apiResource('locations', LocationController::class);
 Route::apiResource('items', ItemController::class);
 Route::apiResource('loans', LoanController::class);
 Route::apiResource('returns', ReturnController::class);

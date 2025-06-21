@@ -19,7 +19,8 @@ class HistoryController extends Controller
         $endDate = $request->input('end_date');
 
         $loans = Loan::query()->where('status', 'returned')
-            ->with(['items.category', 'items.location']);
+            ->with(['items.category', 'items.location', 'return']);
+
         $locations = Location::all();
         $categories = Category::all();
 
@@ -53,7 +54,7 @@ class HistoryController extends Controller
 
         $loans = $loans->with('items.category')->paginate(20);
 
-        return view('pages.history', compact('loans', 'search', 'locations' , 'categories'));
+        return view('pages.history', compact('loans', 'search', 'locations', 'categories'));
     }
 
 
@@ -78,28 +79,29 @@ class HistoryController extends Controller
     }
 
     public function show($id): JsonResponse
-{
-    try {
-        $loan = Loan::with([
-            'items.category:id,name',
-            'items.location:id,name',
-            'user:id,name',
-            'items' // Ensure items are loaded
-        ])->findOrFail($id);
+    {
+        try {
+            $loan = Loan::with([
+                'items.category:id,name',
+                'items.location:id,name',
+                'user:id,name',
+                'items' ,
+                'return'
+                // Ensure items are loaded
+            ])->findOrFail($id);
 
-        return response()->json([
-            'success' => true,
-            'data' => $loan
-        ]);
-
-    } catch (\Exception $e) {
-        Log::error("Failed to fetch loan {$id}: " . $e->getMessage());
-        return response()->json([
-            'success' => false,
-            'message' => 'Loan not found'
-        ], 404);
+            return response()->json([
+                'success' => true,
+                'data' => $loan
+            ]);
+        } catch (\Exception $e) {
+            Log::error("Failed to fetch loan {$id}: " . $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => 'Loan not found'
+            ], 404);
+        }
     }
-}
 
     public function destroy($id): JsonResponse
     {

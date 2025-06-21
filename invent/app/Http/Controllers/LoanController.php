@@ -137,7 +137,7 @@ class LoanController extends Controller
      */
     public function show(string $id)
     {
-        $loan = Loan::with(['user', 'item'])->find($id);
+        $loan = Loan::with(['user', 'item', 'return'])->find($id);
         if (!$loan) {
             return response()->json(['message' => 'Loan not found'], 404);
         }

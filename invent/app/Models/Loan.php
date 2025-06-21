@@ -31,9 +31,10 @@ class Loan extends Model
 {
     return $this->belongsToMany(Item::class)->withPivot('quantity')->withTimestamps();
 }
-public function returns()
+public function return()
 {
-    return $this->hasMany(Returns::class); // Ganti ReturnModel dengan nama model return kamu
+    return $this->hasOne(Returns::class);
 }
+
 
 }

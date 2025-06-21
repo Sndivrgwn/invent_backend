@@ -48,7 +48,7 @@
                                     <th>SERIAL NUMBER</th>
                                     <th>PRODUCT</th>
                                     <th>STATUS</th>
-                                    <th>RETURN DATE</th>
+                                    <th>DUE DATE</th>
                                     <th class="text-center">ACTIONS</th>
                                 </tr>
                             </thead>
@@ -104,9 +104,6 @@
                     <dialog id="returnProduct" class="modal">
                         <div class="modal-box max-w-sm sm:max-w-xl">
                             <form method="dialog" id="returnForm">
-                                <div class="w-full mb-4">
-                                    <img src="{{ asset('image/cyrene.jpg') }}" alt="Preview" class="w-full h-[180px] object-cover rounded-lg">
-                                </div>
 
                                 <button type="button" onclick="document.getElementById('returnProduct').close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
 
@@ -153,9 +150,6 @@
                     <dialog id="viewProduct" class="modal">
                         <div class="modal-box w-11/12 max-w-5xl">
                             <form method="dialog" id="viewForm">
-                                <div class="w-full mb-4">
-                                    <img src="{{ asset('image/cyrene.jpg') }}" alt="Preview" class="w-full h-[180px] object-cover rounded-lg">
-                                </div>
 
                                 <button type="button" onclick="document.getElementById('viewProduct').close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
 
@@ -363,7 +357,7 @@
             const gridContent = `
                 <div><h1 class="font-medium">BORROWER</h1><p>${loan.loaner_name}</p></div>
                 <div><h1 class="font-medium">LOAN DATE</h1><p>${loan.loan_date}</p></div>
-                <div><h1 class="font-medium">RETURN DATE</h1><p>${loan.return_date || '-'}</p></div>
+                <div><h1 class="font-medium">DUE DATE</h1><p>${loan.return_date || '-'}</p></div>
                 <div><h1 class="font-medium">STATUS</h1><p>${loan.status}</p></div>
             `;
             document.getElementById('loanDetailsGrid').innerHTML = gridContent;

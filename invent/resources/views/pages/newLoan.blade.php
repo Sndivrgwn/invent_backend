@@ -1,4 +1,20 @@
 @include('template.head')
+<style>
+    /* Additional styling for the enhanced dropdown */
+    #enhancedDropdown {
+        border: 1px solid #e5e7eb;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    #enhancedDropdown div {
+        transition: background-color 0.2s;
+    }
+
+    #enhancedDropdown div:hover {
+        background-color: #f3f4f6;
+    }
+
+</style>
 
 <div class="flex h-screen bg-gradient-to-b from-blue-100 to-white">
     <div>
@@ -60,23 +76,43 @@
                         <button type="button" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onclick="document.getElementById('newLoan').close()">✕</button>
                         <h1 class="text-xl font-bold mb-4">Add Item</h1>
 
-                        <label class="block text-gray-600 font-medium mb-1">SN / Nama Produk</label>
-                        <input list="snList" id="loanSN" class="input w-full mb-3" placeholder="Masukkan SN" required>
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text text-gray-600 font-medium">SN / Nama Produk</span>
+                            </label>
+                            <div class="relative">
+                                <input type="text" id="loanSN" class="input input-bordered w-full mb-3" placeholder="Masukkan SN" required autocomplete="off">
+                                <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
+                                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                    </svg>
+                                </div>
+                            </div>
 
-                        <datalist id="snList">
+                            <!-- Enhanced custom dropdown -->
+                            <div id="enhancedDropdown" class="hidden absolute z-10 mt-1 w-full max-h-60 overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm border border-gray-200">
+                                <!-- Options will be inserted here by JavaScript -->
+                            </div>
+                        </div>
+
+                        <!-- Hidden datalist (only used as data source) -->
+                        <datalist id="snList" class="hidden">
                             @foreach ($items as $item)
-                            <option value="{{ $item->code }}">
+                            <option value="{{ $item->code }}" data-name="{{ $item->name }}" data-type="{{ $item->type }}" data-status="{{ $item->status }}">
                                 {{ $item->name }} | {{ $item->type }}
                                 @if ($item->status === 'NOT READY') (BORROWED) @endif
                             </option>
                             @endforeach
                         </datalist>
 
+                        <div class="form-control">
+                            <label class="label">
+                                <span class="label-text text-gray-600 font-medium">Qty</span>
+                            </label>
+                            <input type="number" id="loanQty" min="1" class="input input-bordered w-full" placeholder="Jumlah" required>
+                        </div>
 
-                        <label class="block text-gray-600 font-medium mb-1">Qty</label>
-                        <input type="number" id="loanQty" min="1" class="input w-full mb-4" placeholder="Jumlah" required>
-
-                        <div class="flex justify-end gap-2">
+                        <div class="modal-action">
                             <button type="button" class="btn" onclick="document.getElementById('newLoan').close()">Cancel</button>
                             <button type="button" class="btn btn-primary" onclick="handleAddItem()">Tambah</button>
                         </div>
@@ -104,6 +140,79 @@
     const tempItems = [];
     const allItems = @json($items);
     let itemIndexToDelete = -1;
+
+   document.addEventListener('DOMContentLoaded', function() {
+    const input = document.getElementById('loanSN');
+    const dropdown = document.getElementById('enhancedDropdown');
+    const datalist = document.getElementById('snList');
+    
+    // Create enhanced dropdown options from datalist
+    const options = Array.from(datalist.options).map(option => {
+        return {
+            value: option.value,
+            name: option.getAttribute('data-name'),
+            type: option.getAttribute('data-type'),
+            status: option.getAttribute('data-status')
+        };
+    });
+    
+    // Disable native autocomplete
+    input.setAttribute('autocomplete', 'off');
+    input.setAttribute('list', 'none');
+    
+    input.addEventListener('focus', showDropdown);
+    input.addEventListener('input', showDropdown);
+    input.addEventListener('click', showDropdown);
+    
+    function showDropdown() {
+        dropdown.innerHTML = '';
+        const inputValue = input.value.toLowerCase();
+        
+        if (!inputValue) {
+            dropdown.classList.add('hidden');
+            return;
+        }
+        
+        const filteredOptions = options.filter(option => 
+            option.value.toLowerCase().includes(inputValue) || 
+            option.name.toLowerCase().includes(inputValue)
+        );
+        
+        if (filteredOptions.length === 0) {
+            dropdown.classList.add('hidden');
+            return;
+        }
+        
+        filteredOptions.forEach(option => {
+            const item = document.createElement('div');
+            item.className = `px-4 py-2 hover:bg-gray-100 cursor-pointer ${option.status === 'NOT READY' ? 'text-red-500' : 'text-gray-900'}`;
+            item.innerHTML = `
+                <div class="font-medium">${option.value}</div>
+                <div class="text-sm">
+                    ${option.name} | ${option.type}
+                    ${option.status === 'NOT READY' ? '<span class="text-red-500 ml-2">(BORROWED)</span>' : ''}
+                </div>
+            `;
+            
+            item.addEventListener('click', () => {
+                input.value = option.value;
+                dropdown.classList.add('hidden');
+                input.focus(); // Keep focus on input after selection
+            });
+            
+            dropdown.appendChild(item);
+        });
+        
+        dropdown.classList.remove('hidden');
+    }
+    
+    // Hide dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!input.contains(e.target) && !dropdown.contains(e.target)) {
+            dropdown.classList.add('hidden');
+        }
+    });
+});
 
     function handleAddItem() {
         const sn = document.getElementById("loanSN").value;

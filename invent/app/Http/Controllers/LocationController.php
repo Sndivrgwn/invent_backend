@@ -43,10 +43,26 @@ class LocationController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        $location = Location::create($validated);
-        return response()->json(['message' => 'Location created successfully', 'data' => $location], 201);
+        $location = new Location();
+        $location->name = $validated['name'];
+        $location->description = $validated['description'];
+
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('location_images', 'public');
+            $location->image = $imagePath;
+        } else {
+            $location->image = 'default.png';
+        }
+
+        $location->save();
+
+        return response()->json([
+            'message' => 'Location created successfully',
+            'data' => $location
+        ], 201);
     }
 
     /**
@@ -96,10 +112,29 @@ class LocationController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        $location->update($validated);
-        return response()->json(['message' => 'Location updated successfully', 'data' => $location], 200);
+        $location->name = $validated['name'];
+        $location->description = $validated['description'];
+
+        if ($request->hasFile('image')) {
+            // Delete old image if it's not the default
+            if ($location->image !== 'default.png') {
+                Storage::disk('public')->delete($location->image);
+            }
+
+            // Store new image
+            $imagePath = $request->file('image')->store('location_images', 'public');
+            $location->image = $imagePath;
+        }
+
+        $location->save();
+
+        return response()->json([
+            'message' => 'Location updated successfully',
+            'data' => $location
+        ], 200);
     }
 
     /**

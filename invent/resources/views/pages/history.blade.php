@@ -148,12 +148,13 @@
                     <thead class="text-gray-500 text-sm font-semibold border-b">
                         <tr>
                             <th>DATE</th>
-                            <th>CODE</th>
+                            <th>RETURNED AT</th>
+                            <th>RETURN DATE</th>
+                            <th>LOAN CODE</th>
                             <th>NAME</th>
                             <th>SERIAL NUMBER</th>
                             <th>PRODUCT</th>
                             <th>STATUS</th>
-                            <th>RETURN DATE</th>
                             <th class="text-center">ACTIONS</th>
                         </tr>
                     </thead>
@@ -164,57 +165,20 @@
                             @if ($index === 0)
                             <td rowspan="{{ count($loan->items) }}">{{ $loan->loan_date }}</td>
                             @endif
+                            <td>{{ $loan->return?->return_date}}</td>
+                            <td>{{ $loan->return_date }}</td>
                             <td>{{ $loan->code_loans }}</td>
                             <td>{{ $loan->loaner_name }}</td>
                             <td class="font-semibold">{{ $item->code }}</td>
                             <td>{{ $item->name }}</td>
                             <td><span class="badge badge-warning text-xs">{{ $loan->status }}</span></td>
-                            <td>{{ $loan->return_date }}</td>
                             @if ($index === 0)
                             <td class="text-center whitespace-nowrap" rowspan="{{ count($loan->items) }}">
                                 <div class="flex justify-center items-center">
                                     <i class="fa fa-trash fa-lg cursor-pointer !leading-none" onclick="deleteItem({{ $loan->id }})"></i>
                                     <i class="fa-regular fa-eye fa-lg cursor-pointer" onclick="showLoanDetails({{ $loan->id }})"></i> </div>
                             </td>
-                            {{-- tampilan delete --}}
-                            <dialog id="itemDetailsDialog" class="modal">
-                                <div class="modal-box w-11/12 max-w-5xl">
-                                    <button onclick="document.getElementById('itemDetailsDialog').close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-                                    <div id="itemDetailsContent"></div>
-                                </div>
-                            </dialog>
-                            <dialog id="confirmDeleteDialog" class="modal">
-                                <div class="modal-box">
-                                    <form method="dialog">
-                                        <!-- Close Button -->
-                                        <button type="button" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onclick="closeDeleteDialog()">✕</button>
-                                        <!-- Konten -->
-                                        <h1 class="text-xl font-bold text-center mb-4">Delete Item?</h1>
-                                        <p class="text-center text-gray-600">Are you sure you want to delete this item? This action cannot be undone.</p>
-                                        <!-- Tombol -->
-                                        <div class="flex justify-end gap-3 mt-6">
-                                            <button type="button" onclick="closeDeleteDialog()" class="bg-gray-300 text-gray-800 rounded-lg px-4 py-2 hover:bg-gray-400">Cancel</button>
-                                            <button type="button" onclick="confirmDelete()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-red-600">Yes, Delete</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </dialog>
 
-                            {{-- tampilan preview --}}
-                            <dialog id="viewProduct" class="modal">
-                                <div class="modal-box w-11/12 max-w-5xl">
-                                    <form method="dialog" id="viewForm">
-                                        <!-- Image will be dynamically updated -->
-
-                                        <!-- Loan details will be inserted here by JavaScript -->
-
-                                        <!-- Tombol close -->
-                                        <button type="button" onclick="document.getElementById('viewProduct').close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-
-
-                                    </form>
-                                </div>
-                            </dialog>
                             {{-- tampilan preview --}}
                             @endif
                         </tr>
@@ -227,7 +191,45 @@
                     </tbody>
                 </table>
             </div>
+            {{-- tampilan delete --}}
+            <dialog id="itemDetailsDialog" class="modal">
+                <div class="modal-box w-11/12 max-w-5xl">
+                    <button onclick="document.getElementById('itemDetailsDialog').close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                    <div id="itemDetailsContent"></div>
+                </div>
+            </dialog>
+            <dialog id="confirmDeleteDialog" class="modal">
+                <div class="modal-box">
+                    <form method="dialog">
+                        <!-- Close Button -->
+                        <button type="button" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onclick="closeDeleteDialog()">✕</button>
+                        <!-- Konten -->
+                        <h1 class="text-xl font-bold text-center mb-4">Delete Item?</h1>
+                        <p class="text-center text-gray-600">Are you sure you want to delete this item? This action cannot be undone.</p>
+                        <!-- Tombol -->
+                        <div class="flex justify-end gap-3 mt-6">
+                            <button type="button" onclick="closeDeleteDialog()" class="bg-gray-300 text-gray-800 rounded-lg px-4 py-2 hover:bg-gray-400">Cancel</button>
+                            <button type="button" onclick="confirmDelete()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-red-600">Yes, Delete</button>
+                        </div>
+                    </form>
+                </div>
+            </dialog>
 
+            {{-- tampilan preview --}}
+            <dialog id="viewProduct" class="modal">
+                <div class="modal-box w-11/12 max-w-5xl">
+                    <form method="dialog" id="viewForm">
+                        <!-- Image will be dynamically updated -->
+
+                        <!-- Loan details will be inserted here by JavaScript -->
+
+                        <!-- Tombol close -->
+                        <button type="button" onclick="document.getElementById('viewProduct').close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+
+
+                    </form>
+                </div>
+            </dialog>
             <!-- Pagination -->
             <div class="flex justify-end my-4">
                 {{ $loans->withQueryString()->links() }}
@@ -269,10 +271,7 @@
 
             // Build modal content
             let modalContent = `
-            <div class="w-full mb-4">
-                <img src="${loan.items[0]?.image_url || '{{ asset('image/cyrene.jpg') }}'}" 
-                     alt="Preview" class="w-full h-[180px] object-cover rounded-lg">
-            </div>
+            
             <button type="button" onclick="document.getElementById('viewProduct').close()"
                 class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
             <h1 class="font-semibold text-2xl mb-4">Loan Details</h1>
@@ -301,8 +300,16 @@
                         <p>${loan.return_date || 'Not returned yet'}</p>
                     </div>
                     <div>
+                        <p class="text-gray-600">Returned At:</p>
+                        <p>${loan.return?.return_date || 'Not returned yet'}</p>
+                    </div>
+                    <div>
                         <p class="text-gray-600">Description:</p>
                         <p>${loan.description || 'N/A'}</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-600">Notes:</p>
+                        <p>${loan.return?.notes || 'N/A'}</p>
                     </div>
                     <div>
                         <p class="text-gray-600">Status:</p>
@@ -430,10 +437,6 @@
 
             content.innerHTML = `
             <div class="flex gap-6">
-                <div class="w-1/3">
-                    <img src="${item.image_url || '{{ asset('image/cyrene.jpg') }}'}" 
-                         alt="${item.name}" class="w-full rounded-lg">
-                </div>
                 <div class="w-2/3">
                     <h2 class="text-2xl font-bold mb-4">${item.name}</h2>
                     <div class="grid grid-cols-2 gap-4">

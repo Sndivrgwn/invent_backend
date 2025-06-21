@@ -150,9 +150,6 @@
                                 <div class="modal-box">
                                     <form method="dialog" id="viewForm">
                                         <!-- Gambar atas -->
-                                        <div class="w-full mb-4">
-                                            <img src="{{ asset('image/cyrene.jpg') }}" alt="Preview" class="w-full h-[180px] object-cover rounded-lg">
-                                        </div>
 
                                         <!-- Tombol close -->
                                         <button type="button" onclick="document.getElementById('viewProductIncome').close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
@@ -439,10 +436,6 @@
 
             // Build modal content
             let modalContent = `
-            <div class="w-full mb-4">
-                <img src="${loan.items[0]?.image_url || '{{ asset('image/cyrene.jpg') }}'}" 
-                     alt="Preview" class="w-full h-[180px] object-cover rounded-lg">
-            </div>
             <button type="button" onclick="document.getElementById('viewProduct').close()"
                 class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
             <h1 class="font-semibold text-2xl mb-4">Loan Details</h1>
@@ -470,8 +463,16 @@
                         <p>${loan.return_date || 'Not returned yet'}</p>
                     </div>
                     <div>
+                        <p class="text-gray-600">Returned At:</p>
+                        <p>${loan.return?.return_date || 'Not returned yet'}</p>
+                    </div>
+                    <div>
                         <p class="text-gray-600">Description:</p>
                         <p>${loan.description || 'N/A'}</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-600">Notes:</p>
+                        <p>${loan.return?.notes || 'N/A'}</p>
                     </div>
                     <div>
                         <p class="text-gray-600">Status:</p>
@@ -612,10 +613,6 @@
 
             // Build modal content
             let modalContent = `
-            <div class="w-full mb-4">
-                <img src="${loan.items[0]?.image_url || '{{ asset('image/cyrene.jpg') }}'}" 
-                     alt="Preview" class="w-full h-[180px] object-cover rounded-lg">
-            </div>
             <h1 class="font-semibold text-2xl mb-4">Loan Details</h1>
             <div class="mb-6">
                 <h2 class="font-semibold text-lg mb-2">Loan Information</h2>
@@ -769,10 +766,6 @@
 
             content.innerHTML = `
             <div class="flex gap-6">
-                <div class="w-1/3">
-                    <img src="${item.image_url || '{{ asset('image/cyrene.jpg') }}'}" 
-                         alt="${item.name}" class="w-full rounded-lg">
-                </div>
                 <div class="w-2/3">
                     <h2 class="text-2xl font-bold mb-4">${item.name}</h2>
                     <div class="grid grid-cols-2 gap-4">
@@ -837,10 +830,6 @@
 
             content.innerHTML = `
             <div class="flex gap-6">
-                <div class="w-1/3">
-                    <img src="${item.image_url || '{{ asset('image/cyrene.jpg') }}'}" 
-                         alt="${item.name}" class="w-full rounded-lg">
-                </div>
                 <div class="w-2/3">
                     <h2 class="text-2xl font-bold mb-4">${item.name}</h2>
                     <div class="grid grid-cols-2 gap-4">

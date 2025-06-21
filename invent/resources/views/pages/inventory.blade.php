@@ -31,30 +31,42 @@
         <!-- New Inventory Modal -->
         <dialog id="newInventory" class="modal">
             <div class="modal-box">
-                <form method="POST" id="itemForm">
+                <form method="POST" id="itemForm" enctype="multipart/form-data">
                     <button id="cancel" type="button" onclick="closeModal()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
                     <h1 class="font-semibold text-2xl mb-4">New Inventory</h1>
+
+                    <!-- Image Upload -->
+                    <div class="mb-4">
+                        <h1 class="font-medium">Image</h1>
+                        <div class="flex items-center gap-4">
+                            <div class="avatar">
+                                <div class="w-24 rounded-lg bg-gray-200">
+                                    <img id="imagePreview" src="{{ asset('image/default.png') }}" alt="Preview" class="w-full h-full object-cover" />
+                                </div>
+                            </div>
+                            <input type="file" id="imageUpload" name="image" class="file-input file-input-bordered w-full max-w-xs" accept="image/*" />
+                        </div>
+                    </div>
 
                     <div class="flex gap-5 justify-between text-gray-600">
                         <!-- Rack -->
                         <div class="w-[50%]">
                             <h1 class="font-medium">Name</h1>
                             <div class="mb-2">
-                                <input type="text" id="locationName" class="input input-bordered w-full max-w-xs" placeholder="Enter location name">
+                                <input type="text" name="name" id="locationName" class="input input-bordered w-full max-w-xs" placeholder="Enter location name" required>
                             </div>
                         </div>
                         <!-- Location -->
                         <div class="w-[50%]">
-                            <h1 class="font-medium">Desciption</h1>
-                            <input type="text" id="locationDescription" class="input input-bordered w-full max-w-xs" placeholder="Enter location description">
+                            <h1 class="font-medium">Description</h1>
+                            <input type="text" name="description" id="locationDescription" class="input input-bordered w-full max-w-xs" placeholder="Enter location description">
                         </div>
                     </div>
 
-
                     <!-- Buttons -->
-                    <div class="w-full flex justify-end items-end gap-4">
+                    <div class="w-full flex justify-end items-end gap-4 mt-4">
                         <button id="cancelButton" type="button" onclick="closeModal()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Cancel</button>
-                        <button class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Submit</button>
+                        <button type="submit" class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Submit</button>
                     </div>
                 </form>
             </div>
@@ -65,29 +77,36 @@
                 document.getElementById('newInventory').close();
             }
 
-            document.getElementById('itemForm').addEventListener('submit', function(e) {
-                e.preventDefault(); // Cegah reload
+            // Image preview functionality
+            document.getElementById('imageUpload').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        document.getElementById('imagePreview').src = event.target.result;
+                    };
+                    reader.readAsDataURL(file);
+                }
+            });
 
-                const name = document.getElementById('locationName').value;
-                const description = document.getElementById('locationDescription').value;
+            document.getElementById('itemForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const formData = new FormData(this);
 
                 fetch('/locations', {
                         method: 'POST'
                         , headers: {
-                            'Content-Type': 'application/json'
-                            , 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                        , }
-                        , body: JSON.stringify({
-                            name: name
-                            , description: description
-                        , })
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        }
+                        , body: formData
                     })
                     .then(res => res.json())
                     .then(data => {
                         console.log(data);
                         alert(data.message);
                         closeModal();
-                        window.location.reload(); // Reload halaman setelah sukses
+                        window.location.reload();
                     })
                     .catch(err => {
                         console.error(err);
@@ -130,7 +149,9 @@
                 <form method="dialog" id="viewForm">
                     <!-- Product Image -->
                     <div class="w-full mb-4">
-                        <img src="{{ asset('image/cyrene.jpg') }}" alt="Preview" class="w-full h-[180px] object-cover rounded-lg">
+                        <img alt="Preview" class="w-full h-[180px] object-cover rounded-lg" src="{{ $location->image === 'default.png' ? asset('image/default.png') : asset('storage/' . $location->image) }}" />
+
+
                     </div>
 
                     <!-- Close Button -->
@@ -167,7 +188,7 @@
                     </div>
 
                     <div class="w-full flex justify-end items-end gap-4 mt-6">
-                        <button type="button" class="btn btn-primary text-white rounded-lg px-4 py-2 cursor-pointer" onclick="document.getElementById('editProduct').showModal()">edit</button>
+                        <button type="button" class="btn btn-primary text-white rounded-lg px-4 py-2 cursor-pointer" onclick="event.stopPropagation(); prepareEditModal();">edit</button>
                         <button type="button" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-red-800 cursor-pointer" onclick="deleteItem({{ $location->id }})">delete</button>
                         <button type="button" onclick="document.getElementById('viewProduct').close()" class="btn btn-secondary text-white rounded-lg px-4 py-2 cursor-pointer">Close</button>
                     </div>
@@ -210,19 +231,33 @@
 
         <dialog id="editProduct" class="modal">
             <div class="modal-box">
-                <form method="dialog" id="editForm">
+                <form method="POST" id="editForm" enctype="multipart/form-data">
                     <button id="cancel" type="button" onclick="closeEditModal()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
                     <h1 class="font-semibold text-2xl mb-4">Edit Location</h1>
-                    <input type="hidden" id="edit_location_id">
+                    <input type="hidden" name="_method" value="PUT">
+                    <input type="hidden" name="id" id="edit_location_id">
+
+                    <!-- Image Upload -->
+                    <div class="mb-4">
+                        <h1 class="font-medium">Image</h1>
+                        <div class="flex items-center gap-4">
+                            <div class="avatar">
+                                <div class="w-24 rounded-lg bg-gray-200">
+                                    <img id="editImagePreview" src="" alt="Preview" class="w-full h-full object-cover" />
+                                </div>
+                            </div>
+                            <input type="file" id="editImageUpload" name="image" class="file-input file-input-bordered w-full max-w-xs" accept="image/*" />
+                        </div>
+                    </div>
 
                     <div class="flex gap-5 justify-between text-gray-600">
                         <div class="w-[50%]">
                             <h1 class="font-medium">NAME</h1>
-                            <input type="text" id="edit_name" class="input w-full" placeholder="Location name">
+                            <input type="text" name="name" id="edit_name" class="input w-full" placeholder="Location name" required>
                         </div>
                         <div class="w-[50%]">
                             <h1 class="font-medium">DESCRIPTION</h1>
-                            <input type="text" id="edit_description" class="input w-full" placeholder="Location description">
+                            <input type="text" name="description" id="edit_description" class="input w-full" placeholder="Location description">
                         </div>
                     </div>
 
@@ -281,30 +316,34 @@
             document.getElementById("editForm").addEventListener("submit", function(e) {
                 e.preventDefault();
 
-                const id = document.getElementById("edit_location_id").value;
-                const payload = {
-                    name: document.getElementById("edit_name").value
-                    , description: document.getElementById("edit_description").value
-                };
+                const formData = new FormData(this);
+                const locationId = formData.get('id');
 
-                fetch(`/api/locations/${id}`, {
-                        method: 'PUT'
-                        , headers: {
-                            'Content-Type': 'application/json'
-                            , 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                // Use the correct endpoint (note: using /api/locations)
+                fetch(`/api/locations/${locationId}`, {
+                        method: 'POST', // Using POST with _method=PUT
+                        headers: {
+                            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            , 'Accept': 'application/json'
                         }
-                        , body: JSON.stringify(payload)
+                        , body: formData
                     })
-                    .then(response => response.json())
+                    .then(response => {
+                        if (!response.ok) {
+                            return response.json().then(err => {
+                                throw err;
+                            });
+                        }
+                        return response.json();
+                    })
                     .then(data => {
                         alert('Location updated successfully');
                         closeEditModal();
-                        // Optionally refresh the page or update the UI
                         window.location.reload();
                     })
                     .catch(err => {
                         console.error(err);
-                        alert('Failed to update location');
+                        alert(err.message || 'Failed to update location');
                     });
             });
 
@@ -317,21 +356,22 @@
                         return response.json();
                     })
                     .then(data => {
-                        // Simpan data untuk modal kedua
                         currentItems = data.items || [];
-                        document.querySelector('.btn-primary').onclick = function() {
-                            document.getElementById('edit_location_id').value = data.location.id;
-                            document.getElementById('edit_name').value = data.location.name;
-                            document.getElementById('edit_description').value = data.location.description;
-                            document.getElementById('editProduct').showModal();
-                        };
-                        // Set data di modal utama
+                        currentLocationData = data.location; // Store the location data
+
+                        // Set view modal data
                         document.getElementById('modalLocationName').textContent = data.location.name || '-';
                         document.getElementById('modalLocationDescription').textContent = data.location.description || '-';
 
+                        // Set image in view modal
+                        const viewImage = document.querySelector('#viewProduct img');
+                        viewImage.src = data.location.image === 'default.png' ?
+                            '{{ asset("image/default.png") }}' :
+                            '{{ asset("storage") }}/' + data.location.image;
+
+                        // Set items list
                         const itemList = document.getElementById('modalItemList');
                         itemList.innerHTML = '';
-
                         const previewItems = currentItems.slice(0, 5);
                         previewItems.forEach(item => {
                             const li = document.createElement('li');
@@ -339,9 +379,11 @@
                             itemList.appendChild(li);
                         });
 
+                        // Show/hide "View All" button
                         const viewAllBtn = document.getElementById('viewAllBtn');
                         viewAllBtn.classList.toggle('hidden', currentItems.length <= 5);
 
+                        // Set categories
                         const categoryList = document.getElementById('modalCategoryList');
                         categoryList.innerHTML = '';
                         (data.categories || []).forEach(cat => {
@@ -351,12 +393,34 @@
                             categoryList.appendChild(span);
                         });
 
+                        // Open view modal
                         document.getElementById('viewProduct').showModal();
                     })
                     .catch(err => {
-                        alert('Gagal mengambil data lokasi.');
+                        alert('Failed to fetch location data.');
                         console.error(err);
                     });
+            }
+
+            function prepareEditModal() {
+                if (!currentLocationData) return;
+
+                // Close view modal
+                document.getElementById('viewProduct').close();
+
+                // Set edit modal data
+                document.getElementById('edit_location_id').value = currentLocationData.id;
+                document.getElementById('edit_name').value = currentLocationData.name;
+                document.getElementById('edit_description').value = currentLocationData.description;
+
+                // Set image preview
+                const editImagePreview = document.getElementById('editImagePreview');
+                editImagePreview.src = currentLocationData.image === 'default.png' ?
+                    '{{ asset("image/default.png") }}' :
+                    '{{ asset("storage") }}/' + currentLocationData.image;
+
+                // Open edit modal
+                document.getElementById('editProduct').showModal();
             }
 
             function openAllItemsModal() {
