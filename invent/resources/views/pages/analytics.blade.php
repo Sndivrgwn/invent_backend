@@ -21,11 +21,9 @@
             </div>
             <div class="flex-none">
                 {{-- new product --}}
-                <button
-                    class="bg-[#ffffff] rounded-lg py-2 px-4 mx-5 hover:bg-blue-400 cursor-pointer flex justify-center items-center">
+                <button class="bg-[#ffffff] rounded-lg py-2 px-4 mx-5 hover:bg-blue-400 cursor-pointer flex justify-center items-center">
                     <div class="gap-2 flex">
-                        <i class="fa fa-download"
-                            style="display: flex; justify-content: center; align-items: center;"></i>
+                        <i class="fa fa-download" style="display: flex; justify-content: center; align-items: center;"></i>
                         <a href="{{ route('analytics.export') }}">Export Report</a>
                     </div>
                 </button>
@@ -41,9 +39,7 @@
                         <p class="font-medium text-xl ms-5">Category Overview</p>
                     </div>
                     <div class="flex-none">
-                        <button
-                            class="bg-[#2563EB] text-white rounded-lg py-2 px-4 mx-5 hover:bg-blue-400 cursor-pointer flex justify-center items-center"
-                            onclick="newProduct.showModal()">
+                        <button class="bg-[#2563EB] text-white rounded-lg py-2 px-4 mx-5 hover:bg-blue-400 cursor-pointer flex justify-center items-center" onclick="newProduct.showModal()">
                             <div class="gap-2 flex">
                                 <i class="fa fa-plus" style="display: flex; justify-content: center; align-items: center;"></i>
                                 <span>New Category</span>
@@ -54,8 +50,7 @@
                         <div class="modal-box">
                             <form method="POST" id="itemForm" action="{{ route('analytics.store') }}">
                                 @csrf
-                                <button id="cancel" type="button" onclick="document.getElementById('newProduct').close()"
-                                    class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                                <button id="cancel" type="button" onclick="document.getElementById('newProduct').close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
                                 <h1 class="font-semibold text-2xl mb-4">New Category</h1>
                                 <div class="flex gap-5 justify-between text-gray-600">
                                     <!-- Rack -->
@@ -72,10 +67,8 @@
                                     </div>
                                 </div>
                                 <div class="w-full flex justify-end items-end gap-4">
-                                    <button id="cancelButton" type="button" onclick="document.getElementById('newProduct').close()"
-                                        class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Cancel</button>
-                                    <button type="submit"
-                                        class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Submit</button>
+                                    <button id="cancelButton" type="button" onclick="document.getElementById('newProduct').close()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Cancel</button>
+                                    <button type="submit" class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Submit</button>
                                 </div>
                             </form>
 
@@ -84,6 +77,7 @@
                                 function closeModal() {
                                     document.getElementById('newProduct').close();
                                 }
+
                             </script>
                             @endpush
 
@@ -98,36 +92,172 @@
                 @foreach($categories as $category)
                 <div class="mb-6 flex flex-col gap-4">
                     <h2 class="text-lg ms-12 font-bold mb-2">{{ $category->name }} </h2>
-                    <p class="ms-12 font-italic">{{  $category->description  }}</p>
+                    <p class="ms-12 font-italic">{{ $category->description  }}</p>
                     <div class="overflow-x-auto">
-                    <table class="table w-full bg-white rounded shadow-md">
-                        <thead>
-                            <tr>
-                                <th class="text-center">TYPE</th>
-                                <th class="text-center">QUANTITY</th>
-                                <th class="text-center">AVAILABLE</th>
-                                <th class="text-center">LOANED</th>
-                                <th class="text-center">LOW STOCK</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach($category->type_summaries as $type)
-                            <tr>
-                                <td class="text-center">{{ $type['type'] }}</td>
-                                <td class="text-center">{{ $type['quantity'] }}</td>
-                                <td class="text-center">{{ $type['available'] }}</td>
-                                <td class="text-center">{{ $type['loaned'] }}</td>
-                                <td class="text-center">{{ $type['low_stock'] }}</td>
-                            </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                        <table class="table w-full bg-white rounded shadow-md">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">TYPE</th>
+                                    <th class="text-center">QUANTITY</th>
+                                    <th class="text-center">AVAILABLE</th>
+                                    <th class="text-center">LOANED</th>
+                                    <th class="text-center">LOW STOCK</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach($category->type_summaries as $type)
+                                <tr>
+                                    <td class="text-center">{{ $type['type'] }}</td>
+                                    <td class="text-center">{{ $type['quantity'] }}</td>
+                                    <td class="text-center">{{ $type['available'] }}</td>
+                                    <td class="text-center">{{ $type['loaned'] }}</td>
+                                    <td class="text-center">{{ $type['low_stock'] }}</td>
+                                </tr>
+                                @endforeach
+                                <tr>
+                                    <td colspan="5" class="text-end">
+                                        <!-- Change this in your table row -->
+                                        <button type="button" class="btn btn-primary text-white rounded-lg px-4 py-2 cursor-pointer" onclick="openEditModal({{ $category->id }}, '{{ $category->name }}', '{{ $category->description }}')">
+                                            edit
+                                        </button>
+                                        <button type="button" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-red-800 cursor-pointer" onclick="deleteItem({{ $category->id }})">delete</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
                 @endforeach
             </div>
 
+            <dialog id="confirmDeleteDialog" class="modal">
+                <div class="modal-box">
+                    <form method="dialog">
+                        <!-- Close Button -->
+                        <button type="button" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onclick="closeDeleteDialog()">✕</button>
+                        <!-- Konten -->
+                        <h1 class="text-xl font-bold text-center mb-4">Delete Item?</h1>
+                        <p class="text-center text-gray-600">Are you sure you want to delete this item? The product will also deleted. Check before you submit.</p>
+                        <!-- Tombol -->
+                        <div class="flex justify-end gap-3 mt-6">
+                            <button type="button" onclick="closeDeleteDialog()" class="bg-gray-300 text-gray-800 rounded-lg px-4 py-2 hover:bg-gray-400 cursor-pointer">Cancel</button>
+                            <button type="button" onclick="confirmDelete()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-red-600 cursor-pointer">Yes, Delete</button>
+                        </div>
+                    </form>
+                </div>
+            </dialog>
 
+            <dialog id="editProduct" class="modal">
+                <div class="modal-box">
+                    <form id="editForm" method="POST">
+                        <!-- Remove method="dialog" -->
+                        <button type="button" onclick="closeEditModal()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                        <h1 class="font-semibold text-2xl mb-4">Edit Category</h1>
+                        <input type="hidden" id="edit_category_id" name="id">
+
+                        <div class="flex gap-5 justify-between text-gray-600">
+                            <div class="w-[50%]">
+                                <h1 class="font-medium">NAME</h1>
+                                <input type="text" id="edit_name" name="name" class="input w-full" placeholder="Category name">
+                            </div>
+                            <div class="w-[50%]">
+                                <h1 class="font-medium">DESCRIPTION</h1>
+                                <input type="text" id="edit_description" name="description" class="input w-full" placeholder="Category description">
+                            </div>
+                        </div>
+
+                        <div class="w-full flex justify-end items-end gap-4 mt-4">
+                            <button type="button" onclick="closeEditModal()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Cancel</button>
+                            <button type="submit" class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Save</button>
+                        </div>
+                    </form>
+                </div>
+            </dialog>
+
+            <script>
+                let deleteTargetId = null;
+
+                async function deleteItem(id) {
+                    deleteTargetId = id;
+                    document.getElementById("confirmDeleteDialog").showModal();
+                }
+
+                async function confirmDelete() {
+                    if (!deleteTargetId) return;
+
+                    const res = await fetch(`/api/analytics/${deleteTargetId}`, {
+                        method: 'DELETE'
+                        , headers: {
+                            'Accept': 'application/json'
+                            , 'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        }
+                    });
+
+                    if (res.ok) {
+                        alert('Category deleted');
+                        window.location.reload();
+                    } else {
+                        const data = await res.json();
+                        alert('Error bray cek console');
+                        console.log(data.message || res.statusText);
+                    }
+
+                    deleteTargetId = null;
+                    closeDeleteDialog();
+                }
+
+                function closeDeleteDialog() {
+                    document.getElementById("confirmDeleteDialog").close();
+                    deleteTargetId = null;
+                }
+
+                function closeEditModal() {
+                    document.getElementById('editProduct').close();
+                }
+
+                // Add these functions to your script section
+                function openEditModal(id, name, description) {
+                    document.getElementById('edit_category_id').value = id;
+                    document.getElementById('edit_name').value = name;
+                    document.getElementById('edit_description').value = description;
+                    document.getElementById('editProduct').showModal();
+                }
+
+                // Update the form submission handler
+                document.getElementById("editForm").addEventListener("submit", function(e) {
+                    e.preventDefault();
+
+                    const id = document.getElementById("edit_category_id").value;
+                    const payload = {
+                        name: document.getElementById("edit_name").value
+                        , description: document.getElementById("edit_description").value
+                        , _method: 'PUT' // Laravel needs this for PUT requests
+                    };
+
+                    fetch(`api/analytics/${id}`, {
+                            method: 'PUT', // Laravel prefers POST for form submissions
+                            headers: {
+                                'Content-Type': 'application/json'
+                                , 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                            }
+                            , body: JSON.stringify(payload)
+                        })
+                        .then(response => {
+                            if (!response.ok) throw new Error('Network response was not ok');
+                            return response.json();
+                        })
+                        .then(data => {
+                            alert('Category updated successfully');
+                            closeEditModal();
+                            window.location.reload(); // Refresh to see changes
+                        })
+                        .catch(err => {
+                            console.error('Error:', err);
+                            alert('Failed to update category');
+                        });
+                });
+
+            </script>
         </div>
     </div>
 </div>

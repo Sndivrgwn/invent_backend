@@ -95,7 +95,18 @@ class AnalyticsController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+        ]);
+
+        $category = Category::findOrFail($id);
+        $category->update($request->only('name', 'description'));
+
+        return response()->json([
+            'message' => 'Category updated successfully',
+            'data' => $category,
+        ], 200);
     }
 
     /**
@@ -103,6 +114,19 @@ class AnalyticsController extends Controller
      */
     public function destroy(string $id)
     {
-        //
+        $category = Category::findOrFail($id);
+
+        // Hapus semua item terkait kategori ini
+        foreach ($category->items as $item) {
+            $item->loans()->detach(); // Hapus relasi dengan loans
+            $item->delete(); // Hapus item
+        }
+
+        // Hapus kategori
+        $category->delete();
+
+        return response()->json([
+            'message' => 'Category and related items deleted successfully',
+        ], 200);
     }
 }

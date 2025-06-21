@@ -21,9 +21,7 @@
             </div>
             <div class="flex-none">
                 {{-- new product --}}
-                <button
-                    class="bg-[#2563EB] text-white rounded-lg py-2 px-4 mx-5 hover:bg-blue-400 cursor-pointer flex justify-center items-center"
-                    onclick="newProduct.showModal()">
+                <button class="bg-[#2563EB] text-white rounded-lg py-2 px-4 mx-5 hover:bg-blue-400 cursor-pointer flex justify-center items-center" onclick="newProduct.showModal()">
                     <div class="gap-2 flex">
                         <i class="fa fa-plus" style="display: flex; justify-content: center; align-items: center;"></i>
                         <span>New Product</span>
@@ -33,8 +31,7 @@
                     <div class="modal-box">
                         <!-- close button -->
                         <form method="dialog" id="itemForm">
-                            <button id="cancel" type="button" onclick="closeModal()"
-                                class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                            <button id="cancel" type="button" onclick="closeModal()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
                             <h1 class="font-semibold text-2xl mb-4">New Product</h1>
                             <div class="flex gap-5 justify-between text-gray-600">
                                 <!-- Product -->
@@ -122,8 +119,7 @@
                                 <div class="w-full">
                                     <h1 class="font-medium text-gray-600">SERIAL NUMBER</h1>
                                     <label class="input flex text-gray-600" style="width: 100%;">
-                                        <input class="w-full" type="text" id="serialNumber"
-                                            placeholder="Serial Number" />
+                                        <input class="w-full" type="text" id="serialNumber" placeholder="Serial Number" />
                                     </label>
                                 </div>
                             </div>
@@ -131,16 +127,13 @@
                             <!-- deskripsi -->
                             <div class="mb-4">
                                 <h1 class="font-medium text-gray-600">DESCRIPTION</h1>
-                                <textarea id="description" class="textarea text-gray-600" placeholder="Description"
-                                    style="width: 100%;"></textarea>
+                                <textarea id="description" class="textarea text-gray-600" placeholder="Description" style="width: 100%;"></textarea>
                             </div>
 
                             <!-- button -->
                             <div class="w-full flex justify-end items-end gap-4">
-                                <button id="cancelButton" type="button" onclick="closeModal()"
-                                    class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Cancel</button>
-                                <button
-                                    class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Submit</button>
+                                <button id="cancelButton" type="button" onclick="closeModal()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Cancel</button>
+                                <button class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Submit</button>
                             </div>
                         </form>
 
@@ -233,6 +226,7 @@
                             function closeModal() {
                                 document.getElementById('newProduct').close();
                             }
+
                         </script>
                         @endpush
 
@@ -247,34 +241,26 @@
                 <!-- search -->
                 <div class="relative w-full hidden md:block mr-4">
                     <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                        <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                            viewBox="0 0 20 20">
-                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                        <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
                         </svg>
                         <span class="sr-only">Search icon</span>
                     </div>
                     <form method="GET" action="{{ route('products') }}" class="relative w-full md:block">
                         <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                            <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                viewBox="0 0 20 20">
-                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                    stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                            <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
                             </svg>
                             <span class="sr-only">Search icon</span>
                         </div>
-                        <input type="text" name="search-navbar" value="{{ request('search-navbar') }}"
-                            class="block w-full p-2 ps-10 text-sm border border-gray-400 rounded-lg"
-                            placeholder="Search...">
+                        <input type="text" name="search-navbar" value="{{ request('search-navbar') }}" class="block w-full p-2 ps-10 text-sm border border-gray-400 rounded-lg" placeholder="Search...">
 
                     </form>
 
                 </div>
 
                 <!-- filter -->
-                <button class="btn flex justify-center items-center bg-transparent"
-                    onclick="filterProduct.showModal()">All Categories <i class="fa fa-filter"
-                        style="display: flex; justify-content: center; align-items: center;"></i></button>
+                <button class="btn flex justify-center items-center bg-transparent" onclick="filterProduct.showModal()">All Categories <i class="fa fa-filter" style="display: flex; justify-content: center; align-items: center;"></i></button>
                 <dialog id="filterProduct" class="modal">
                     <div class="modal-box">
                         <!-- close button -->
@@ -287,11 +273,9 @@
                             <div class="mb-4">
                                 <h1 class="text-lg font-semibold mb-2">Brand</h1>
                                 <div class="flex flex-wrap gap-1">
-                                    <input class="btn btn-square" type="reset" value="×"
-                                        onclick="resetFilter('brand')" />
+                                    <input class="btn btn-square" type="reset" value="×" onclick="resetFilter('brand')" />
                                     @foreach($items->pluck('brand')->unique() as $brand)
-                                    <input class="btn" type="radio" name="brand" value="{{ $brand }}"
-                                        aria-label="{{ $brand }}" />
+                                    <input class="btn" type="radio" name="brand" value="{{ $brand }}" aria-label="{{ $brand }}" />
                                     @endforeach
                                 </div>
                             </div>
@@ -300,11 +284,9 @@
                             <div class="mb-4">
                                 <h1 class="text-lg font-semibold mb-2">Category</h1>
                                 <div class="flex flex-wrap gap-1">
-                                    <input class="btn btn-square" type="reset" value="×"
-                                        onclick="resetFilter('category')" />
+                                    <input class="btn btn-square" type="reset" value="×" onclick="resetFilter('category')" />
                                     @foreach($items->pluck('category.name')->unique() as $category)
-                                    <input class="btn" type="radio" name="category" value="{{ $category }}"
-                                        aria-label="{{ $category }}" />
+                                    <input class="btn" type="radio" name="category" value="{{ $category }}" aria-label="{{ $category }}" />
                                     @endforeach
                                 </div>
                             </div>
@@ -313,11 +295,9 @@
                             <div class="mb-4">
                                 <h1 class="text-lg font-semibold mb-2">Type</h1>
                                 <div class="flex flex-wrap gap-1">
-                                    <input class="btn btn-square" type="reset" value="×"
-                                        onclick="resetFilter('type')" />
+                                    <input class="btn btn-square" type="reset" value="×" onclick="resetFilter('type')" />
                                     @foreach($items->pluck('type')->unique() as $type)
-                                    <input class="btn" type="radio" name="type" value="{{ $type }}"
-                                        aria-label="{{ $type }}" />
+                                    <input class="btn" type="radio" name="type" value="{{ $type }}" aria-label="{{ $type }}" />
                                     @endforeach
                                 </div>
                             </div>
@@ -325,11 +305,9 @@
                             <div class="mb-4">
                                 <h1 class="text-lg font-semibold mb-2">Location</h1>
                                 <div class="flex flex-wrap gap-1">
-                                    <input class="btn btn-square" type="reset" value="×"
-                                        onclick="resetFilter('type')" />
+                                    <input class="btn btn-square" type="reset" value="×" onclick="resetFilter('type')" />
                                     @foreach($locations->pluck('description')->unique() as $type)
-                                    <input class="btn" type="radio" name="location" value="{{ $type }}"
-                                        aria-label="{{ $type }}" />
+                                    <input class="btn" type="radio" name="location" value="{{ $type }}" aria-label="{{ $type }}" />
                                     @endforeach
                                 </div>
                             </div>
@@ -337,11 +315,9 @@
                             <div class="mb-4">
                                 <h1 class="text-lg font-semibold mb-2">Condition</h1>
                                 <div class="flex flex-wrap gap-1">
-                                    <input class="btn btn-square" type="reset" value="×"
-                                        onclick="resetFilter('condition')" />
+                                    <input class="btn btn-square" type="reset" value="×" onclick="resetFilter('condition')" />
                                     <input class="btn" type="radio" name="condition" value="GOOD" aria-label="GOOD" />
-                                    <input class="btn" type="radio" name="condition" value="NOT GOOD"
-                                        aria-label="NOT GOOD" />
+                                    <input class="btn" type="radio" name="condition" value="NOT GOOD" aria-label="NOT GOOD" />
                                 </div>
                             </div>
 
@@ -350,11 +326,9 @@
                             <div class="mb-4">
                                 <h1 class="text-lg font-semibold mb-2">Status</h1>
                                 <div class="flex flex-wrap gap-1">
-                                    <input class="btn btn-square" type="reset" value="×"
-                                        onclick="resetFilter('status')" />
+                                    <input class="btn btn-square" type="reset" value="×" onclick="resetFilter('status')" />
                                     <input class="btn" type="radio" name="status" value="READY" aria-label="READY" />
-                                    <input class="btn" type="radio" name="status" value="NOT READY"
-                                        aria-label="NOT READY" />
+                                    <input class="btn" type="radio" name="status" value="NOT READY" aria-label="NOT READY" />
                                 </div>
                             </div>
 
@@ -390,13 +364,12 @@
                                 <img class="size-12 rounded-sm" src="{{ asset('image/' . $item->image) }}" />
                             </td>
                             <td class="text-center">{{ $item->name }}</td>
-                            <td class="text-center">{{ $item->location->description }}</td>
+                            <td class="text-center">{{ $item->location->name }}</td>
                             <td class="text-center">{{ $item->code }}</td>
                             <td class="text-center">{{ $item->type }}</td>
                             <td class="text-center">{{ $item->condition }}</td>
                             <td class="text-center">
-                                <div
-                                    class="badge badge-soft p-4 {{ $item->status === 'READY' ? 'badge-success' : 'badge-error' }}">
+                                <div class="badge badge-soft p-4 {{ $item->status === 'READY' ? 'badge-success' : 'badge-error' }}">
                                     {{ $item->status }}
                                 </div>
                             </td>
@@ -413,17 +386,14 @@
                                 <div class="modal-box">
                                     <form method="dialog">
                                         <!-- Close Button -->
-                                        <button type="button" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
-                                            onclick="closeDeleteDialog()">✕</button>
+                                        <button type="button" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onclick="closeDeleteDialog()">✕</button>
                                         <!-- Konten -->
                                         <h1 class="text-xl font-bold text-center mb-4">Delete Item?</h1>
                                         <p class="text-center text-gray-600">Are you sure you want to delete this item? This action cannot be undone.</p>
                                         <!-- Tombol -->
                                         <div class="flex justify-end gap-3 mt-6">
-                                            <button type="button" onclick="closeDeleteDialog()"
-                                                class="bg-gray-300 text-gray-800 rounded-lg px-4 py-2 hover:bg-gray-400">Cancel</button>
-                                            <button type="button" onclick="confirmDelete()"
-                                                class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-red-600">Yes, Delete</button>
+                                            <button type="button" onclick="closeDeleteDialog()" class="bg-gray-300 text-gray-800 rounded-lg px-4 py-2 hover:bg-gray-400">Cancel</button>
+                                            <button type="button" onclick="confirmDelete()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-red-600">Yes, Delete</button>
                                         </div>
                                     </form>
                                 </div>
@@ -434,8 +404,7 @@
                             <dialog id="editProduct" class="modal">
                                 <div class="modal-box">
                                     <form method="dialog" id="editForm">
-                                        <button id="cancel" type="button" onclick="closeEditModal()"
-                                            class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                                        <button id="cancel" type="button" onclick="closeEditModal()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
                                         <h1 class="font-semibold text-2xl mb-4">Edit Product</h1>
 
                                         <div class="flex gap-5 justify-between text-gray-600">
@@ -482,10 +451,8 @@
                                         </div>
 
                                         <div class="w-full flex justify-end items-end gap-4 mt-4">
-                                            <button type="button" onclick="closeEditModal()"
-                                                class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Cancel</button>
-                                            <button type="submit"
-                                                class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Edit</button>
+                                            <button type="button" onclick="closeEditModal()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Cancel</button>
+                                            <button type="submit" class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Edit</button>
                                         </div>
                                     </form>
                                 </div>
@@ -502,8 +469,7 @@
                                         </div>
 
                                         <!-- Tombol close -->
-                                        <button type="button" onclick="document.getElementById('viewProduct').close()"
-                                            class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                                        <button type="button" onclick="document.getElementById('viewProduct').close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
 
                                         <h1 class="font-semibold text-2xl mb-4">Product Details</h1>
 
@@ -551,8 +517,7 @@
                                         </div>
 
                                         <div class="w-full flex justify-end items-end gap-4 mt-4">
-                                            <button type="button" onclick="document.getElementById('viewProduct').close()"
-                                                class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Close</button>
+                                            <button type="button" onclick="document.getElementById('viewProduct').close()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Close</button>
                                         </div>
                                     </form>
                                 </div>
@@ -569,39 +534,39 @@
             <script>
                 let deleteTargetId = null;
 
-    async function deleteItem(id) {
-        deleteTargetId = id;
-        document.getElementById("confirmDeleteDialog").showModal();
-    }
+                async function deleteItem(id) {
+                    deleteTargetId = id;
+                    document.getElementById("confirmDeleteDialog").showModal();
+                }
 
-    async function confirmDelete() {
-        if (!deleteTargetId) return;
+                async function confirmDelete() {
+                    if (!deleteTargetId) return;
 
-        const res = await fetch(`/api/items/${deleteTargetId}`, {
-            method: 'DELETE',
-            headers: {
-                'Accept': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            }
-        });
+                    const res = await fetch(`/api/items/${deleteTargetId}`, {
+                        method: 'DELETE'
+                        , headers: {
+                            'Accept': 'application/json'
+                            , 'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        }
+                    });
 
-        if (res.ok) {
-            alert('Item deleted');
-            window.location.reload();
-        } else {
-            const data = await res.json();
-            alert('Error bray cek console');
-            console.log(data.message || res.statusText);
-        }
+                    if (res.ok) {
+                        alert('Item deleted');
+                        window.location.reload();
+                    } else {
+                        const data = await res.json();
+                        alert('Error bray cek console');
+                        console.log(data.message || res.statusText);
+                    }
 
-        deleteTargetId = null;
-        closeDeleteDialog();
-    }
+                    deleteTargetId = null;
+                    closeDeleteDialog();
+                }
 
-    function closeDeleteDialog() {
-        document.getElementById("confirmDeleteDialog").close();
-        deleteTargetId = null;
-    }
+                function closeDeleteDialog() {
+                    document.getElementById("confirmDeleteDialog").close();
+                    deleteTargetId = null;
+                }
 
             </script>
             @endpush
@@ -637,27 +602,27 @@
 
 <script>
     function applyFilter() {
-    const form = document.getElementById('filterForm');
-    const formData = new FormData(form);
-    const params = new URLSearchParams();
+        const form = document.getElementById('filterForm');
+        const formData = new FormData(form);
+        const params = new URLSearchParams();
 
-    for (const [key, value] of formData.entries()) {
-        params.append(key, value);
-    }
+        for (const [key, value] of formData.entries()) {
+            params.append(key, value);
+        }
 
-    fetch(`/items/filter?${params.toString()}`)
-        .then(res => res.json())
-        .then(data => {
-            const tbody = document.getElementById("itemTableBody");
-            tbody.innerHTML = ""; // Kosongkan isi lama
+        fetch(`/items/filter?${params.toString()}`)
+            .then(res => res.json())
+            .then(data => {
+                const tbody = document.getElementById("itemTableBody");
+                tbody.innerHTML = ""; // Kosongkan isi lama
 
-            if (data.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="8" class="text-center text-gray-500">No items found</td></tr>`;
-                return;
-            }
+                if (data.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="8" class="text-center text-gray-500">No items found</td></tr>`;
+                    return;
+                }
 
-            data.forEach(item => {
-                tbody.innerHTML += `
+                data.forEach(item => {
+                    tbody.innerHTML += `
                     <tr>
                         <td class="flex justify-center">
                             <img class="size-12 rounded-sm" src="/image/${item.image}" />
@@ -679,15 +644,16 @@
                         </td>
                     </tr>
                 `;
+                });
+            })
+            .catch(error => {
+                console.error("Error:", error);
             });
-        })
-        .catch(error => {
-            console.error("Error:", error);
-        });
-}
+    }
+
 </script>
 <script>
-    document.getElementById('search-navbar').addEventListener('input', function () {
+    document.getElementById('search-navbar').addEventListener('input', function() {
         const keyword = this.value;
 
         fetch(`/items/search?q=${encodeURIComponent(keyword)}`)
@@ -733,19 +699,19 @@
         document.getElementById('editProduct').close();
     }
 
-    document.getElementById("editForm").addEventListener("submit", function (e) {
+    document.getElementById("editForm").addEventListener("submit", function(e) {
         e.preventDefault();
 
         const payload = {
-            product: document.getElementById("edit_product").value,
-            rack: document.getElementById("edit_rack").value,
-            brand: document.getElementById("edit_brand").value,
-            condition: document.getElementById("edit_condition").value,
-            type: document.getElementById("edit_type").value,
-            status: document.getElementById("edit_status").value,
-            serial: document.getElementById("edit_serial").value,
-            description: document.getElementById("edit_description").value,
-        };
+            product: document.getElementById("edit_product").value
+            , rack: document.getElementById("edit_rack").value
+            , brand: document.getElementById("edit_brand").value
+            , condition: document.getElementById("edit_condition").value
+            , type: document.getElementById("edit_type").value
+            , status: document.getElementById("edit_status").value
+            , serial: document.getElementById("edit_serial").value
+            , description: document.getElementById("edit_description").value
+        , };
 
         console.log("Edit payload:", payload);
         alert("Simulasi update berhasil. Kirim ke API sesuai kebutuhan.");
@@ -753,8 +719,8 @@
         document.getElementById("editForm").reset();
         closeEditModal();
     });
+
 </script>
 
 @stack('scripts')
 @include('template.footer')
-

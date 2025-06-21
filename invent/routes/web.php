@@ -36,8 +36,11 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/users', [UserManagementController::class, 'index'])->name('users');
     Route::get('/settings', [SettingController::class, 'index'])->name('setting');
     Route::get('/profil', [profilController::class, 'index'])->name('profil');
-
+    Route::put('/profile/name', [profilController::class, 'updateName'])->name('profile.update.name');
+    Route::put('/profile/email', [profilController::class, 'updateEmail'])->name('profile.update.email');
+    Route::put('/profile/avatar', [profilController::class, 'updateAvatar'])->name('profile.update.avatar');
     Route::post('/users/store', [UserManagementController::class, 'store'])->name('users.store');
+
     Route::post('/locations', [LocationController::class, 'store']);
 
 

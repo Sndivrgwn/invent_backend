@@ -87,7 +87,7 @@
                         console.log(data);
                         alert(data.message);
                         closeModal();
-                        // TODO: Tambahkan logika untuk menambahkan item ke daftar tanpa reload
+                        window.location.reload(); // Reload halaman setelah sukses
                     })
                     .catch(err => {
                         console.error(err);
@@ -167,7 +167,9 @@
                     </div>
 
                     <div class="w-full flex justify-end items-end gap-4 mt-6">
-                        <button type="button" onclick="document.getElementById('viewProduct').close()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Close</button>
+                        <button type="button" class="btn btn-primary text-white rounded-lg px-4 py-2 cursor-pointer" onclick="document.getElementById('editProduct').showModal()">edit</button>
+                        <button type="button" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-red-800 cursor-pointer" onclick="deleteItem({{ $location->id }})">delete</button>
+                        <button type="button" onclick="document.getElementById('viewProduct').close()" class="btn btn-secondary text-white rounded-lg px-4 py-2 cursor-pointer">Close</button>
                     </div>
                 </form>
             </div>
@@ -189,12 +191,122 @@
             </div>
         </dialog>
 
+        <dialog id="confirmDeleteDialog" class="modal">
+            <div class="modal-box">
+                <form method="dialog">
+                    <!-- Close Button -->
+                    <button type="button" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onclick="closeDeleteDialog()">✕</button>
+                    <!-- Konten -->
+                    <h1 class="text-xl font-bold text-center mb-4">Delete Item?</h1>
+                    <p class="text-center text-gray-600">Are you sure you want to delete this item? The product will also deleted. Check before you submit.</p>
+                    <!-- Tombol -->
+                    <div class="flex justify-end gap-3 mt-6">
+                        <button type="button" onclick="closeDeleteDialog()" class="bg-gray-300 text-gray-800 rounded-lg px-4 py-2 hover:bg-gray-400 cursor-pointer">Cancel</button>
+                        <button type="button" onclick="confirmDelete()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-red-600 cursor-pointer">Yes, Delete</button>
+                    </div>
+                </form>
+            </div>
+        </dialog>
 
+        <dialog id="editProduct" class="modal">
+            <div class="modal-box">
+                <form method="dialog" id="editForm">
+                    <button id="cancel" type="button" onclick="closeEditModal()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                    <h1 class="font-semibold text-2xl mb-4">Edit Location</h1>
+                    <input type="hidden" id="edit_location_id">
+
+                    <div class="flex gap-5 justify-between text-gray-600">
+                        <div class="w-[50%]">
+                            <h1 class="font-medium">NAME</h1>
+                            <input type="text" id="edit_name" class="input w-full" placeholder="Location name">
+                        </div>
+                        <div class="w-[50%]">
+                            <h1 class="font-medium">DESCRIPTION</h1>
+                            <input type="text" id="edit_description" class="input w-full" placeholder="Location description">
+                        </div>
+                    </div>
+
+                    <div class="w-full flex justify-end items-end gap-4 mt-4">
+                        <button type="button" onclick="closeEditModal()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Cancel</button>
+                        <button type="submit" class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Save</button>
+                    </div>
+                </form>
+            </div>
+        </dialog>
 
         <!-- JavaScript -->
         <script>
             let currentItems = []; // global variable
             let currentLocationId = null;
+            let deleteTargetId = null;
+
+            async function deleteItem(id) {
+                deleteTargetId = id;
+                document.getElementById("confirmDeleteDialog").showModal();
+            }
+
+            async function confirmDelete() {
+                if (!deleteTargetId) return;
+
+                const res = await fetch(`/api/location/${deleteTargetId}`, {
+                    method: 'DELETE'
+                    , headers: {
+                        'Accept': 'application/json'
+                        , 'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    }
+                });
+
+                if (res.ok) {
+                    alert('Item deleted');
+                    window.location.reload();
+                } else {
+                    const data = await res.json();
+                    alert('Error bray cek console');
+                    console.log(data.message || res.statusText);
+                }
+
+                deleteTargetId = null;
+                closeDeleteDialog();
+            }
+
+            function closeDeleteDialog() {
+                document.getElementById("confirmDeleteDialog").close();
+                deleteTargetId = null;
+            }
+
+            function closeEditModal() {
+                document.getElementById('editProduct').close();
+            }
+
+            document.getElementById("editForm").addEventListener("submit", function(e) {
+                e.preventDefault();
+
+                const id = document.getElementById("edit_location_id").value;
+                const payload = {
+                    name: document.getElementById("edit_name").value
+                    , description: document.getElementById("edit_description").value
+                };
+
+                fetch(`/api/locations/${id}`, {
+                        method: 'PUT'
+                        , headers: {
+                            'Content-Type': 'application/json'
+                            , 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                        }
+                        , body: JSON.stringify(payload)
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        alert('Location updated successfully');
+                        closeEditModal();
+                        // Optionally refresh the page or update the UI
+                        window.location.reload();
+                    })
+                    .catch(err => {
+                        console.error(err);
+                        alert('Failed to update location');
+                    });
+            });
 
             function openLocationDetail(id) {
                 currentLocationId = id;
@@ -207,7 +319,12 @@
                     .then(data => {
                         // Simpan data untuk modal kedua
                         currentItems = data.items || [];
-
+                        document.querySelector('.btn-primary').onclick = function() {
+                            document.getElementById('edit_location_id').value = data.location.id;
+                            document.getElementById('edit_name').value = data.location.name;
+                            document.getElementById('edit_description').value = data.location.description;
+                            document.getElementById('editProduct').showModal();
+                        };
                         // Set data di modal utama
                         document.getElementById('modalLocationName').textContent = data.location.name || '-';
                         document.getElementById('modalLocationDescription').textContent = data.location.description || '-';
