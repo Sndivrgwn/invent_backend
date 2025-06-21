@@ -1,10 +1,10 @@
 @include('template.head')
 
 <div class="navbar bg-base-100 shadow-sm rounded-b-xl">
-    <div class="flex-1">
+    <div class="flex-1 hidden md:inline-flex">
         <a class="btn btn-ghost text-xl">StockFlowICT</a>
     </div>
-    <div class="flex gap-2">
+    <div class="flex">
         {{-- search --}}
         {{-- <div class="flex md:order-2">
     <button type="button" data-collapse-toggle="navbar-search" aria-controls="navbar-search" aria-expanded="false" class="md:hidden text-white focus:outline-none rounded-lg text-sm p-2.5 me-1">
