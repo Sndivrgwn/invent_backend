@@ -4,6 +4,7 @@ use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\LoanController;
 use App\Http\Controllers\LocationController;
+use App\Http\Controllers\ManageLoanController;
 use App\Http\Controllers\ReturnController;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\UsersController;
@@ -35,6 +36,10 @@ Route::get('/history/{id}', [App\Http\Controllers\HistoryController::class, 'sho
 Route::put('/history/{id}', [App\Http\Controllers\HistoryController::class, 'update']);
 Route::delete('/history/{id}', [App\Http\Controllers\HistoryController::class, 'destroy']);
 
+Route::delete('/loans/{id}', [ManageLoanController::class, 'destroy']);
+Route::get('/loans/{id}', [ManageLoanController::class, 'show']);
+Route::get('/loans', [ManageLoanController::class, 'index']);
+Route::post('/return/{id}', [ManageLoanController::class, 'returnLoan']);
 
 Route::post('/login', [App\Http\Controllers\Auth\LoginController::class, 'loginapi']);
 Route::post('/register', [App\Http\Controllers\Auth\RegisterController::class, 'registerapi']);

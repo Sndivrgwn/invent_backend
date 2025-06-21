@@ -8,6 +8,7 @@ use App\Models\Loan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Exports\HistoryExport;
+use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
 
 class LoanController extends Controller
@@ -147,25 +148,57 @@ class LoanController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+     public function update(Request $request, string $id)
     {
+        // Validate the request data
+        $validator = Validator::make($request->all(), [
+            'loaner_name' => 'sometimes|required|string|max:255',
+            'return_date' => 'sometimes|required|date|after_or_equal:today',
+            'description' => 'nullable|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        // Find the loan
         $loan = Loan::find($id);
+        
         if (!$loan) {
             return response()->json(['message' => 'Loan not found'], 404);
         }
 
-        $request->validate([
-            'user_id' => 'sometimes|exists:users,id',
-            'item_id' => 'sometimes|exists:items,id',
-            'quantity' => 'sometimes|integer|min:1',
-            'code_loans' => 'sometimes|string|unique:loans,code_loans,' . $id,
-            'loan_date' => 'sometimes|date',
-            'return_date' => 'sometimes|date|after_or_equal:loan_date',
-            'status' => 'sometimes|in:borrowed,returned',
-        ]);
+        // Check if the loan can be updated (status check)
+        if ($loan->status === 'returned') {
+            return response()->json([
+                'message' => 'Cannot update a returned loan'
+            ], 403);
+        }
 
-        $loan->update($request->all());
-        return response()->json(['message' => 'Loan updated', 'loan' => $loan]);
+        try {
+            // Update only the fields that were provided in the request
+            $loan->fill($request->only([
+                'loaner_name',
+                'return_date',
+                'description'
+            ]));
+            
+            $loan->save();
+
+            return response()->json([
+                'message' => 'Loan updated successfully',
+                'loan' => $loan
+            ]);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Failed to update loan',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -177,6 +210,11 @@ class LoanController extends Controller
         if (!$loan) {
             return response()->json(['message' => 'Loan not found'],  404);
         }
+
+        $loan->items()->each(function ($item) {
+            $item->status = 'READY'; // Reset item status to READY
+            $item->save();
+        });
 
         $loan->delete();
         return response()->json(['message' => 'Loan deleted']);

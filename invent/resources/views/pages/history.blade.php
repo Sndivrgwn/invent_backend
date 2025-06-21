@@ -284,9 +284,14 @@
                         <p>${loan.code_loans || 'N/A'}</p>
                     </div>
                     <div>
-                        <p class="text-gray-600">Borrower:</p>
-                        <p>${loan.user?.name || loan.loaner_name || 'N/A'}</p>
+                        <p class="text-gray-600">Admin:</p>
+                        <p>${loan.user?.name || 'N/A'}</p>
                     </div>
+                    <div>
+                        <p class="text-gray-600">Borrower:</p>
+                        <p>${loan.loaner_name || 'N/A'}</p>
+                    </div>
+                    
                     <div>
                         <p class="text-gray-600">Loan Date:</p>
                         <p>${loan.loan_date || 'N/A'}</p>
@@ -294,6 +299,10 @@
                     <div>
                         <p class="text-gray-600">Return Date:</p>
                         <p>${loan.return_date || 'Not returned yet'}</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-600">Description:</p>
+                        <p>${loan.description || 'N/A'}</p>
                     </div>
                     <div>
                         <p class="text-gray-600">Status:</p>
