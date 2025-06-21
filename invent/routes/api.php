@@ -31,6 +31,9 @@ Route::get('/users/{id}/loans', [UserManagementController::class, 'userLoans']);
 Route::put('/users/{id}', [UserManagementController::class, 'update']);
 Route::delete('/users/{id}', [UserManagementController::class, 'destroy']);
 
+Route::get('/history/{id}', [App\Http\Controllers\HistoryController::class, 'show']);
+Route::put('/history/{id}', [App\Http\Controllers\HistoryController::class, 'update']);
+Route::delete('/history/{id}', [App\Http\Controllers\HistoryController::class, 'destroy']);
 
 
 Route::post('/login', [App\Http\Controllers\Auth\LoginController::class, 'loginapi']);

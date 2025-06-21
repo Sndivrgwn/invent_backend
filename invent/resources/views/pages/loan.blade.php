@@ -37,7 +37,7 @@
                 <label class="tab text-blue-700 px-10! pb-2! mx-0!">
                     <input type="radio" name="my_tabs_4" checked="checked" />
                     <i class="fa fa-circle-arrow-down mr-1" style="display: flex; justify-content: center;"></i>
-                    Incoming Product
+                    Outgoing Product
                 </label>
                 <!-- Value Tab 1 -->
                 <div class="tab-content bg-base-100" style="border-top: 1px solid lightgray;">
@@ -120,66 +120,26 @@
                                 <td class="text-center">{{ $loan->status }}</td>
 
                                 <td class="text-center">
-                                    <i class="fa fa-pen-to-square fa-lg cursor-pointer" onclick="document.getElementById('editProductIncome').showModal()"></i>
-                                    <i class="fa-regular fa-eye fa-lg cursor-pointer" onclick="document.getElementById('viewProductIncome').showModal()"></i>
+                                    <i class="fa-regular fa-eye fa-lg cursor-pointer" onclick="showLoanDetails({{ $loan->id }})"></i>
                                 </td>
                                 {{-- tampilan edit --}}
-                            <dialog id="editProductIncome" class="modal">
-                                <div class="modal-box">
-                                    <form method="dialog" id="editForm">
-                                        <button id="cancel" type="button" onclick="closeEditModalIncome()"
-                                            class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-                                        <h1 class="font-semibold text-2xl mb-4">Edit Product</h1>
+                                <dialog id="itemDetailsDialog" class="modal">
+                                <div class="modal-box w-11/12 max-w-5xl">
+                                    <button onclick="document.getElementById('itemDetailsDialog').close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                                    <div id="itemDetailsContent"></div>
+                                </div>
+                            </dialog>
+                           <dialog id="viewProduct" class="modal">
+                                <div class="modal-box w-11/12 max-w-5xl">
+                                    <form method="dialog" id="viewForm">
+                                        <!-- Image will be dynamically updated -->
 
-                                        <div class="flex gap-5 justify-between text-gray-600">
-                                            <div class="w-[50%]">
-                                                <h1 class="font-medium">PRODUCT</h1>
-                                                <input type="text" id="edit_product" class="input w-full" placeholder="Insert Product">
-                                            </div>
-                                            <div class="w-[50%]">
-                                                <h1 class="font-medium">RACK</h1>
-                                                <input type="text" id="edit_rack" class="input w-full" placeholder="Insert Rack">
-                                            </div>
-                                        </div>
+                                        <!-- Loan details will be inserted here by JavaScript -->
 
-                                        <div class="flex gap-5 justify-between text-gray-600 mt-3">
-                                            <div class="w-[50%]">
-                                                <h1 class="font-medium">BRAND</h1>
-                                                <input type="text" id="edit_brand" class="input w-full" placeholder="Insert Brand">
-                                            </div>
-                                            <div class="w-[50%]">
-                                                <h1 class="font-medium">CONDITION</h1>
-                                                <input type="text" id="edit_condition" class="input w-full" placeholder="Insert Condition">
-                                            </div>
-                                        </div>
+                                        <!-- Tombol close -->
+                                        <button type="button" onclick="document.getElementById('viewProduct').close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
 
-                                        <div class="flex gap-5 justify-between text-gray-600 mt-3">
-                                            <div class="w-[50%]">
-                                                <h1 class="font-medium">TYPE</h1>
-                                                <input type="text" id="edit_type" class="input w-full" placeholder="Insert Type">
-                                            </div>
-                                            <div class="w-[50%]">
-                                                <h1 class="font-medium">STATUS</h1>
-                                                <input type="text" id="edit_status" class="input w-full" placeholder="Insert Status">
-                                            </div>
-                                        </div>
 
-                                        <div class="w-full mt-3">
-                                            <h1 class="font-medium text-gray-600">SERIAL NUMBER</h1>
-                                            <input type="text" id="edit_serial" class="input w-full" placeholder="Serial Number">
-                                        </div>
-
-                                        <div class="w-full mt-3">
-                                            <h1 class="font-medium text-gray-600">DESCRIPTION</h1>
-                                            <textarea id="edit_description" class="textarea w-full text-gray-600" placeholder="Description"></textarea>
-                                        </div>
-
-                                        <div class="w-full flex justify-end items-end gap-4 mt-4">
-                                            <button type="button" onclick="closeEditModalIncome()"
-                                                class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Cancel</button>
-                                            <button type="submit"
-                                                class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Edit</button>
-                                        </div>
                                     </form>
                                 </div>
                             </dialog>
@@ -286,7 +246,7 @@
                 <label class="tab border-0 text-blue-700 px-10! pb-2! mx-0!">
                     <input type="radio" name="my_tabs_4" />
                     <i class="fa-solid fa-circle-arrow-up mr-2" style="display: flex; justify-content: center;"></i>
-                    Outgoing Product
+                    Incoming Product
                 </label>
                 <!-- Value Tab 2 -->
                 <div class="tab-content bg-base-100" style="border-top: 1px solid lightgray; ">
@@ -306,6 +266,7 @@
                         </div>
 
                         <!-- filter -->
+                        
 
                         <dialog id="filterProduct" class="modal">
                             <div class="modal-box">
@@ -371,9 +332,97 @@
 
                                 <td class="text-center">
                                     <i class="fa fa-pen-to-square fa-lg cursor-pointer" onclick="document.getElementById('editProductOutgoing').showModal()"></i>
-                                    <i class="fa-regular fa-eye fa-lg cursor-pointer" onclick="document.getElementById('viewProductOutgoing').showModal()"></i>
+                                    <i class="fa-regular fa-eye fa-lg cursor-pointer" onclick="showLoanDetailsTwo({{ $loan->id }})"></i>
                                 </td>
                                 {{-- tampilan delete --}}
+                                
+                                <dialog id="itemDetailsDialogtwo" class="modal">
+                                <div class="modal-box w-11/12 max-w-5xl">
+                                    <button onclick="document.getElementById('itemDetailsDialogtwo').close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                                    <div id="itemDetailsContenttwo"></div>
+                                </div>
+                            </dialog>
+                           <dialog id="viewProduct" class="modal">
+                                <div class="modal-box w-11/12 max-w-5xl">
+                                    <form method="dialog" id="viewForm">
+                                        <!-- Image will be dynamically updated -->
+
+                                        <!-- Loan details will be inserted here by JavaScript -->
+
+                                        <!-- Tombol close -->
+                                        <button type="button" onclick="document.getElementById('viewProduct').close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+
+
+                                    </form>
+                                </div>
+                            </dialog>
+                            {{-- tampilan edit --}}
+
+                            {{-- tampilan preview --}}
+                            <dialog id="viewProductIncome" class="modal">
+                                <div class="modal-box">
+                                    <form method="dialog" id="viewForm">
+                                        <!-- Gambar atas -->
+                                        <div class="w-full mb-4">
+                                            <img src="{{ asset('image/cyrene.jpg') }}" alt="Preview" class="w-full h-[180px] object-cover rounded-lg">
+                                        </div>
+
+                                        <!-- Tombol close -->
+                                        <button type="button" onclick="document.getElementById('viewProductIncome').close()"
+                                            class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+
+                                        <h1 class="font-semibold text-2xl mb-4">Product Details</h1>
+
+                                        <div class="flex gap-5 justify-between text-gray-600">
+                                            <div class="w-[50%]">
+                                                <h1 class="font-medium">PRODUCT</h1>
+                                                <p>Access Point</p>
+                                            </div>
+                                            <div class="w-[50%]">
+                                                <h1 class="font-medium">RACK</h1>
+                                                <p>Rack 1</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex gap-5 justify-between text-gray-600 mt-3">
+                                            <div class="w-[50%]">
+                                                <h1 class="font-medium">BRAND</h1>
+                                                <p>TP-Link</p>
+                                            </div>
+                                            <div class="w-[50%]">
+                                                <h1 class="font-medium">CONDITION</h1>
+                                                <p>Good</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="flex gap-5 justify-between text-gray-600 mt-3">
+                                            <div class="w-[50%]">
+                                                <h1 class="font-medium">TYPE</h1>
+                                                <p>TL-WR840N</p>
+                                            </div>
+                                            <div class="w-[50%]">
+                                                <h1 class="font-medium">STATUS</h1>
+                                                <p>Ready</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="w-full mt-3">
+                                            <h1 class="font-medium text-gray-600">SERIAL NUMBER</h1>
+                                            <p>A1B2C3D4E5F6G7H</p>
+                                        </div>
+
+                                        <div class="w-full mt-3">
+                                            <h1 class="font-medium text-gray-600">DESCRIPTION</h1>
+                                            <p class="text-gray-600">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vel enim eget lacus fermentum suscipit ut non ex.</p>
+                                        </div>
+
+                                        <div class="w-full flex justify-end items-end gap-4 mt-4">
+                                            <button type="button" onclick="document.getElementById('viewProductIncome').close()"
+                                                class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Close</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </dialog>
                             <dialog id="confirmDeleteDialog" class="modal">
                                 <div class="modal-box">
                                     <form method="dialog">
@@ -457,70 +506,7 @@
                             {{-- tampilan edit --}}
 
                             {{-- tampilan preview --}}
-                            <dialog id="viewProductOutgoing" class="modal">
-                                <div class="modal-box">
-                                    <form method="dialog" id="viewForm">
-                                        <!-- Gambar atas -->
-                                        <div class="w-full mb-4">
-                                            <img src="{{ asset('image/cyrene.jpg') }}" alt="Preview" class="w-full h-[180px] object-cover rounded-lg">
-                                        </div>
-
-                                        <!-- Tombol close -->
-                                            <button type="button" onclick="document.getElementById('viewProductOutgoing').close()"
-                                            class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-
-                                        <h1 class="font-semibold text-2xl mb-4">Product Details</h1>
-
-                                        <div class="flex gap-5 justify-between text-gray-600">
-                                            <div class="w-[50%]">
-                                                <h1 class="font-medium">PRODUCT</h1>
-                                                <p>Access Point</p>
-                                            </div>
-                                            <div class="w-[50%]">
-                                                <h1 class="font-medium">RACK</h1>
-                                                <p>Rack 1</p>
-                                            </div>
-                                        </div>
-
-                                        <div class="flex gap-5 justify-between text-gray-600 mt-3">
-                                            <div class="w-[50%]">
-                                                <h1 class="font-medium">BRAND</h1>
-                                                <p>TP-Link</p>
-                                            </div>
-                                            <div class="w-[50%]">
-                                                <h1 class="font-medium">CONDITION</h1>
-                                                <p>Good</p>
-                                            </div>
-                                        </div>
-
-                                        <div class="flex gap-5 justify-between text-gray-600 mt-3">
-                                            <div class="w-[50%]">
-                                                <h1 class="font-medium">TYPE</h1>
-                                                <p>TL-WR840N</p>
-                                            </div>
-                                            <div class="w-[50%]">
-                                                <h1 class="font-medium">STATUS</h1>
-                                                <p>Ready</p>
-                                            </div>
-                                        </div>
-
-                                        <div class="w-full mt-3">
-                                            <h1 class="font-medium text-gray-600">SERIAL NUMBER</h1>
-                                            <p>A1B2C3D4E5F6G7H</p>
-                                        </div>
-
-                                        <div class="w-full mt-3">
-                                            <h1 class="font-medium text-gray-600">DESCRIPTION</h1>
-                                            <p class="text-gray-600">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vel enim eget lacus fermentum suscipit ut non ex.</p>
-                                        </div>
-
-                                        <div class="w-full flex justify-end items-end gap-4 mt-4">
-                                            <button type="button" onclick="document.getElementById('viewProductOutgoing').close()"
-                                                class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Close</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </dialog>
+                           
                             {{-- tampilan preview --}}
                             </tr>
                             @endforeach
@@ -562,6 +548,467 @@
 </div>
 
 <script>
+    async function showLoanDetails(loanId) {
+        try {
+            const response = await fetch(`/api/history/${loanId}`);
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                throw new Error("Response isn't JSON");
+            }
+
+            const data = await response.json();
+
+            if (!data.success) {
+                throw new Error(data.message || 'Failed to load loan');
+            }
+
+            const loan = data.data;
+            const modal = document.getElementById('viewProduct');
+
+            // Build modal content
+            let modalContent = `
+            <div class="w-full mb-4">
+                <img src="${loan.items[0]?.image_url || '{{ asset('image/cyrene.jpg') }}'}" 
+                     alt="Preview" class="w-full h-[180px] object-cover rounded-lg">
+            </div>
+            <button type="button" onclick="document.getElementById('viewProduct').close()"
+                class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+            <h1 class="font-semibold text-2xl mb-4">Loan Details</h1>
+            <div class="mb-6">
+                <h2 class="font-semibold text-lg mb-2">Loan Information</h2>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <p class="text-gray-600">Loan Code:</p>
+                        <p>${loan.code_loans || 'N/A'}</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-600">Borrower:</p>
+                        <p>${loan.user?.name || loan.loaner_name || 'N/A'}</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-600">Loan Date:</p>
+                        <p>${loan.loan_date || 'N/A'}</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-600">Return Date:</p>
+                        <p>${loan.return_date || 'Not returned yet'}</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-600">Status:</p>
+                        <p class="${loan.status === 'returned' ? 'text-green-500' : 'text-yellow-500'}">
+                            ${loan.status || 'N/A'}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="mb-6">
+                <h2 class="font-semibold text-lg mb-2">Items (${loan.items?.length || 0})</h2>
+        `;
+
+            // Add items if they exist
+            if (loan.items && loan.items.length > 0) {
+                if (loan.items.length > 1) {
+                    // For multiple items, show a summary table with expandable details
+                    modalContent += `
+                    <div class="overflow-x-auto">
+                        <table class="table w-full">
+                            <thead>
+                                <tr>
+                                    <th>Item Name</th>
+                                    <th>Serial Number</th>
+                                    <th>Category</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+
+                    loan.items.forEach((item, index) => {
+                        modalContent += `
+                        <tr>
+                            <td>${item.name || 'N/A'}</td>
+                            <td>${item.code || 'N/A'}</td>
+                            <td>${item.category?.name || 'N/A'}</td>
+                            <td>
+                                <button onclick="showItemDetails(${index}, ${loanId})" 
+                                    class="btn btn-sm btn-ghost">
+                                    View Details
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                    });
+
+                    modalContent += `
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="itemDetailsContainer" class="mt-4"></div>
+                `;
+                } else {
+                    // For single item, show full details directly
+                    const item = loan.items[0];
+                    modalContent += `
+                    <div class="border p-4 rounded-lg">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <p class="text-gray-600">Product Name:</p>
+                                <p>${item.name || 'N/A'}</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-600">Serial Number:</p>
+                                <p>${item.code || 'N/A'}</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-600">Category:</p>
+                                <p>${item.category?.name || 'N/A'}</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-600">Location:</p>
+                                <p>${item.location?.name || 'N/A'}</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-600">Brand:</p>
+                                <p>${item.brand || 'N/A'}</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-600">Type:</p>
+                                <p>${item.type || 'N/A'}</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-600">Condition:</p>
+                                <p>${item.condition || 'N/A'}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                }
+            } else {
+                modalContent += `<p class="text-gray-500">No items found for this loan</p>`;
+            }
+
+            modalContent += `</div>`; // Close items section
+
+            // Add close button
+            modalContent += `
+            <div class="w-full flex justify-end items-end gap-4 mt-4">
+                <button type="button" onclick="document.getElementById('viewProduct').close()"
+                    class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Close</button>
+            </div>
+        `;
+
+            // Update modal content
+            modal.querySelector('form').innerHTML = modalContent;
+            modal.showModal();
+
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to load loan details. See console for details.');
+        }
+    }
+
+    async function showLoanDetailsTwo(loanId) {
+        try {
+            const response = await fetch(`/api/history/${loanId}`);
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                throw new Error("Response isn't JSON");
+            }
+
+            const data = await response.json();
+
+            if (!data.success) {
+                throw new Error(data.message || 'Failed to load loan');
+            }
+
+            const loan = data.data;
+            const dialog = document.getElementById('itemDetailsDialogtwo');
+            const content = document.getElementById('itemDetailsContenttwo');
+
+            // Build modal content
+            let modalContent = `
+            <div class="w-full mb-4">
+                <img src="${loan.items[0]?.image_url || '{{ asset('image/cyrene.jpg') }}'}" 
+                     alt="Preview" class="w-full h-[180px] object-cover rounded-lg">
+            </div>
+            <h1 class="font-semibold text-2xl mb-4">Loan Details</h1>
+            <div class="mb-6">
+                <h2 class="font-semibold text-lg mb-2">Loan Information</h2>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <p class="text-gray-600">Loan Code:</p>
+                        <p>${loan.code_loans || 'N/A'}</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-600">Borrower:</p>
+                        <p>${loan.user?.name || loan.loaner_name || 'N/A'}</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-600">Loan Date:</p>
+                        <p>${loan.loan_date || 'N/A'}</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-600">Return Date:</p>
+                        <p>${loan.return_date || 'Not returned yet'}</p>
+                    </div>
+                    <div>
+                        <p class="text-gray-600">Status:</p>
+                        <p class="${loan.status === 'returned' ? 'text-green-500' : 'text-yellow-500'}">
+                            ${loan.status || 'N/A'}
+                        </p>
+                    </div>
+                </div>
+            </div>
+            <div class="mb-6">
+                <h2 class="font-semibold text-lg mb-2">Items (${loan.items?.length || 0})</h2>
+        `;
+
+            // Add items if they exist
+            if (loan.items && loan.items.length > 0) {
+                if (loan.items.length > 1) {
+                    // For multiple items, show a summary table with expandable details
+                    modalContent += `
+                    <div class="overflow-x-auto">
+                        <table class="table w-full">
+                            <thead>
+                                <tr>
+                                    <th>Item Name</th>
+                                    <th>Serial Number</th>
+                                    <th>Category</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+
+                    loan.items.forEach((item, index) => {
+                        modalContent += `
+                        <tr>
+                            <td>${item.name || 'N/A'}</td>
+                            <td>${item.code || 'N/A'}</td>
+                            <td>${item.category?.name || 'N/A'}</td>
+                            <td>
+                                <button onclick="showItemDetailsTwo(${index}, ${loanId})" 
+                                    class="btn btn-sm btn-ghost">
+                                    View Details
+                                </button>
+                            </td>
+                        </tr>
+                    `;
+                    });
+
+                    modalContent += `
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="itemDetailsContainer" class="mt-4"></div>
+                `;
+                } else {
+                    // For single item, show full details directly
+                    const item = loan.items[0];
+                    modalContent += `
+                    <div class="border p-4 rounded-lg">
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <p class="text-gray-600">Product Name:</p>
+                                <p>${item.name || 'N/A'}</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-600">Serial Number:</p>
+                                <p>${item.code || 'N/A'}</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-600">Category:</p>
+                                <p>${item.category?.name || 'N/A'}</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-600">Location:</p>
+                                <p>${item.location?.name || 'N/A'}</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-600">Brand:</p>
+                                <p>${item.brand || 'N/A'}</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-600">Type:</p>
+                                <p>${item.type || 'N/A'}</p>
+                            </div>
+                            <div>
+                                <p class="text-gray-600">Condition:</p>
+                                <p>${item.condition || 'N/A'}</p>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                }
+            } else {
+                modalContent += `<p class="text-gray-500">No items found for this loan</p>`;
+            }
+
+            modalContent += `</div>`; // Close items section
+
+            // Add close button
+            modalContent += `
+            <div class="w-full flex justify-end items-end gap-4 mt-4">
+                <button type="button" onclick="document.getElementById('itemDetailsDialogtwo').close()"
+                    class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Close</button>
+            </div>
+        `;
+
+            // Update modal content
+            content.innerHTML = modalContent;
+            dialog.showModal();
+
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to load loan details. See console for details.');
+        }
+    }
+
+    async function showItemDetailsTwo(itemIndex, loanId) {
+        try {
+            const response = await fetch(`/api/history/${loanId}`);
+            const data = await response.json();
+            const item = data.data.items[itemIndex];
+
+            const dialog = document.getElementById('itemDetailsDialogtwo');
+            const content = document.getElementById('itemDetailsContenttwo');
+
+            content.innerHTML = `
+            <div class="flex gap-6">
+                <div class="w-1/3">
+                    <img src="${item.image_url || '{{ asset('image/cyrene.jpg') }}'}" 
+                         alt="${item.name}" class="w-full rounded-lg">
+                </div>
+                <div class="w-2/3">
+                    <h2 class="text-2xl font-bold mb-4">${item.name}</h2>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-gray-600">Serial Number:</p>
+                            <p class="font-semibold">${item.code || 'N/A'}</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-600">Category:</p>
+                            <p>${item.category?.name || 'N/A'}</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-600">Location:</p>
+                            <p>${item.location?.name || 'N/A'}</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-600">Brand:</p>
+                            <p>${item.brand || 'N/A'}</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-600">Type:</p>
+                            <p>${item.type || 'N/A'}</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-600">Condition:</p>
+                            <p>${item.condition || 'N/A'}</p>
+                        </div>
+                    </div>
+                    ${item.description ? `
+                        <div class="mt-4">
+                            <p class="text-gray-600">Description:</p>
+                            <p class="mt-1">${item.description}</p>
+                        </div>
+                    ` : ''}
+                </div>
+            </div>
+        `;
+
+            dialog.showModal();
+
+        } catch (error) {
+            console.error('Error showing item details:', error);
+            const content = document.getElementById('itemDetailsContenttwo');
+            content.innerHTML = `
+            <div class="alert alert-error">
+                Failed to load item details: ${error.message}
+            </div>
+        `;
+            dialog.showModal();
+        }
+    }
+
+    // Function to show detailed view of a specific item
+    async function showItemDetails(itemIndex, loanId) {
+        try {
+            const response = await fetch(`/api/history/${loanId}`);
+            const data = await response.json();
+            const item = data.data.items[itemIndex];
+
+            const dialog = document.getElementById('itemDetailsDialog');
+            const content = document.getElementById('itemDetailsContent');
+
+            content.innerHTML = `
+            <div class="flex gap-6">
+                <div class="w-1/3">
+                    <img src="${item.image_url || '{{ asset('image/cyrene.jpg') }}'}" 
+                         alt="${item.name}" class="w-full rounded-lg">
+                </div>
+                <div class="w-2/3">
+                    <h2 class="text-2xl font-bold mb-4">${item.name}</h2>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-gray-600">Serial Number:</p>
+                            <p class="font-semibold">${item.code || 'N/A'}</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-600">Category:</p>
+                            <p>${item.category?.name || 'N/A'}</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-600">Location:</p>
+                            <p>${item.location?.name || 'N/A'}</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-600">Brand:</p>
+                            <p>${item.brand || 'N/A'}</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-600">Type:</p>
+                            <p>${item.type || 'N/A'}</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-600">Condition:</p>
+                            <p>${item.condition || 'N/A'}</p>
+                        </div>
+                    </div>
+                    ${item.description ? `
+                        <div class="mt-4">
+                            <p class="text-gray-600">Description:</p>
+                            <p class="mt-1">${item.description}</p>
+                        </div>
+                    ` : ''}
+                </div>
+            </div>
+        `;
+
+            dialog.showModal();
+
+        } catch (error) {
+            console.error('Error showing item details:', error);
+            const content = document.getElementById('itemDetailsContent');
+            content.innerHTML = `
+            <div class="alert alert-error">
+                Failed to load item details: ${error.message}
+            </div>
+        `;
+            dialog.showModal();
+        }
+    }
 
 // edit product
     function closeEditModal() {
