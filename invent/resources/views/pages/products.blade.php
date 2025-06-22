@@ -1,13 +1,13 @@
 @include('template.head')
 
-<div class="flex h-screen bg-gradient-to-b from-blue-100 to-white">
+<div class="flex flex-col h-screen bg-gradient-to-b from-blue-100 to-white md:flex-row">
     <!-- Sidebar -->
-    <div>
+    <div class="w-full md:w-auto">
         @include('template.sidebar')
     </div>
 
     <!-- Main Content -->
-    <div class="flex-1 overflow-y-auto px-6">
+    <div class="flex-1 overflow-y-auto px-4 md:px-6">
         {{-- header --}}
 
         {{-- navbar --}}
@@ -33,18 +33,34 @@
                         <form method="dialog" id="itemForm">
                             <button id="cancel" type="button" onclick="closeModal()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
                             <h1 class="font-semibold text-2xl mb-4">New Product</h1>
+                            {{-- image upload --}}
+                            <div class="mb-4 text-gray-600">
+                                <h1 class="font-medium">IMAGE</h1>
+                                <div class="flex items-center gap-4">
+                                    <div class="avatar">
+                                        <div class="w-24 rounded-lg bg-gray-200">
+                                            <img id="imagePreview" src="{{ asset('image/default.png') }}" alt="Preview" class="w-full h-full object-cover" />
+                                        </div>
+                                    </div>
+                                    <input type="file" id="imageUpload" name="image" class="file-input file-input-bordered w-full max-w-xs" accept="image/*" />
+                                </div>
+                            </div>
+
                             <div class="flex gap-5 justify-between text-gray-600">
                                 <!-- Product -->
                                 <div class="w-[50%]">
                                     <h1 class="font-medium">PRODUCT</h1>
                                     <div class="mb-2">
-                                        <label class="select">
+                                        <label class="input flex text-gray-600" style="width: 100%;">
+                                            <input class="w-full" type="text" id="product" placeholder="product" />
+                                        </label>
+                                        {{-- <label class="select">
                                             <select id="product" class="w-[90vw]">
                                                 <option value="">Insert Product</option>
                                                 <option value="Router">Router</option>
                                                 <option value="Access Point">Access Point</option>
                                             </select>
-                                        </label>
+                                        </label> --}}
                                     </div>
                                 </div>
                                 <!-- rack -->
@@ -66,10 +82,8 @@
                                 <div class="w-[50%]">
                                     <h1 class="font-medium">BRAND</h1>
                                     <div class="mb-2">
-                                        <label class="select">
-                                            <select id="brand">
-                                                <option value="">Insert Brand</option>
-                                            </select>
+                                        <label class="input flex text-gray-600" style="width: 100%;">
+                                            <input class="w-full" type="text" id="brand" placeholder="brand" />
                                         </label>
                                     </div>
                                 </div>
@@ -92,22 +106,21 @@
                                 <div class="w-[50%]">
                                     <h1 class="font-medium">TYPE</h1>
                                     <div class="mb-2">
-                                        <label class="select">
-                                            <select id="type">
-                                                <option value="">Insert Type</option>
-                                            </select>
+                                        <label class="input flex text-gray-600" style="width: 100%;">
+                                            <input class="w-full" type="text" id="type" placeholder="type" />
                                         </label>
                                     </div>
                                 </div>
                                 <!-- status -->
                                 <div class="w-[50%]">
-                                    <h1 class="font-medium">STATUS</h1>
+                                    <h1 class="font-medium">CATEGORY</h1>
                                     <div>
                                         <label class="select">
-                                            <select id="status">
-                                                <option>Insert Status</option>
-                                                <option value="READY">Ready</option>
-                                                <option value="NOT READY">Not Ready</option>
+                                            <select id="category_select" name="category_id" class="input w-full">
+                                                <option value="">Pilih Kategori</option>
+                                                @foreach($categories as $category) 
+                                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                                @endforeach
                                             </select>
                                         </label>
                                     </div>
@@ -239,7 +252,7 @@
 
             <div class="p-4 pb-2 flex">
                 <!-- search -->
-                <div class="relative w-full hidden md:block mr-4">
+                <div class="relative w-full mr-4">
                     <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                         <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
@@ -338,13 +351,10 @@
                     </div>
                 </dialog>
 
-
-
-
             </div>
             <!-- table -->
-            <div id="itemTableContainer">
-                <table class="table">
+            <div id="itemTableContainer" class="overflow-x-auto px-2">
+                <table class="table w-full">
                     <thead>
                         <tr>
                             <th class="text-center font-semibold">PHOTO</th>

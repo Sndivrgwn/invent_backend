@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\Item;
 use App\Models\Location;
 use Exception;
@@ -66,8 +67,9 @@ class ItemController extends Controller
 
     $items = $query->paginate(20);
     $locations = Location::all();
+    $categories = Category::all();
 
-    return view('pages.products', compact('items', 'locations'));
+    return view('pages.products', compact('items', 'locations','categories'));
 }
 
 
