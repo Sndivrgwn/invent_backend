@@ -10,6 +10,8 @@ use Exception;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Storage;
+
 
 class ItemController extends Controller
 {
@@ -170,12 +172,18 @@ class ItemController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
-    {
-        $items = Item::find($id);
-        if (!$items) {
-            return response()->json(['message' => 'Item not found'], 404);
+{
+    try {
+        // Find the item
+        $item = Item::find($id);
+        if (!$item) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Item not found'
+            ], 404);
         }
 
+        // Validate input
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'code' => 'required|string|unique:items,code,' . $id,
@@ -186,11 +194,48 @@ class ItemController extends Controller
             'category_id' => 'required|exists:categories,id',
             'location_id' => 'required|exists:locations,id',
             'description' => 'nullable|string',
+            'image' => 'nullable|image|max:2048', // Added image validation like in store
         ]);
 
-        $items->update($validated);
-        return response()->json(['message' => 'Item updated successflly', 'data' => $items]);
+        // Handle image upload if present
+        if ($request->hasFile('image')) {
+            // Delete old image if it's not the default
+            if ($item->image && $item->image !== 'default.png') {
+                Storage::disk('public')->delete($item->image);
+            }
+            $path = $request->file('image')->store('items', 'public');
+            $validated['image'] = $path;
+        }
+
+        // Update the item
+        $item->update($validated);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Item updated successfully',
+            'data' => $item
+        ]);
+
+    } catch (ValidationException $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Validation failed',
+            'errors' => $e->errors()
+        ], 422);
+    } catch (QueryException $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Database error',
+            'error' => $e->getMessage()
+        ], 500);
+    } catch (Exception $e) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Server error',
+            'error' => $e->getMessage()
+        ], 500);
     }
+}
 
     /**
      * Remove the specified resource from storage.
