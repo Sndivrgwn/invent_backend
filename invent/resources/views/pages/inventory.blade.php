@@ -1,13 +1,19 @@
 @include('template.head')
 
-<div class="flex h-screen bg-gradient-to-b from-blue-100 to-white">
+<div class="flex flex-col h-screen bg-gradient-to-b from-blue-100 to-white md:flex-row">
     <!-- Sidebar -->
-    @include('template.sidebar')
+    <div class="w-full md:w-auto relative">
+        @include('template.sidebar')
+    </div>
 
     <!-- Main Content -->
-    <div class="flex-1 overflow-y-auto px-6">
-        <!-- Navbar -->
-        @include('template.navbar')
+    <div class="flex-1 overflow-y-auto px-4 md:px-6">
+        {{-- header --}}
+
+        {{-- navbar --}}
+        <div>
+            @include('template.navbar')
+        </div>
 
         <!-- Page Header -->
         <div class="navbar my-6">

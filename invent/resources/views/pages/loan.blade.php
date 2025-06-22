@@ -1,13 +1,13 @@
 @include('template.head')
 
-<div class="flex h-screen bg-gradient-to-b from-blue-100 to-white">
+<div class="flex flex-col h-screen bg-gradient-to-b from-blue-100 to-white md:flex-row">
     <!-- Sidebar -->
-    <div>
+    <div class="w-full md:w-auto relative">
         @include('template.sidebar')
     </div>
 
     <!-- Main Content -->
-    <div class="flex-1 overflow-y-auto px-6">
+    <div class="flex-1 overflow-y-auto px-4 md:px-6">
         {{-- header --}}
 
         {{-- navbar --}}
@@ -97,6 +97,7 @@
                     </dialog>
                 </div>
                 <!-- table -->
+                <div class="overflow-x-auto">
                 <table class="table">
                     <thead>
                         <tr>
@@ -211,6 +212,7 @@
                     </tbody>
 
                 </table>
+                </div>
                 <div class="flex justify-end mb-4 mt-4">
                     <div class="join">
                         {{-- Previous Page Link --}}
@@ -261,133 +263,135 @@
                     </div>
                 </div>
                 <!-- table -->
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th class="text-center font-semibold">NAME</th>
-                            <th class="text-center font-semibold">PRODUCT</th>
-                            <th class="text-center font-semibold">BORROW DATE</th>
-                            <th class="text-center font-semibold">DUE DATE</th>
-                            <th class="text-center font-semibold">STATUS</th>
-                            <th class="text-center font-semibold">ACTIONS</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($outgoingLoans as $loan)
-                        <tr>
-                            <td class="text-center">{{ $loan->loaner_name }}</td>
-                            <td class="text-center">@foreach ($loan->items as $item)
-                                {{ $item->name }}{{ !$loop->last ? ', ' : '' }}
-                                @endforeach</td>
-                            <td class="text-center">{{ $loan->loan_date }}</td>
-                            <td class="text-center">{{ $loan->return_date }}</td>
-                            <td class="text-center">{{ $loan->status }}</td>
-
-                            <td class="text-center">
-                @can('isAdmin')
-                                
-                                <i class="fa fa-pen-to-square fa-lg cursor-pointer" 
-   onclick="openEditModal(
-       {{ $loan->id }}, 
-       '{{ $loan->loaner_name }}', 
-       '{{ $loan->description }}', 
-       '{{ $loan->return_date }}',
-       '{{ $loan->loan_date }}'
-   )"></i>
-   @endcan
-                                <i class="fa-regular fa-eye fa-lg cursor-pointer" onclick="showLoanDetailsTwo({{ $loan->id }})"></i>
-                            </td>
-                            {{-- tampilan delete --}}
-
-                            <dialog id="itemDetailsDialogtwo" class="modal">
-                                <div class="modal-box w-11/12 max-w-5xl">
-                                    <button onclick="document.getElementById('itemDetailsDialogtwo').close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-                                    <div id="itemDetailsContenttwo"></div>
-                                </div>
-                            </dialog>
-                            <dialog id="viewProduct" class="modal">
-                                <div class="modal-box w-11/12 max-w-5xl">
-                                    <form method="dialog" id="viewForm">
-                                        <!-- Image will be dynamically updated -->
-
-                                        <!-- Loan details will be inserted here by JavaScript -->
-
-                                        <!-- Tombol close -->
-                                        <button type="button" onclick="document.getElementById('viewProduct').close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-
-
-                                    </form>
-                                </div>
-                            </dialog>
-                            {{-- tampilan edit --}}
-
-                            {{-- tampilan preview --}}
-
-                            <dialog id="confirmDeleteDialog" class="modal">
-                                <div class="modal-box">
-                                    <form method="dialog">
-                                        <!-- Close Button -->
-                                        <button type="button" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onclick="closeDeleteDialog()">✕</button>
-                                        <!-- Konten -->
-                                        <h1 class="text-xl font-bold text-center mb-4">Delete Item?</h1>
-                                        <p class="text-center text-gray-600">Are you sure you want to delete this item? This action cannot be undone.</p>
-                                        <!-- Tombol -->
-                                        <div class="flex justify-end gap-3 mt-6">
-                                            <button type="button" onclick="closeDeleteDialog()" class="bg-gray-300 text-gray-800 rounded-lg px-4 py-2 hover:bg-gray-400">Cancel</button>
-                                            <button type="button" onclick="confirmDelete()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-red-600">Yes, Delete</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </dialog>
-
-                            {{-- tampilan edit --}}
-                            <dialog id="editProductOutgoing" class="modal">
-                                <div class="modal-box">
-                                    <form method="dialog" id="editForm">
-                                        <input type="hidden" id="edit_loan_id" name="loan_id">
-                                        <button id="cancel" type="button" onclick="closeEditModal()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-                                        <h1 class="font-semibold text-2xl mb-4">Edit Product</h1>
-
-                                        <div class="flex gap-5 justify-between text-gray-600">
-                                            <div class="w-[100%]">
-                                                <h1 class="font-medium">BORROWER NAME</h1>
-                                                <input type="text" id="edit_borrower_name" class="input w-full" placeholder="Insert Borrower Name">
+                <div class="overflow-x-auto">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th class="text-center font-semibold">NAME</th>
+                                <th class="text-center font-semibold">PRODUCT</th>
+                                <th class="text-center font-semibold">BORROW DATE</th>
+                                <th class="text-center font-semibold">DUE DATE</th>
+                                <th class="text-center font-semibold">STATUS</th>
+                                <th class="text-center font-semibold">ACTIONS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($outgoingLoans as $loan)
+                            <tr>
+                                <td class="text-center">{{ $loan->loaner_name }}</td>
+                                <td class="text-center">@foreach ($loan->items as $item)
+                                    {{ $item->name }}{{ !$loop->last ? ', ' : '' }}
+                                    @endforeach</td>
+                                <td class="text-center">{{ $loan->loan_date }}</td>
+                                <td class="text-center">{{ $loan->return_date }}</td>
+                                <td class="text-center">{{ $loan->status }}</td>
+    
+                                <td class="text-center">
+                    @can('isAdmin')
+                                    
+                                    <i class="fa fa-pen-to-square fa-lg cursor-pointer" 
+       onclick="openEditModal(
+           {{ $loan->id }}, 
+           '{{ $loan->loaner_name }}', 
+           '{{ $loan->description }}', 
+           '{{ $loan->return_date }}',
+           '{{ $loan->loan_date }}'
+       )"></i>
+       @endcan
+                                    <i class="fa-regular fa-eye fa-lg cursor-pointer" onclick="showLoanDetailsTwo({{ $loan->id }})"></i>
+                                </td>
+                                {{-- tampilan delete --}}
+    
+                                <dialog id="itemDetailsDialogtwo" class="modal">
+                                    <div class="modal-box w-11/12 max-w-5xl">
+                                        <button onclick="document.getElementById('itemDetailsDialogtwo').close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                                        <div id="itemDetailsContenttwo"></div>
+                                    </div>
+                                </dialog>
+                                <dialog id="viewProduct" class="modal">
+                                    <div class="modal-box w-11/12 max-w-5xl">
+                                        <form method="dialog" id="viewForm">
+                                            <!-- Image will be dynamically updated -->
+    
+                                            <!-- Loan details will be inserted here by JavaScript -->
+    
+                                            <!-- Tombol close -->
+                                            <button type="button" onclick="document.getElementById('viewProduct').close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+    
+    
+                                        </form>
+                                    </div>
+                                </dialog>
+                                {{-- tampilan edit --}}
+    
+                                {{-- tampilan preview --}}
+    
+                                <dialog id="confirmDeleteDialog" class="modal">
+                                    <div class="modal-box">
+                                        <form method="dialog">
+                                            <!-- Close Button -->
+                                            <button type="button" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onclick="closeDeleteDialog()">✕</button>
+                                            <!-- Konten -->
+                                            <h1 class="text-xl font-bold text-center mb-4">Delete Item?</h1>
+                                            <p class="text-center text-gray-600">Are you sure you want to delete this item? This action cannot be undone.</p>
+                                            <!-- Tombol -->
+                                            <div class="flex justify-end gap-3 mt-6">
+                                                <button type="button" onclick="closeDeleteDialog()" class="bg-gray-300 text-gray-800 rounded-lg px-4 py-2 hover:bg-gray-400">Cancel</button>
+                                                <button type="button" onclick="confirmDelete()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-red-600">Yes, Delete</button>
                                             </div>
-
-                                        </div>
-
-                                        <div class="flex gap-5 justify-between text-gray-600">
-                                            <div class="w-[100%]">
-                                                <h1 class="font-medium">RETURN DATE</h1>
-                                                <input type="date" id="edit_return_date" class="input w-full" placeholder="Insert return date">
+                                        </form>
+                                    </div>
+                                </dialog>
+    
+                                {{-- tampilan edit --}}
+                                <dialog id="editProductOutgoing" class="modal">
+                                    <div class="modal-box">
+                                        <form method="dialog" id="editForm">
+                                            <input type="hidden" id="edit_loan_id" name="loan_id">
+                                            <button id="cancel" type="button" onclick="closeEditModal()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                                            <h1 class="font-semibold text-2xl mb-4">Edit Product</h1>
+    
+                                            <div class="flex gap-5 justify-between text-gray-600">
+                                                <div class="w-[100%]">
+                                                    <h1 class="font-medium">BORROWER NAME</h1>
+                                                    <input type="text" id="edit_borrower_name" class="input w-full" placeholder="Insert Borrower Name">
+                                                </div>
+    
                                             </div>
-
-                                        </div>
-
-
-                                        <div class="w-full mt-3">
-                                            <h1 class="font-medium text-gray-600">DESCRIPTION</h1>
-                                            <textarea id="edit_description" class="textarea w-full text-gray-600" placeholder="Description"></textarea>
-                                        </div>
-
-                                        <div class="w-full flex justify-end items-end gap-4 mt-4">
-                                            <button type="button" onclick="closeEditModal()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Cancel</button>
-                                            <button type="submit" class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Edit</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </dialog>
-                            {{-- tampilan edit --}}
-
-                            {{-- tampilan preview --}}
-
-                            {{-- tampilan preview --}}
-                        </tr>
-                        @endforeach
-                    </tbody>
-
-
-                </table>
+    
+                                            <div class="flex gap-5 justify-between text-gray-600">
+                                                <div class="w-[100%]">
+                                                    <h1 class="font-medium">RETURN DATE</h1>
+                                                    <input type="date" id="edit_return_date" class="input w-full" placeholder="Insert return date">
+                                                </div>
+    
+                                            </div>
+    
+    
+                                            <div class="w-full mt-3">
+                                                <h1 class="font-medium text-gray-600">DESCRIPTION</h1>
+                                                <textarea id="edit_description" class="textarea w-full text-gray-600" placeholder="Description"></textarea>
+                                            </div>
+    
+                                            <div class="w-full flex justify-end items-end gap-4 mt-4">
+                                                <button type="button" onclick="closeEditModal()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Cancel</button>
+                                                <button type="submit" class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Edit</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </dialog>
+                                {{-- tampilan edit --}}
+    
+                                {{-- tampilan preview --}}
+    
+                                {{-- tampilan preview --}}
+                            </tr>
+                            @endforeach
+                        </tbody>
+    
+    
+                    </table>
+                </div>
 
                 <div class="flex justify-end mb-4 mt-4">
                     <div class="join">

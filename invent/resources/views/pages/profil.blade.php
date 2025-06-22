@@ -1,13 +1,15 @@
 @include('template.head')
 
-<div class="flex h-screen bg-gradient-to-b from-blue-100 to-white">
+<div class="flex flex-col h-screen bg-gradient-to-b from-blue-100 to-white md:flex-row">
     <!-- Sidebar -->
-    <div>
+    <div class="w-full md:w-auto relative">
         @include('template.sidebar')
     </div>
 
     <!-- Main Content -->
-    <div class="flex-1 overflow-y-auto px-6">
+    <div class="flex-1 overflow-y-auto px-4 md:px-6">
+        {{-- header --}}
+
         {{-- navbar --}}
         <div>
             @include('template.navbar')
@@ -19,7 +21,7 @@
             </div>
         </div>
 
-        <div class="list bg-base-100 rounded-box shadow-md p-10">
+        <div class="list bg-base-100 rounded-box shadow-md p-14 overflow-x-auto">
             <div class="flex gap-4">
                 <div class="w-50 rounded-full me-5 relative">
                     <img alt="profile image" src="{{ auth()->user()->avatar ? asset('storage/' . auth()->user()->avatar) : 'https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp' }}" class="rounded w-32 h-32 object-cover" />

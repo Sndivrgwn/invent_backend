@@ -1,14 +1,20 @@
 @include('template.head')
 
 
-<div class="flex h-screen bg-gradient-to-b from-blue-100 to-white">
+<div class="flex flex-col h-screen bg-gradient-to-b from-blue-100 to-white md:flex-row">
     <!-- Sidebar -->
-    <div>@include('template.sidebar')</div>
+    <div class="w-full md:w-auto relative">
+        @include('template.sidebar')
+    </div>
 
     <!-- Main Content -->
-    <div class="flex-1 overflow-y-auto px-6">
-        <!-- Navbar -->
-        <div>@include('template.navbar')</div>
+    <div class="flex-1 overflow-y-auto px-4 md:px-6">
+        {{-- header --}}
+
+        {{-- navbar --}}
+        <div>
+            @include('template.navbar')
+        </div>
 
         <!-- Header -->
         <div class="navbar my-6">
@@ -139,11 +145,8 @@
                 </div>
             </dialog>
 
-
-
-
             <!-- Table Section -->
-            <div class="overflow-x-auto">
+            <div class="overflow-x-auto px-2">
                 <table class="table w-full">
                     <thead class="text-gray-500 text-sm font-semibold border-b">
                         <tr>

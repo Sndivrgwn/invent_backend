@@ -1,11 +1,15 @@
 @include('template.head')
 
 <div class="flex flex-col h-screen bg-gradient-to-b from-blue-100 to-white md:flex-row">
-    <div class="w-full md:w-auto">
+    <!-- Sidebar -->
+    <div class="w-full md:w-auto relative">
         @include('template.sidebar')
     </div>
 
+    <!-- Main Content -->
     <div class="flex-1 overflow-y-auto px-4 md:px-6">
+        {{-- header --}}
+
         {{-- navbar --}}
         <div>
             @include('template.navbar')
