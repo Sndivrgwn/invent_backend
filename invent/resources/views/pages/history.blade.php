@@ -49,11 +49,11 @@
                 <div class="calender px-5">
                     <!-- Date Filter Section -->
                     <!-- Filter Date -->
-                    <form method="GET" action="{{ route('history') }}" class="flex flex-wrap items-center gap-3 mt-4">
+                    <form method="GET" action="{{ route('history') }}" class="flex flex-wrap items-center gap-3 mt-4 p-1">
                         <div>
                             <input type="date" name="start_date" value="{{ request('start_date') }}" class="input input-bordered w-full max-w-xs" />
                         </div>
-                        <div class="self-end">
+                        <div class="flex gap-2 sm:gap-3 self-end"> 
                             <button type="submit" class="btn btn-primary">Filter Date</button>
                             <a href="{{ route('history') }}" class="btn btn-secondary">Reset Filter</a>
                         </div>
@@ -152,7 +152,7 @@
                         <tr>
                             <th>DATE</th>
                             <th>RETURNED AT</th>
-                            <th>RETURN DATE</th>
+                            <th>DUE DATE</th>
                             <th>LOAN CODE</th>
                             <th>NAME</th>
                             <th>SERIAL NUMBER</th>
@@ -303,7 +303,7 @@
                             <p>${loan.loan_date || 'N/A'}</p>
                         </div>
                         <div>
-                            <p class="text-gray-600">Return Date:</p>
+                            <p class="text-gray-600">Due Date:</p>
                             <p>${loan.return_date || 'Not returned yet'}</p>
                         </div>
                         <div>
