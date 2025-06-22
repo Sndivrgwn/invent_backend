@@ -33,7 +33,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/newLoan', [NewLoanController::class, 'index'])->name('newLoan');
     Route::get('/manageLoan', [ManageLoanController::class, 'index'])->name('pages.manageLoan');
     Route::post('/loans', [LoanController::class, 'store']);
+    
     Route::get('/users', [UserManagementController::class, 'index'])->name('users');
+
     Route::get('/settings', [SettingController::class, 'index'])->name('setting');
     Route::get('/profil', [profilController::class, 'index'])->name('profil');
     Route::put('/profile/name', [profilController::class, 'updateName'])->name('profile.update.name');

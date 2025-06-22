@@ -58,25 +58,26 @@ class HistoryController extends Controller
     }
 
 
-    public function filter(Request $request)
-    {
-        $loans = Loan::with(['items.location', 'items.category'])
-            ->whereHas('items', function ($query) use ($request) {
-                $query->when($request->brand, fn($q) => $q->where('brand', $request->brand))
-                    ->when($request->type, fn($q) => $q->where('type', $request->type))
-                    ->when($request->condition, fn($q) => $q->where('condition', $request->condition))
-                    ->when($request->category, function ($q) use ($request) {
-                        $q->whereHas('category', fn($q) => $q->where('name', $request->category));
-                    })
-                    ->when($request->location, function ($q) use ($request) {
-                        $q->whereHas('location', fn($q) => $q->where('description', $request->location));
-                    });
-            })
-            ->when($request->status, fn($q) => $q->where('status', $request->status))
-            ->get();
+   public function filter(Request $request)
+{
+    $loans = Loan::with(['items.location', 'items.category'])
+        ->where('status', 'returned') // Tambahkan ini untuk filter hanya returned
+        ->whereHas('items', function ($query) use ($request) {
+            $query->when($request->brand, fn($q) => $q->where('brand', $request->brand))
+                ->when($request->type, fn($q) => $q->where('type', $request->type))
+                ->when($request->condition, fn($q) => $q->where('condition', $request->condition))
+                ->when($request->category, function ($q) use ($request) {
+                    $q->whereHas('category', fn($q) => $q->where('name', $request->category));
+                })
+                ->when($request->location, function ($q) use ($request) {
+                    $q->whereHas('location', fn($q) => $q->where('description', $request->location));
+                });
+        })
+        ->when($request->status, fn($q) => $q->where('status', $request->status))
+        ->get();
 
-        return response()->json($loans);
-    }
+    return response()->json($loans);
+}
 
     public function show($id): JsonResponse
     {

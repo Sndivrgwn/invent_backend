@@ -116,6 +116,7 @@
 
                     <!-- filter -->
                     <button class="btn flex justify-center items-center bg-transparent" onclick="filterUsers.showModal()">All Categories <i class="fa fa-filter" style="display: flex; justify-content: center; align-items: center;"></i></button>
+                    <button class="btn flex justify-center items-center btn-secondary" onclick="resetFilter()">Reset Filter</button>
                     <dialog id="filterUsers" class="modal">
                         <div class="modal-box">
                             <!-- close button -->
@@ -351,6 +352,8 @@
     // Global variables
     let deleteTargetId = null;
 
+    
+
     // User management functions
     async function deleteItem(id) {
         deleteTargetId = id;
@@ -360,21 +363,36 @@
     async function confirmDelete() {
         if (!deleteTargetId) return;
 
-        const res = await fetch(`/api/users/${deleteTargetId}`, {
-            method: 'DELETE',
-            headers: {
-                'Accept': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            }
-        });
+        try {
+            const res = await fetch(`/api/users/${deleteTargetId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+            });
 
-        if (res.ok) {
-            alert('User deleted successfully');
-            window.location.reload();
-        } else {
             const data = await res.json();
-            alert('Error: ' + (data.message || res.statusText));
-            console.error(data.message || res.statusText);
+            
+            if (res.ok) {
+                handleAjaxResponse({
+                    toast: {
+                        type: 'success',
+                        message: 'User deleted successfully'
+                    },
+                    reload: true
+                });
+            } else {
+                handleAjaxResponse({
+                    toast: {
+                        type: 'error',
+                        message: data.message || 'Failed to delete user'
+                    }
+                });
+            }
+        } catch (error) {
+            showToast('An error occurred while deleting user', 'error');
+            console.error(error);
         }
 
         deleteTargetId = null;
@@ -406,210 +424,233 @@
 
     // View user details function
     async function showUserDetails(userId) {
-    try {
-        // Show loading state
-        const modal = document.getElementById('viewProduct');
-        modal.showModal();
-        
-        // Add loading indicator
-        document.getElementById('viewUserName').textContent = 'Loading...';
-        document.getElementById('loanHistoryBody').innerHTML = '<tr><td colspan="4" class="text-center">Loading...</td></tr>';
-        
-        // Fetch user details
-        const response = await fetch(`/api/users/${userId}`);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        
-        // Check if we got valid user data
-        if (!data.user) {
-            throw new Error('Invalid user data received');
-        }
-        
-        const user = data.user;
-        const loans = user.loans || [];
-        
-        // Populate user details
-        document.getElementById('viewUserName').textContent = user.name;
-        document.getElementById('viewUserEmail').textContent = user.email;
-        document.getElementById('viewUserRole').textContent = user.roles?.name || 'N/A';
-        document.getElementById('viewUserLastActive').textContent = user.last_active_at || 'N/A';
-        document.getElementById('viewUserTotalLoans').textContent = data.total_loans || 0;
-        document.getElementById('viewUserTotalReturns').textContent = data.total_returned_loans || 0;
-        
-        // Populate loan history (limited to 4)
-        const loanHistoryBody = document.getElementById('loanHistoryBody');
-        loanHistoryBody.innerHTML = '';
-        
-        if (loans.length === 0) {
-            loanHistoryBody.innerHTML = '<tr><td colspan="4" class="text-center">No loan history found</td></tr>';
-        } else {
-            loans.forEach(loan => {
-                // Create a row for each item in the loan
-                if (loan.items && loan.items.length > 0) {
-                    loan.items.forEach(item => {
+        try {
+            // Show loading state
+            const modal = document.getElementById('viewProduct');
+            modal.showModal();
+            
+            // Add loading indicator
+            document.getElementById('viewUserName').textContent = 'Loading...';
+            document.getElementById('loanHistoryBody').innerHTML = '<tr><td colspan="4" class="text-center">Loading...</td></tr>';
+            
+            // Fetch user details
+            const response = await fetch(`/api/users/${userId}`);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            
+            // Check if we got valid user data
+            if (!data.user) {
+                throw new Error('Invalid user data received');
+            }
+            
+            const user = data.user;
+            const loans = user.loans || [];
+            
+            // Populate user details
+            document.getElementById('viewUserName').textContent = user.name;
+            document.getElementById('viewUserEmail').textContent = user.email;
+            document.getElementById('viewUserRole').textContent = user.roles?.name || 'N/A';
+            document.getElementById('viewUserLastActive').textContent = user.last_active_at || 'N/A';
+            document.getElementById('viewUserTotalLoans').textContent = data.total_loans || 0;
+            document.getElementById('viewUserTotalReturns').textContent = data.total_returned_loans || 0;
+            
+            // Populate loan history (limited to 4)
+            const loanHistoryBody = document.getElementById('loanHistoryBody');
+            loanHistoryBody.innerHTML = '';
+            
+            if (loans.length === 0) {
+                loanHistoryBody.innerHTML = '<tr><td colspan="4" class="text-center">No loan history found</td></tr>';
+            } else {
+                loans.forEach(loan => {
+                    if (loan.items && loan.items.length > 0) {
+                        loan.items.forEach(item => {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${item.name || 'N/A'} (Qty: ${item.pivot?.quantity || 1})</td>
+                                <td>${loan.loan_date ? new Date(loan.loan_date).toLocaleDateString() : 'N/A'}</td>
+                                <td>${loan.return_date ? new Date(loan.return_date).toLocaleDateString() : 'N/A'}</td>
+                                <td>${loan.status || 'N/A'}</td>
+                            `;
+                            loanHistoryBody.appendChild(row);
+                        });
+                    } else {
                         const row = document.createElement('tr');
                         row.innerHTML = `
-                            <td>${item.name || 'N/A'} (Qty: ${item.pivot?.quantity || 1})</td>
+                            <td>No items</td>
                             <td>${loan.loan_date ? new Date(loan.loan_date).toLocaleDateString() : 'N/A'}</td>
                             <td>${loan.return_date ? new Date(loan.return_date).toLocaleDateString() : 'N/A'}</td>
                             <td>${loan.status || 'N/A'}</td>
                         `;
                         loanHistoryBody.appendChild(row);
-                    });
-                } else {
-                    // Show a row even if there are no items
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>No items</td>
-                        <td>${loan.loan_date ? new Date(loan.loan_date).toLocaleDateString() : 'N/A'}</td>
-                        <td>${loan.return_date ? new Date(loan.return_date).toLocaleDateString() : 'N/A'}</td>
-                        <td>${loan.status || 'N/A'}</td>
-                    `;
-                    loanHistoryBody.appendChild(row);
-                }
-            });
-        }
-        
-        // Add "View More" button if there are more loans
-        if (data.has_more_loans) {
-            const viewMoreRow = document.createElement('tr');
-            viewMoreRow.innerHTML = `
-                <td colspan="4" class="text-center">
-                    <button onclick="showAllLoans(${userId})" class="btn btn-primary">
-                        View All ${data.total_loans} Loans
-                    </button>
-                </td>
+                    }
+                });
+            }
+            
+            // Add "View More" button if there are more loans
+            if (data.has_more_loans) {
+                const viewMoreRow = document.createElement('tr');
+                viewMoreRow.innerHTML = `
+                    <td colspan="4" class="text-center">
+                        <button onclick="showAllLoans(${userId})" class="btn btn-primary">
+                            View All ${data.total_loans} Loans
+                        </button>
+                    </td>
+                `;
+                loanHistoryBody.appendChild(viewMoreRow);
+            }
+            
+        } catch (error) {
+            console.error('Error fetching user details:', error);
+            document.getElementById('loanHistoryBody').innerHTML = `
+                <tr>
+                    <td colspan="4" class="text-center text-red-500">
+                        Error loading data: ${error.message}
+                    </td>
+                </tr>
             `;
-            loanHistoryBody.appendChild(viewMoreRow);
+            showToast('Error loading user details', 'error');
+            document.getElementById('viewProduct').showModal();
         }
-        
-    } catch (error) {
-        console.error('Error fetching user details:', error);
-        document.getElementById('loanHistoryBody').innerHTML = `
-            <tr>
-                <td colspan="4" class="text-center text-red-500">
-                    Error loading data: ${error.message}
-                </td>
-            </tr>
-        `;
-        document.getElementById('viewProduct').showModal();
     }
-}
 
-// New function to show all loans
-async function showAllLoans(userId) {
-    try {
-        // Show loading state
-        const allLoansModal = document.getElementById('allLoansModal');
-        allLoansModal.showModal();
-        document.getElementById('allLoansBody').innerHTML = '<tr><td colspan="4" class="text-center">Loading...</td></tr>';
-        
-        // Fetch all loans (you'll need to create this endpoint)
-        const response = await fetch(`/api/users/${userId}/loans`);
-        
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const loans = await response.json();
-        
-        // Populate all loans
-        const allLoansBody = document.getElementById('allLoansBody');
-        allLoansBody.innerHTML = '';
-        
-        if (loans.length === 0) {
-            allLoansBody.innerHTML = '<tr><td colspan="4" class="text-center">No loan history found</td></tr>';
-        } else {
-            loans.forEach(loan => {
-                if (loan.items && loan.items.length > 0) {
-                    loan.items.forEach(item => {
+    // New function to show all loans
+    async function showAllLoans(userId) {
+        try {
+            // Show loading state
+            const allLoansModal = document.getElementById('allLoansModal');
+            allLoansModal.showModal();
+            document.getElementById('allLoansBody').innerHTML = '<tr><td colspan="4" class="text-center">Loading...</td></tr>';
+            
+            // Fetch all loans
+            const response = await fetch(`/api/users/${userId}/loans`);
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const loans = await response.json();
+            
+            // Populate all loans
+            const allLoansBody = document.getElementById('allLoansBody');
+            allLoansBody.innerHTML = '';
+            
+            if (loans.length === 0) {
+                allLoansBody.innerHTML = '<tr><td colspan="4" class="text-center">No loan history found</td></tr>';
+            } else {
+                loans.forEach(loan => {
+                    if (loan.items && loan.items.length > 0) {
+                        loan.items.forEach(item => {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td>${item.name || 'N/A'} (Qty: ${item.pivot?.quantity || 1})</td>
+                                <td>${loan.loan_date ? new Date(loan.loan_date).toLocaleDateString() : 'N/A'}</td>
+                                <td>${loan.return_date ? new Date(loan.return_date).toLocaleDateString() : 'N/A'}</td>
+                                <td>${loan.status || 'N/A'}</td>
+                            `;
+                            allLoansBody.appendChild(row);
+                        });
+                    } else {
                         const row = document.createElement('tr');
                         row.innerHTML = `
-                            <td>${item.name || 'N/A'} (Qty: ${item.pivot?.quantity || 1})</td>
+                            <td>No items</td>
                             <td>${loan.loan_date ? new Date(loan.loan_date).toLocaleDateString() : 'N/A'}</td>
                             <td>${loan.return_date ? new Date(loan.return_date).toLocaleDateString() : 'N/A'}</td>
                             <td>${loan.status || 'N/A'}</td>
                         `;
                         allLoansBody.appendChild(row);
-                    });
-                } else {
-                    const row = document.createElement('tr');
-                    row.innerHTML = `
-                        <td>No items</td>
-                        <td>${loan.loan_date ? new Date(loan.loan_date).toLocaleDateString() : 'N/A'}</td>
-                        <td>${loan.return_date ? new Date(loan.return_date).toLocaleDateString() : 'N/A'}</td>
-                        <td>${loan.status || 'N/A'}</td>
-                    `;
-                    allLoansBody.appendChild(row);
-                }
-            });
+                    }
+                });
+            }
+            
+        } catch (error) {
+            console.error('Error fetching all loans:', error);
+            document.getElementById('allLoansBody').innerHTML = `
+                <tr>
+                    <td colspan="4" class="text-center text-red-500">
+                        Error loading data: ${error.message}
+                    </td>
+                </tr>
+            `;
+            showToast('Error loading loan history', 'error');
         }
-        
-    } catch (error) {
-        console.error('Error fetching all loans:', error);
-        document.getElementById('allLoansBody').innerHTML = `
-            <tr>
-                <td colspan="4" class="text-center text-red-500">
-                    Error loading data: ${error.message}
-                </td>
-            </tr>
-        `;
     }
-}
 
     // Form submission handler
-    document.getElementById("editForm").addEventListener("submit", function(e) {
+    document.getElementById("editForm").addEventListener("submit", async function(e) {
         e.preventDefault();
 
         const id = document.getElementById("edit_user_id").value;
         const formData = new FormData(this);
-        formData.append('_method', 'PUT'); // For Laravel to recognize as PUT request
+        formData.append('_method', 'PUT');
 
-        fetch(`/api/users/${id}`, {
-                method: 'POST', // Laravel prefers POST for form data
+        try {
+            const response = await fetch(`/api/users/${id}`, {
+                method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                     'Accept': 'application/json'
                 },
                 body: formData
-            })
-            .then(response => {
-                if (!response.ok) throw response;
-                return response.json();
-            })
-            .then(data => {
-                alert('User updated successfully');
-                closeEditModal();
-                window.location.reload();
-            })
-            .catch(async (err) => {
-                const error = await err.json();
-                alert(error.message || 'Failed to update user');
             });
+
+            const data = await response.json();
+            
+            if (response.ok) {
+                handleAjaxResponse({
+                    toast: {
+                        type: 'success',
+                        message: 'User updated successfully'
+                    },
+                    reload: true
+                });
+            } else {
+                handleAjaxResponse({
+                    toast: {
+                        type: 'error',
+                        message: data.message || 'Failed to update user'
+                    }
+                });
+            }
+        } catch (error) {
+            showToast('An error occurred while updating user', 'error');
+            console.error(error);
+        }
     });
 
+    function resetFilter() {
+        window.location.reload();
+    }
+
     // Search and filter functionality
-    document.addEventListener('DOMContentLoaded', function() {
+    const filter = document.addEventListener('DOMContentLoaded', function() {
         const searchInput = document.getElementById('searchInput');
         const roleFilter = document.getElementById('roleFilter');
         const tableBody = document.getElementById('itemTableBody');
+        
 
-        function fetchUsers() {
+        async function fetchUsers() {
             const search = searchInput.value;
             const role = roleFilter.value;
 
-            fetch(`{{ route('users') }}?search=${search}&role=${role}`, {
+            try {
+                const response = await fetch(`/users?search=${search}&role=${role}`, {
                     headers: {
                         'X-Requested-With': 'XMLHttpRequest'
                     }
-                })
-                .then(res => res.json())
-                .then(data => {
-                    tableBody.innerHTML = '';
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch users');
+                }
+                
+                const data = await response.json();
+                tableBody.innerHTML = '';
+                
+                if (data.data && data.data.length > 0) {
                     data.data.forEach(user => {
                         const row = `
                             <tr>
@@ -627,7 +668,13 @@ async function showAllLoans(userId) {
                             </tr>`;
                         tableBody.insertAdjacentHTML('beforeend', row);
                     });
-                });
+                } else {
+                    tableBody.innerHTML = '<tr><td colspan="5" class="text-center">No users found</td></tr>';
+                }
+            } catch (error) {
+                showToast('Error fetching users', 'error');
+                console.error(error);
+            }
         }
 
         searchInput.addEventListener('input', fetchUsers);

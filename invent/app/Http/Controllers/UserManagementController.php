@@ -38,94 +38,136 @@ class UserManagementController extends Controller
         return view('pages.userManagement', compact('user', 'roles'));
     }
 
-
-
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:8|confirmed',
-            'roles_id' => 'required|',
-        ]);
+        try {
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|email|unique:users,email',
+                'password' => 'required|string|min:8|confirmed',
+                'roles_id' => 'required|exists:roles,id',
+            ]);
 
-        $validated['password'] = bcrypt($validated['password']);
-        $user = User::create($validated);
+            $validated['password'] = bcrypt($validated['password']);
+            User::create($validated);
 
-        return redirect()->route('users')->with('success', 'User created successfully');
+            return redirect()->route('users')->with('toast', [
+                'type' => 'success',
+                'message' => 'User created successfully'
+            ]);
+            
+        } catch (\Exception $e) {
+            return redirect()->back()->with('toast', [
+                'type' => 'error',
+                'message' => 'Error creating user: ' . $e->getMessage()
+            ])->withInput();
+        }
     }
 
     public function update(Request $request, $id)
     {
-        $user = User::findOrFail($id);
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email,' . $user->id,
-            'password' => 'nullable|string|min:8|confirmed',
-            'roles_id' => 'required|',
-        ]);
+        try {
+            $user = User::findOrFail($id);
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|email|unique:users,email,' . $user->id,
+                'password' => 'nullable|string|min:8|confirmed',
+                'roles_id' => 'required|exists:roles,id',
+            ]);
 
-        if ($request->filled('password')) {
-            $validated['password'] = bcrypt($validated['password']);
-        } else {
-            unset($validated['password']);
+            if ($request->filled('password')) {
+                $validated['password'] = bcrypt($validated['password']);
+            } else {
+                unset($validated['password']);
+            }
+
+            $user->update($validated);
+
+            return response()->json([
+                'toast' => [
+                    'type' => 'success',
+                    'message' => 'User updated successfully'
+                ],
+                'data' => $user,
+            ], 200);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'toast' => [
+                    'type' => 'error',
+                    'message' => 'Error updating user: ' . $e->getMessage()
+                ]
+            ], 500);
         }
-
-        $user->update($validated);
-
-        return response()->json([
-            'message' => 'User updated successfully',
-            'data' => $user,
-        ], 200);
     }
+
     public function destroy($id)
     {
-        $user = User::findOrFail($id);
-        $user->delete();
+        try {
+            $user = User::findOrFail($id);
+            $user->delete();
 
-        return response()->json([
-            'message' => 'User deleted successfully',
-        ], 200);
-    }
-    public function show($id)
-{
-    try {
-        $user = User::with(['roles', 'loans' => function($query) {
-            $query->latest()->take(4); // Get only the 4 most recent loans
-        }, 'loans.items'])->findOrFail($id);
-        
-        // Get total counts without limiting
-        $totalLoans = $user->loans()->count();
-        $totalReturned = $user->loans()->where('status', 'returned')->count();
-        
-        return response()->json([
-            'user' => $user,
-            'total_loans' => $totalLoans,
-            'total_returned_loans' => $totalReturned,
-            'has_more_loans' => $totalLoans > 4, // Flag if there are more loans
-        ]);
-    } catch (\Exception $e) {
-        return response()->json([
-            'message' => 'Error fetching user details',
-            'error' => $e->getMessage()
-        ], 500);
-    }
-}
-
-public function userLoans($id)
-{
-    try {
-        $loans = Loan::with('items')
-            ->where('user_id', $id)
-            ->latest()
-            ->get();
+            return response()->json([
+                'toast' => [
+                    'type' => 'success',
+                    'message' => 'User deleted successfully'
+                ]
+            ], 200);
             
-        return response()->json($loans);
-    } catch (\Exception $e) {
-        return response()->json([
-            'message' => 'Error fetching loans',
-            'error' => $e->getMessage()
-        ], 500);
+        } catch (\Exception $e) {
+            return response()->json([
+                'toast' => [
+                    'type' => 'error',
+                    'message' => 'Error deleting user: ' . $e->getMessage()
+                ]
+            ], 500);
+        }
     }
-}
+
+    public function show($id)
+    {
+        try {
+            $user = User::with(['roles', 'loans' => function($query) {
+                $query->latest()->take(4);
+            }, 'loans.items'])->findOrFail($id);
+            
+            $totalLoans = $user->loans()->count();
+            $totalReturned = $user->loans()->where('status', 'returned')->count();
+            
+            return response()->json([
+                'user' => $user,
+                'total_loans' => $totalLoans,
+                'total_returned_loans' => $totalReturned,
+                'has_more_loans' => $totalLoans > 4,
+            ]);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'toast' => [
+                    'type' => 'error',
+                    'message' => 'Error fetching user details: ' . $e->getMessage()
+                ]
+            ], 500);
+        }
+    }
+
+    public function userLoans($id)
+    {
+        try {
+            $loans = Loan::with('items')
+                ->where('user_id', $id)
+                ->latest()
+                ->get();
+                
+            return response()->json($loans);
+            
+        } catch (\Exception $e) {
+            return response()->json([
+                'toast' => [
+                    'type' => 'error',
+                    'message' => 'Error fetching loans: ' . $e->getMessage()
+                ]
+            ], 500);
+        }
+    }
 }

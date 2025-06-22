@@ -44,7 +44,7 @@
                 <div class="bg-white p-4 rounded-lg shadow flex items-center justify-between">
                     <div>
                         <h2 class="text-sm font-medium text-gray-400 mb-1">Total Loans</h2>
-                        <p class="text-2xl font-semibold">{{ $totalLoans }}</p>
+                        <p class="text-2xl font-semibold">{{ $totalLoanedItems }}</p>
                         <p class="text-sm text-gray-400 mt-1">Items currently on loaned.</p>
                     </div>
                     <div

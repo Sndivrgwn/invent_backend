@@ -247,6 +247,10 @@
 </script>
 
 <script>
+     function resetFilter(name) {
+        document.querySelectorAll(`input[name="${name}"]`).forEach(r => r.checked = false);
+    }
+
     async function showLoanDetails(loanId) {
         try {
             const response = await fetch(`/api/history/${loanId}`);
@@ -271,111 +275,171 @@
 
             // Build modal content
             let modalContent = `
-            
-            <button type="button" onclick="document.getElementById('viewProduct').close()"
-                class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-            <h1 class="font-semibold text-2xl mb-4">Loan Details</h1>
-            <div class="mb-6">
-                <h2 class="font-semibold text-lg mb-2">Loan Information</h2>
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <p class="text-gray-600">Loan Code:</p>
-                        <p>${loan.code_loans || 'N/A'}</p>
-                    </div>
-                    <div>
-                        <p class="text-gray-600">Admin:</p>
-                        <p>${loan.user?.name || 'N/A'}</p>
-                    </div>
-                    <div>
-                        <p class="text-gray-600">Borrower:</p>
-                        <p>${loan.loaner_name || 'N/A'}</p>
-                    </div>
-                    
-                    <div>
-                        <p class="text-gray-600">Loan Date:</p>
-                        <p>${loan.loan_date || 'N/A'}</p>
-                    </div>
-                    <div>
-                        <p class="text-gray-600">Return Date:</p>
-                        <p>${loan.return_date || 'Not returned yet'}</p>
-                    </div>
-                    <div>
-                        <p class="text-gray-600">Returned At:</p>
-                        <p>${loan.return?.return_date || 'Not returned yet'}</p>
-                    </div>
-                    <div>
-                        <p class="text-gray-600">Description:</p>
-                        <p>${loan.description || 'N/A'}</p>
-                    </div>
-                    <div>
-                        <p class="text-gray-600">Notes:</p>
-                        <p>${loan.return?.notes || 'N/A'}</p>
-                    </div>
-                    <div>
-                        <p class="text-gray-600">Status:</p>
-                        <p class="${loan.status === 'returned' ? 'text-green-500' : 'text-yellow-500'}">
-                            ${loan.status || 'N/A'}
-                        </p>
+                <button type="button" onclick="document.getElementById('viewProduct').close()"
+                    class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                <h1 class="font-semibold text-2xl mb-4">Loan Details</h1>
+                <div class="mb-6">
+                    <h2 class="font-semibold text-lg mb-2">Loan Information</h2>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <p class="text-gray-600">Loan Code:</p>
+                            <p>${loan.code_loans || 'N/A'}</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-600">Admin:</p>
+                            <p>${loan.user?.name || 'N/A'}</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-600">Borrower:</p>
+                            <p>${loan.loaner_name || 'N/A'}</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-600">Loan Date:</p>
+                            <p>${loan.loan_date || 'N/A'}</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-600">Return Date:</p>
+                            <p>${loan.return_date || 'Not returned yet'}</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-600">Returned At:</p>
+                            <p>${loan.return?.return_date || 'Not returned yet'}</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-600">Description:</p>
+                            <p>${loan.description || 'N/A'}</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-600">Notes:</p>
+                            <p>${loan.return?.notes || 'N/A'}</p>
+                        </div>
+                        <div>
+                            <p class="text-gray-600">Status:</p>
+                            <p class="${loan.status === 'returned' ? 'text-green-500' : 'text-yellow-500'}">
+                                ${loan.status || 'N/A'}
+                            </p>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="mb-6">
-                <h2 class="font-semibold text-lg mb-2">Items (${loan.items?.length || 0})</h2>
-        `;
+                <div class="mb-6">
+                    <h2 class="font-semibold text-lg mb-2">Items (${loan.items?.length || 0})</h2>
+            `;
 
             // Add items if they exist
             if (loan.items && loan.items.length > 0) {
                 if (loan.items.length > 1) {
-                    // For multiple items, show a summary table with expandable details
                     modalContent += `
-                    <div class="overflow-x-auto">
-                        <table class="table w-full">
-                            <thead>
-                                <tr>
-                                    <th>Item Name</th>
-                                    <th>Serial Number</th>
-                                    <th>Category</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                `;
+                        <div class="overflow-x-auto">
+                            <table class="table w-full">
+                                <thead>
+                                    <tr>
+                                        <th>Item Name</th>
+                                        <th>Serial Number</th>
+                                        <th>Category</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                    `;
 
                     loan.items.forEach((item, index) => {
                         modalContent += `
-                        <tr>
-                            <td>${item.name || 'N/A'}</td>
-                            <td>${item.code || 'N/A'}</td>
-                            <td>${item.category?.name || 'N/A'}</td>
-                            <td>
-                                <button onclick="showItemDetails(${index}, ${loanId})" 
-                                    class="btn btn-sm btn-ghost">
-                                    View Details
-                                </button>
-                            </td>
-                        </tr>
-                    `;
+                            <tr>
+                                <td>${item.name || 'N/A'}</td>
+                                <td>${item.code || 'N/A'}</td>
+                                <td>${item.category?.name || 'N/A'}</td>
+                                <td>
+                                    <button onclick="showItemDetails(${index}, ${loanId})" 
+                                        class="btn btn-sm btn-ghost">
+                                        View Details
+                                    </button>
+                                </td>
+                            </tr>
+                        `;
                     });
 
                     modalContent += `
-                            </tbody>
-                        </table>
-                    </div>
-                    <div id="itemDetailsContainer" class="mt-4"></div>
-                `;
+                                </tbody>
+                            </table>
+                        </div>
+                        <div id="itemDetailsContainer" class="mt-4"></div>
+                    `;
                 } else {
-                    // For single item, show full details directly
                     const item = loan.items[0];
                     modalContent += `
-                    <div class="border p-4 rounded-lg">
+                        <div class="border p-4 rounded-lg">
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <p class="text-gray-600">Product Name:</p>
+                                    <p>${item.name || 'N/A'}</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-600">Serial Number:</p>
+                                    <p>${item.code || 'N/A'}</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-600">Category:</p>
+                                    <p>${item.category?.name || 'N/A'}</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-600">Location:</p>
+                                    <p>${item.location?.name || 'N/A'}</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-600">Brand:</p>
+                                    <p>${item.brand || 'N/A'}</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-600">Type:</p>
+                                    <p>${item.type || 'N/A'}</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-600">Condition:</p>
+                                    <p>${item.condition || 'N/A'}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+            } else {
+                modalContent += `<p class="text-gray-500">No items found for this loan</p>`;
+            }
+
+            modalContent += `</div>`; // Close items section
+
+            modalContent += `
+                <div class="w-full flex justify-end items-end gap-4 mt-4">
+                    <button type="button" onclick="document.getElementById('viewProduct').close()"
+                        class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Close</button>
+                </div>
+            `;
+
+            modal.querySelector('form').innerHTML = modalContent;
+            modal.showModal();
+
+        } catch (error) {
+            console.error('Error:', error);
+            showToast('Failed to load loan details', 'error');
+        }
+    }
+
+    async function showItemDetails(itemIndex, loanId) {
+        try {
+            const response = await fetch(`/api/history/${loanId}`);
+            const data = await response.json();
+            const item = data.data.items[itemIndex];
+
+            const dialog = document.getElementById('itemDetailsDialog');
+            const content = document.getElementById('itemDetailsContent');
+
+            content.innerHTML = `
+                <div class="flex gap-6">
+                    <div class="w-2/3">
+                        <h2 class="text-2xl font-bold mb-4">${item.name}</h2>
                         <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <p class="text-gray-600">Product Name:</p>
-                                <p>${item.name || 'N/A'}</p>
-                            </div>
-                            <div>
                                 <p class="text-gray-600">Serial Number:</p>
-                                <p>${item.code || 'N/A'}</p>
+                                <p class="font-semibold">${item.code || 'N/A'}</p>
                             </div>
                             <div>
                                 <p class="text-gray-600">Category:</p>
@@ -398,94 +462,21 @@
                                 <p>${item.condition || 'N/A'}</p>
                             </div>
                         </div>
+                        ${item.description ? `
+                            <div class="mt-4">
+                                <p class="text-gray-600">Description:</p>
+                                <p class="mt-1">${item.description}</p>
+                            </div>
+                        ` : ''}
                     </div>
-                `;
-                }
-            } else {
-                modalContent += `<p class="text-gray-500">No items found for this loan</p>`;
-            }
-
-            modalContent += `</div>`; // Close items section
-
-            // Add close button
-            modalContent += `
-            <div class="w-full flex justify-end items-end gap-4 mt-4">
-                <button type="button" onclick="document.getElementById('viewProduct').close()"
-                    class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Close</button>
-            </div>
-        `;
-
-            // Update modal content
-            modal.querySelector('form').innerHTML = modalContent;
-            modal.showModal();
-
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Failed to load loan details. See console for details.');
-        }
-    }
-
-    // Function to show detailed view of a specific item
-    async function showItemDetails(itemIndex, loanId) {
-        try {
-            const response = await fetch(`/api/history/${loanId}`);
-            const data = await response.json();
-            const item = data.data.items[itemIndex];
-
-            const dialog = document.getElementById('itemDetailsDialog');
-            const content = document.getElementById('itemDetailsContent');
-
-            content.innerHTML = `
-            <div class="flex gap-6">
-                <div class="w-2/3">
-                    <h2 class="text-2xl font-bold mb-4">${item.name}</h2>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <p class="text-gray-600">Serial Number:</p>
-                            <p class="font-semibold">${item.code || 'N/A'}</p>
-                        </div>
-                        <div>
-                            <p class="text-gray-600">Category:</p>
-                            <p>${item.category?.name || 'N/A'}</p>
-                        </div>
-                        <div>
-                            <p class="text-gray-600">Location:</p>
-                            <p>${item.location?.name || 'N/A'}</p>
-                        </div>
-                        <div>
-                            <p class="text-gray-600">Brand:</p>
-                            <p>${item.brand || 'N/A'}</p>
-                        </div>
-                        <div>
-                            <p class="text-gray-600">Type:</p>
-                            <p>${item.type || 'N/A'}</p>
-                        </div>
-                        <div>
-                            <p class="text-gray-600">Condition:</p>
-                            <p>${item.condition || 'N/A'}</p>
-                        </div>
-                    </div>
-                    ${item.description ? `
-                        <div class="mt-4">
-                            <p class="text-gray-600">Description:</p>
-                            <p class="mt-1">${item.description}</p>
-                        </div>
-                    ` : ''}
                 </div>
-            </div>
-        `;
+            `;
 
             dialog.showModal();
 
         } catch (error) {
             console.error('Error showing item details:', error);
-            const content = document.getElementById('itemDetailsContent');
-            content.innerHTML = `
-            <div class="alert alert-error">
-                Failed to load item details: ${error.message}
-            </div>
-        `;
-            dialog.showModal();
+            showToast('Failed to load item details', 'error');
         }
     }
 
@@ -509,9 +500,9 @@
 
                 if (data.length === 0) {
                     tbody.innerHTML = `
-            <tr>
-                <td colspan="8" class="text-center text-gray-500">No items found</td>
-            </tr>`;
+                        <tr>
+                            <td colspan="9" class="text-center text-gray-500">No items found</td>
+                        </tr>`;
                     return;
                 }
 
@@ -527,22 +518,24 @@
                         }
 
                         html += `
-                <td>${loan.code_loans}</td>
-                <td>${loan.loaner_name}</td>
-                <td class="font-semibold">${item.code}</td>
-                <td>${item.name}</td>
-                <td><span class="badge badge-warning text-xs">${loan.status}</span></td>
-                <td>${loan.return_date}</td>
-            `;
+                            <td>${loan.return?.return_date || ''}</td>
+                            <td>${loan.return_date}</td>
+                            <td>${loan.code_loans}</td>
+                            <td>${loan.loaner_name}</td>
+                            <td class="font-semibold">${item.code}</td>
+                            <td>${item.name}</td>
+                            <td><span class="badge badge-warning text-xs">${loan.status}</span></td>
+                        `;
 
                         if (index === 0) {
                             html += `
-                    <td class="text-center" rowspan="${loan.items.length}">
-                        <i class="fa fa-trash fa-lg cursor-pointer"></i>
-                        <i class="fa fa-pen-to-square fa-lg mx-2 cursor-pointer"></i>
-                        <i class="fa-regular fa-eye fa-lg cursor-pointer"></i>
-                    </td>
-                `;
+                                <td class="text-center whitespace-nowrap" rowspan="${loan.items.length}">
+                                    <div class="flex justify-center items-center">
+                                        <i class="fa fa-trash fa-lg cursor-pointer !leading-none" onclick="deleteItem(${loan.id})"></i>
+                                        <i class="fa-regular fa-eye fa-lg cursor-pointer" onclick="showLoanDetails(${loan.id})"></i>
+                                    </div>
+                                </td>
+                            `;
                         }
 
                         row.innerHTML = html;
@@ -550,17 +543,11 @@
                     });
                 });
             })
-
             .catch(error => {
                 console.error("Error fetching filtered data:", error);
-                const tbody = document.getElementById("itemTableBody");
-                tbody.innerHTML = `
-                <tr>
-                    <td colspan="8" class="text-center text-red-500">Error loading data</td>
-                </tr>`;
+                showToast('Error loading filtered data', 'error');
             });
     }
-
 
     // delete
     let deleteTargetId = null;
@@ -574,19 +561,19 @@
         if (!deleteTargetId) return;
 
         const res = await fetch(`/api/history/${deleteTargetId}`, {
-            method: 'DELETE'
-            , headers: {
-                'Accept': 'application/json'
-                , 'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            method: 'DELETE',
+            headers: {
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
             }
         });
 
         if (res.ok) {
-            alert('Item deleted');
+            showToast('Item deleted successfully', 'success');
             window.location.reload();
         } else {
             const data = await res.json();
-            alert('Error bray cek console');
+            showToast('Failed to delete item', 'error');
             console.log(data.message || res.statusText);
         }
 
@@ -598,7 +585,6 @@
         document.getElementById("confirmDeleteDialog").close();
         deleteTargetId = null;
     }
-    // edit product
 
 </script>
 
