@@ -16,6 +16,7 @@ class Item extends Model
         'type',
         'status',
         'condition',
+        'image',
         'category_id',
         'location_id',
         'description',

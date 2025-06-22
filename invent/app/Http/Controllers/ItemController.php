@@ -109,12 +109,20 @@ class ItemController extends Controller
                 'brand' => 'required|string',
                 'type' => 'required|string',
                 'condition' => 'required|string',
+                'image' => 'nullable|image|max:2048',
                 'status' => 'required|in:READY,NOT READY',
                 'category_id' => 'required|exists:categories,id',
                 'location_id' => 'required|exists:locations,id',
                 'description' => 'nullable|string',
             ]);
 
+            if ($request->hasFile('image')) {
+                $path = $request->file('image')->store('items', 'public');
+            } else {
+                $path = 'default.png';
+            }
+
+            $validated['image'] = $path;
             // Simpan item
             $item = Item::create($validated);
 
@@ -153,7 +161,9 @@ class ItemController extends Controller
             return response()->json(['message' => 'Item not found'], 404);
         }
 
-        return response()->json($items);
+        return response()->json([
+        'data' => $items
+        ]);
     }
 
     /**
@@ -168,7 +178,7 @@ class ItemController extends Controller
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'code' => 'required|string|unique:items,code' . $id,
+            'code' => 'required|string|unique:items,code,' . $id,
             'brand' => 'required|string',
             'type' => 'required|string',
             'condition' => 'required|string',

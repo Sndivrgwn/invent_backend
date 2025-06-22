@@ -34,7 +34,7 @@
                 <dialog id="newProduct" class="modal">
                     <div class="modal-box">
                         <!-- close button -->
-                        <form method="dialog" id="itemForm">
+                        <form method="POST" id="itemForm">
                             <button id="cancel" type="button" onclick="closeModal()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
                             <h1 class="font-semibold text-2xl mb-4">New Product</h1>
                             {{-- image upload --}}
@@ -43,7 +43,7 @@
                                 <div class="flex items-center gap-4">
                                     <div class="avatar">
                                         <div class="w-24 rounded-lg bg-gray-200">
-                                            <img id="imagePreview" src="{{ asset('image/default.png') }}" alt="Preview" class="w-full h-full object-cover" />
+                                            <img id="imagePreview" src="{{ asset('storage/items/default.png') }}" alt="Preview" class="w-full h-full object-cover" />
                                         </div>
                                     </div>
                                     <input type="file" id="imageUpload" name="image" class="file-input file-input-bordered w-full max-w-xs" accept="image/*" />
@@ -156,89 +156,70 @@
 
                         @push('scripts')
                         <script>
-                            const data = {
-                                Router: {
-                                    MikroTik: ["RB-951", "RB-952"]
-                                    , Tenda: ["F3", "AC6"]
-                                    , "TP-Link": ["Archer C5"]
-                                }
-                                , "Access Point": {
-                                    "TP-Link": ["RE450", "RE455"]
-                                    , Tenda: ["A9"]
-                                    , MikroTik: ["cAP lite"]
-                                }
-                            };
 
-                            const productSelect = document.getElementById("product");
-                            const brandSelect = document.getElementById("brand");
-                            const typeSelect = document.getElementById("type");
+                            document.getElementById("imageUpload").addEventListener("change", function () {
+                                const file = this.files[0];
+                                if (file) {
+                                    const reader = new FileReader();
 
-                            productSelect.addEventListener("change", function() {
-                                const product = this.value;
-                                brandSelect.innerHTML = `<option value="">Pilih Brand</option>`;
-                                typeSelect.innerHTML = `<option value="">Pilih Type</option>`;
+                                    reader.onload = function (e) {
+                                        document.getElementById("imagePreview").src = e.target.result;
+                                    };
 
-                                if (product && data[product]) {
-                                    Object.keys(data[product]).forEach((brand) => {
-                                        const opt = document.createElement("option");
-                                        opt.value = brand;
-                                        opt.textContent = brand;
-                                        brandSelect.appendChild(opt);
-                                    });
+                                    reader.readAsDataURL(file);
+                                } else {
+                                    document.getElementById("imagePreview").src = "{{ asset('image/default.png') }}";
                                 }
                             });
 
-                            brandSelect.addEventListener("change", function() {
-                                const product = productSelect.value;
-                                const brand = this.value;
-                                typeSelect.innerHTML = `<option value="">Pilih Type</option>`;
-
-                                if (product && brand && data[product][brand]) {
-                                    data[product][brand].forEach((type) => {
-                                        const opt = document.createElement("option");
-                                        opt.value = type;
-                                        opt.textContent = type;
-                                        typeSelect.appendChild(opt);
-                                    });
-                                }
-                            });
-
-                            document.getElementById("itemForm").addEventListener("submit", function(e) {
+                            document.getElementById("itemForm").addEventListener("submit", function (e) {
                                 e.preventDefault();
-                                const payload = {
-                                    name: productSelect.value + ' ' + typeSelect.value
-                                    , brand: brandSelect.value
-                                    , type: typeSelect.value
-                                    , location_id: document.getElementById("rack").value
-                                    , condition: document.getElementById("condition").value
-                                    , status: document.getElementById("status").value
-                                    , code: document.getElementById("serialNumber").value
-                                    , description: document.getElementById("description").value
-                                    , category_id: 1
-                                , };
 
-                                fetch('/api/items', {
-                                        method: 'POST'
-                                        , headers: {
-                                            'Content-Type': 'application/json'
-                                            , 'Accept': 'application/json'
-                                        , }
-                                        , body: JSON.stringify(payload)
-                                    })
-                                    .then(res => res.json())
-                                    .then(data => {
-                                        if (data.errors) {
-                                            console.log(data.errors);
-                                            console.log('Payload :', payload);
-                                            alert("Please fill in all fields correctly");
-                                        } else {
-                                            alert("Item successfully created");
-                                            document.getElementById("itemForm").reset();
-                                            closeModal();
-                                            window.location.reload();
-                                        }
-                                    })
+                                const formData = new FormData();
+
+                                const image = document.getElementById("imageUpload").files[0];
+                                const product = document.getElementById("product").value;
+                                const brand = document.getElementById("brand").value;
+                                const type = document.getElementById("type").value;
+                                const location = document.getElementById("rack").value;
+                                const condition = document.getElementById("condition").value;
+                                const status = 'READY';
+                                const serialNumber = document.getElementById("serialNumber").value;
+                                const description = document.getElementById("description").value;
+                                const categoryId = document.getElementById("category_select").value;
+
+                                if (image) {
+                                    formData.append("image", image);
+                                }
+
+                                formData.append("name", `${product} ${type}`);
+                                formData.append("brand", brand);
+                                formData.append("type", type);
+                                formData.append("location_id", location);
+                                formData.append("condition", condition);
+                                formData.append("status", status);
+                                formData.append("code", serialNumber);
+                                formData.append("description", description);
+                                formData.append("category_id", categoryId);
+
+                                fetch("/api/items", {
+                                    method: "POST",
+                                    body: formData,
+                                })
+                                .then((res) => res.json())
+                                .then((data) => {
+                                    if (data.errors) {
+                                        showToast("Please fill in all fields correctly", "error");
+                                        console.log("Payload error:", data.errors);
+                                    } else {
+                                        showToast("Item created successfully", "success");
+                                        document.getElementById("itemForm").reset();
+                                        closeModal();
+                                        window.location.reload();
+                                    }
+                                });
                             });
+
 
                             function closeModal() {
                                 document.getElementById('newProduct').close();
@@ -375,7 +356,7 @@
                         @foreach ($items as $item)
                         <tr>
                             <td class="flex justify-center">
-                                <img class="size-12 rounded-sm" src="{{ asset('image/' . $item->image) }}" />
+                                <img src="{{ asset('storage/' . $item->image) }}" alt="Gambar Produk" />
                             </td>
                             <td class="text-center">{{ $item->name }}</td>
                             <td class="text-center">{{ $item->location->name }}</td>
@@ -392,9 +373,20 @@
                 @can('isAdmin')
 
                                     <i class="fa fa-trash fa-lg cursor-pointer !leading-none" onclick="deleteItem({{ $item->id }})"></i>
-                                    <i class="fa fa-pen-to-square fa-lg cursor-pointer !leading-none" onclick="document.getElementById('editProduct').showModal()"></i>
+                                    <i class="fa fa-pen-to-square fa-lg cursor-pointer !leading-none" onclick="openEditModal({
+                                        id: {{ $item->id }},
+                                        name: '{{ $item->name }}',
+                                        brand: '{{ $item->brand }}',
+                                        type: '{{ $item->type }}',
+                                        condition: '{{ $item->condition }}',
+                                        status: '{{ $item->status }}',
+                                        code: '{{ $item->code }}',
+                                        description: `{{ $item->description }}`,
+                                        location_id: {{ $item->location_id }},
+                                        category_id: {{ $item->category_id }}
+                                    })"></i>
                 @endcan
-                                    <i class="fa-regular fa-eye fa-lg cursor-pointer" onclick="document.getElementById('viewProduct').showModal()"></i>
+                                    <i class="fa-regular fa-eye fa-lg cursor-pointer" onclick="openPreviewModal({{$item->id}})"></i>
                                 </div>
                             </td>
 
@@ -420,14 +412,17 @@
                             {{-- tampilan edit --}}
                             <dialog id="editProduct" class="modal">
                                 <div class="modal-box">
-                                    <form method="dialog" id="editForm">
+                                    <form id="editForm">
                                         <button id="cancel" type="button" onclick="closeEditModal()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
                                         <h1 class="font-semibold text-2xl mb-4">Edit Product</h1>
+
+                                        <input type="hidden" id="edit_id">
+                                        <input type="hidden" id="edit_category">
 
                                         <div class="flex gap-5 justify-between text-gray-600">
                                             <div class="w-[50%]">
                                                 <h1 class="font-medium">PRODUCT</h1>
-                                                <input type="text" id="edit_product" class="input w-full" placeholder="Insert Product">
+                                                <input type="text" id="edit_product" value="ss" class="input w-full" placeholder="Insert Product">
                                             </div>
                                             <div class="w-[50%]">
                                                 <h1 class="font-medium">RACK</h1>
@@ -482,7 +477,7 @@
                                     <form method="dialog" id="viewForm">
                                         <!-- Gambar atas -->
                                         <div class="w-full mb-4">
-                                            <img src="{{ asset('image/cyrene.jpg') }}" alt="Preview" class="w-full h-[180px] object-cover rounded-lg">
+                                            <img src="{{ asset('image/cyrene.jpg') }}" id="view_image" alt="Preview" class="w-full h-[180px] object-cover rounded-lg">
                                         </div>
 
                                         <!-- Tombol close -->
@@ -493,44 +488,44 @@
                                         <div class="flex gap-5 justify-between text-gray-600">
                                             <div class="w-[50%]">
                                                 <h1 class="font-medium">PRODUCT</h1>
-                                                <p>Access Point</p>
+                                                <p id="view_product">Access Point</p>
                                             </div>
                                             <div class="w-[50%]">
                                                 <h1 class="font-medium">RACK</h1>
-                                                <p>Rack 1</p>
+                                                <p id="view_rack">Rack 1</p>
                                             </div>
                                         </div>
 
                                         <div class="flex gap-5 justify-between text-gray-600 mt-3">
                                             <div class="w-[50%]">
                                                 <h1 class="font-medium">BRAND</h1>
-                                                <p>TP-Link</p>
+                                                <p id="view_brand">TP-Link</p>
                                             </div>
                                             <div class="w-[50%]">
                                                 <h1 class="font-medium">CONDITION</h1>
-                                                <p>Good</p>
+                                                <p id="view_condition">Good</p>
                                             </div>
                                         </div>
 
                                         <div class="flex gap-5 justify-between text-gray-600 mt-3">
                                             <div class="w-[50%]">
                                                 <h1 class="font-medium">TYPE</h1>
-                                                <p>TL-WR840N</p>
+                                                <p id="view_type">TL-WR840N</p>
                                             </div>
                                             <div class="w-[50%]">
                                                 <h1 class="font-medium">STATUS</h1>
-                                                <p>Ready</p>
+                                                <p id="view_status">Ready</p>
                                             </div>
                                         </div>
 
                                         <div class="w-full mt-3">
                                             <h1 class="font-medium text-gray-600">SERIAL NUMBER</h1>
-                                            <p>A1B2C3D4E5F6G7H</p>
+                                            <p id="view_serial">A1B2C3D4E5F6G7H</p>
                                         </div>
 
                                         <div class="w-full mt-3">
                                             <h1 class="font-medium text-gray-600">DESCRIPTION</h1>
-                                            <p class="text-gray-600">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vel enim eget lacus fermentum suscipit ut non ex.</p>
+                                            <p id="view_description" class="text-gray-600">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vel enim eget lacus fermentum suscipit ut non ex.</p>
                                         </div>
 
                                         <div class="w-full flex justify-end items-end gap-4 mt-4">
@@ -551,6 +546,58 @@
             <script>
                 let deleteTargetId = null;
 
+                function openPreviewModal(id){
+                    document.getElementById('viewProduct').showModal();
+
+                    fetch(`/api/items/${id}`)
+                    .then(res => {
+                        if (!res.ok) throw new Error("Produk tidak ditemukan");
+                        return res.json();
+                    })
+                    .then(response => {
+                        const item = response.data;
+
+                        document.getElementById("view_product").textContent = item.name;
+                        document.getElementById("view_rack").textContent = item.location?.name ?? "-";
+                        document.getElementById("view_brand").textContent = item.brand;
+                        document.getElementById("view_condition").textContent = item.condition;
+                        document.getElementById("view_type").textContent = item.type;
+                        document.getElementById("view_status").textContent = item.status;
+                        document.getElementById("view_serial").textContent = item.code;
+                        document.getElementById("view_description").textContent = item.description ?? "-";
+
+                        const imageUrl = item.image
+                            ? `/storage/${item.image}`
+                            : '/image/default.png';
+                        document.getElementById("view_image").src = imageUrl;
+
+                        document.getElementById("viewProduct").showModal();
+                    })
+                    .catch(error => {
+                        console.error("Gagal mengambil data produk:", error);
+                        showToast("Gagal mengambil data produk", "error");
+                    });
+                }
+
+                function openEditModal(item) {
+                    // Simpan ID ke hidden input (atau variabel global)
+                    document.getElementById("edit_id").value = item.id;
+
+                    // Isi semua input dengan data
+                    document.getElementById("edit_product").value = item.name || "";
+                    document.getElementById("edit_brand").value = item.brand || "";
+                    document.getElementById("edit_type").value = item.type || "";
+                    document.getElementById("edit_condition").value = item.condition || "";
+                    document.getElementById("edit_status").value = item.status || "";
+                    document.getElementById("edit_serial").value = item.code || "";
+                    document.getElementById("edit_description").value = item.description || "";
+                    document.getElementById("edit_rack").value = item.location_id || "";
+                    document.getElementById("edit_category").value = item.category_id || "";
+
+                    // Tampilkan modal
+                    document.getElementById("editProduct").showModal();
+                }
+
                 async function deleteItem(id) {
                     deleteTargetId = id;
                     document.getElementById("confirmDeleteDialog").showModal();
@@ -568,11 +615,11 @@
                     });
 
                     if (res.ok) {
-                        alert('Item deleted');
+                        showToast("Item deleted successfully", "success");
                         window.location.reload();
                     } else {
                         const data = await res.json();
-                        alert('Error bray cek console');
+                        showToast("Item not deleted", "error");
                         console.log(data.message || res.statusText);
                     }
 
@@ -716,26 +763,37 @@
         document.getElementById('editProduct').close();
     }
 
-    document.getElementById("editForm").addEventListener("submit", function(e) {
-        e.preventDefault();
+document.addEventListener("DOMContentLoaded", function () {
+  const form = document.getElementById("editForm");
+  if (!form) {
+    console.warn("Form edit tidak ditemukan!");
+    return;
+  }
 
-        const payload = {
-            product: document.getElementById("edit_product").value
-            , rack: document.getElementById("edit_rack").value
-            , brand: document.getElementById("edit_brand").value
-            , condition: document.getElementById("edit_condition").value
-            , type: document.getElementById("edit_type").value
-            , status: document.getElementById("edit_status").value
-            , serial: document.getElementById("edit_serial").value
-            , description: document.getElementById("edit_description").value
-        , };
+  form.addEventListener("submit", function (e) {
+    e.preventDefault();
+    console.log("Form submitted tanpa refresh");
 
-        console.log("Edit payload:", payload);
-        alert("Simulasi update berhasil. Kirim ke API sesuai kebutuhan.");
+    const payload = {
+      product: document.getElementById("edit_product").value,
+      rack: document.getElementById("edit_rack").value,
+      brand: document.getElementById("edit_brand").value,
+      condition: document.getElementById("edit_condition").value,
+      type: document.getElementById("edit_type").value,
+      status: document.getElementById("edit_status").value,
+      serial: document.getElementById("edit_serial").value,
+      description: document.getElementById("edit_description").value,
+    };
 
-        document.getElementById("editForm").reset();
-        closeEditModal();
-    });
+    console.log("Edit payload:", payload);
+    alert("Simulasi update berhasil. Kirim ke API sesuai kebutuhan.");
+
+    form.reset();
+    closeEditModal();
+  });
+});
+
+
 
 </script>
 

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('brand');
             $table->string('type');
             $table->string('condition');
-            $table->string('image')->default('default.png');
+            $table->string('image')->default('items/default.png');
             $table->text('description')->nullable();
             $table->timestamps();
 
