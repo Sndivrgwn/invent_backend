@@ -24,12 +24,7 @@ class DatabaseSeeder extends Seeder
         // ]);
         $this->call([
             RolesSeeder::class,
-            CategorySeeder::class,
-            LocationSeeder::class,
-            ItemSeeder::class,
             UserSeeder::class,
-            LoanSeeder::class,
-            ItemLoanSeeder::class,
         ]);
     }
 }
