@@ -2,7 +2,7 @@
 
 <!-- MOBILE TOGGLE BUTTON -->
 <div class="md:hidden  md:p-4">
-    <button id="mobile-menu-button" class="text-blue-700 text-xl absolute left-8 top-1/2 transform translate-y-1/2 z-40 text-blue-700 text-xl">
+    <button id="mobile-menu-button" class="bg-white px-1 rounded text-blue-700 text-xl absolute left-8 top-1/2 transform translate-y-1/2 z-40 text-blue-700 text-xl">
         <i class="fa fa-bars"></i>
     </button>
 </div>
