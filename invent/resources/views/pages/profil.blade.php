@@ -18,21 +18,6 @@
                 <h1 class="text-2xl font-semibold py-4">Profil Settings</h1>
             </div>
         </div>
-        @if(session('success'))
-        <div class="alert alert-success">
-            {{ session('success') }}
-        </div>
-        @endif
-
-        @if($errors->any())
-        <div class="alert alert-error">
-            <ul>
-                @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-        @endif
 
         <div class="list bg-base-100 rounded-box shadow-md p-10">
             <div class="flex gap-4">
@@ -100,17 +85,30 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Avatar Upload Form -->
-            <div class="mt-3 w-max">
-                <form action="{{ route('profile.update.avatar') }}" method="POST" enctype="multipart/form-data">
-                    @csrf
-                    @method('PUT')
-                    <input type="file" name="avatar" class="file-input" accept="image/*" required>
-                    <button type="submit" class="btn btn-primary mt-2">Upload Avatar</button>
-                </form>
-            </div>
         </div>
+    </div>
+</div>
+
+<!-- Avatar Upload Modal -->
+<input type="checkbox" id="avatar-modal" class="modal-toggle" />
+<div class="modal">
+    <div class="modal-box">
+        <h3 class="font-bold text-lg">Update Avatar</h3>
+        <form action="{{ route('profile.update.avatar') }}" method="POST" enctype="multipart/form-data">
+            @csrf
+            @method('PUT')
+            <div class="form-control">
+                <label class="label">
+                    <span class="label-text">Choose Avatar Image</span>
+                </label>
+                <input type="file" name="avatar" class="file-input file-input-bordered w-full" accept="image/*" required />
+                <div class="text-sm text-gray-500 mt-2">Max file size: 2MB | Allowed formats: jpeg, png, jpg, gif, webp</div>
+            </div>
+            <div class="modal-action">
+                <label for="avatar-modal" class="btn">Cancel</label>
+                <button type="submit" class="btn btn-primary">Upload</button>
+            </div>
+        </form>
     </div>
 </div>
 
@@ -127,6 +125,9 @@
                     <span class="label-text">New Name</span>
                 </label>
                 <input type="text" name="name" value="{{ $user->name }}" class="input input-bordered" required />
+                @error('name', 'nameUpdate')
+                    <div class="text-error text-sm mt-1">{{ $message }}</div>
+                @enderror
             </div>
             <div class="modal-action">
                 <label for="name-modal" class="btn">Cancel</label>
@@ -149,6 +150,9 @@
                     <span class="label-text">New Email</span>
                 </label>
                 <input type="email" name="email" value="{{ $user->email }}" class="input input-bordered" required />
+                @error('email', 'emailUpdate')
+                    <div class="text-error text-sm mt-1">{{ $message }}</div>
+                @enderror
             </div>
             <div class="modal-action">
                 <label for="email-modal" class="btn">Cancel</label>

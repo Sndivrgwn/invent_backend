@@ -112,7 +112,7 @@
 
     <!-- LOGOUT -->
     <div class="mt-3">
-        <form action="/logout" method="POST">
+        <form method="POST" action="{{ route('logout') }}" id="logout-form">
             @csrf
             <button
                 class="w-full bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 active:bg-red-800 transition-colors duration-200">

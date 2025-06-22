@@ -4,18 +4,38 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class LogoutController extends Controller
 {
     public function logout(Request $request)
     {
-        // Invalidate the user's session
-        $request->session()->invalidate();
+        try {
+            // Explicitly use the 'web' guard as configured in auth.php
+            $guard = Auth::guard('web');
+            
+            // Perform logout
+            $guard->logout();
 
-        // Regenerate the CSRF token
-        $request->session()->regenerateToken();
+            // Invalidate the session
+            $request->session()->invalidate();
 
-        // Redirect to the login page or home page
-        return redirect('/login')->with('message', 'You have been logged out successfully.');
+            // Regenerate CSRF token
+            $request->session()->regenerateToken();
+
+            // Redirect with success message
+            return redirect()->route('login')->with('toast', [
+                'type' => 'success',
+                'message' => 'You have been logged out successfully.'
+            ]);
+
+        } catch (\Exception $e) {
+            report($e); // Log the error
+            
+            return redirect()->back()->with('toast', [
+                'type' => 'error',
+                'message' => 'Logout failed. Please try again.'
+            ]);
+        }
     }
 }

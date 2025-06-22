@@ -284,7 +284,14 @@
                             <td class="text-center">{{ $loan->status }}</td>
 
                             <td class="text-center">
-                                <i class="fa fa-pen-to-square fa-lg cursor-pointer" onclick="openEditModal({{ $loan->id }}, '{{ $loan->loaner_name }}', '{{ $loan->description }}', '{{ $loan->return_date }}')"></i>
+                                <i class="fa fa-pen-to-square fa-lg cursor-pointer" 
+   onclick="openEditModal(
+       {{ $loan->id }}, 
+       '{{ $loan->loaner_name }}', 
+       '{{ $loan->description }}', 
+       '{{ $loan->return_date }}',
+       '{{ $loan->loan_date }}'
+   )"></i>
                                 <i class="fa-regular fa-eye fa-lg cursor-pointer" onclick="showLoanDetailsTwo({{ $loan->id }})"></i>
                             </td>
                             {{-- tampilan delete --}}
@@ -413,29 +420,29 @@
 
 <script>
     async function showLoanDetails(loanId) {
-        try {
-            const response = await fetch(`/api/history/${loanId}`);
+    try {
+        const response = await fetch(`/api/history/${loanId}`);
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
-            const contentType = response.headers.get('content-type');
-            if (!contentType || !contentType.includes('application/json')) {
-                throw new Error("Response isn't JSON");
-            }
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            throw new Error("Response isn't JSON");
+        }
 
-            const data = await response.json();
+        const data = await response.json();
 
-            if (!data.success) {
-                throw new Error(data.message || 'Failed to load loan');
-            }
+        if (!data.success) {
+            throw new Error(data.message || 'Failed to load loan');
+        }
 
-            const loan = data.data;
-            const modal = document.getElementById('viewProduct');
+        const loan = data.data;
+        const modal = document.getElementById('viewProduct');
 
-            // Build modal content
-            let modalContent = `
+        // Build modal content (same as before)
+        let modalContent = `
             <button type="button" onclick="document.getElementById('viewProduct').close()"
                 class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
             <h1 class="font-semibold text-2xl mb-4">Loan Details</h1>
@@ -486,11 +493,10 @@
                 <h2 class="font-semibold text-lg mb-2">Items (${loan.items?.length || 0})</h2>
         `;
 
-            // Add items if they exist
-            if (loan.items && loan.items.length > 0) {
-                if (loan.items.length > 1) {
-                    // For multiple items, show a summary table with expandable details
-                    modalContent += `
+        // Add items if they exist (same as before)
+        if (loan.items && loan.items.length > 0) {
+            if (loan.items.length > 1) {
+                modalContent += `
                     <div class="overflow-x-auto">
                         <table class="table w-full">
                             <thead>
@@ -504,8 +510,8 @@
                             <tbody>
                 `;
 
-                    loan.items.forEach((item, index) => {
-                        modalContent += `
+                loan.items.forEach((item, index) => {
+                    modalContent += `
                         <tr>
                             <td>${item.name || 'N/A'}</td>
                             <td>${item.code || 'N/A'}</td>
@@ -518,18 +524,17 @@
                             </td>
                         </tr>
                     `;
-                    });
+                });
 
-                    modalContent += `
+                modalContent += `
                             </tbody>
                         </table>
                     </div>
                     <div id="itemDetailsContainer" class="mt-4"></div>
                 `;
-                } else {
-                    // For single item, show full details directly
-                    const item = loan.items[0];
-                    modalContent += `
+            } else {
+                const item = loan.items[0];
+                modalContent += `
                     <div class="border p-4 rounded-lg">
                         <div class="grid grid-cols-2 gap-4">
                             <div>
@@ -563,56 +568,56 @@
                         </div>
                     </div>
                 `;
-                }
-            } else {
-                modalContent += `<p class="text-gray-500">No items found for this loan</p>`;
             }
+        } else {
+            modalContent += `<p class="text-gray-500">No items found for this loan</p>`;
+        }
 
-            modalContent += `</div>`; // Close items section
+        modalContent += `</div>`; // Close items section
 
-            // Add close button
-            modalContent += `
+        // Add close button
+        modalContent += `
             <div class="w-full flex justify-end items-end gap-4 mt-4">
                 <button type="button" onclick="document.getElementById('viewProduct').close()"
                     class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Close</button>
             </div>
         `;
 
-            // Update modal content
-            modal.querySelector('form').innerHTML = modalContent;
-            modal.showModal();
+        // Update modal content
+        modal.querySelector('form').innerHTML = modalContent;
+        modal.showModal();
 
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Failed to load loan details. See console for details.');
-        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Failed to load loan details. See console for details.', 'error');
     }
+}
 
-    async function showLoanDetailsTwo(loanId) {
-        try {
-            const response = await fetch(`/api/history/${loanId}`);
+async function showLoanDetailsTwo(loanId) {
+    try {
+        const response = await fetch(`/api/history/${loanId}`);
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
 
-            const contentType = response.headers.get('content-type');
-            if (!contentType || !contentType.includes('application/json')) {
-                throw new Error("Response isn't JSON");
-            }
+        const contentType = response.headers.get('content-type');
+        if (!contentType || !contentType.includes('application/json')) {
+            throw new Error("Response isn't JSON");
+        }
 
-            const data = await response.json();
+        const data = await response.json();
 
-            if (!data.success) {
-                throw new Error(data.message || 'Failed to load loan');
-            }
+        if (!data.success) {
+            throw new Error(data.message || 'Failed to load loan');
+        }
 
-            const loan = data.data;
-            const dialog = document.getElementById('itemDetailsDialogtwo');
-            const content = document.getElementById('itemDetailsContenttwo');
+        const loan = data.data;
+        const dialog = document.getElementById('itemDetailsDialogtwo');
+        const content = document.getElementById('itemDetailsContenttwo');
 
-            // Build modal content
-            let modalContent = `
+        // Build modal content (same as before)
+        let modalContent = `
             <h1 class="font-semibold text-2xl mb-4">Loan Details</h1>
             <div class="mb-6">
                 <h2 class="font-semibold text-lg mb-2">Loan Information</h2>
@@ -653,11 +658,10 @@
                 <h2 class="font-semibold text-lg mb-2">Items (${loan.items?.length || 0})</h2>
         `;
 
-            // Add items if they exist
-            if (loan.items && loan.items.length > 0) {
-                if (loan.items.length > 1) {
-                    // For multiple items, show a summary table with expandable details
-                    modalContent += `
+        // Add items if they exist (same as before)
+        if (loan.items && loan.items.length > 0) {
+            if (loan.items.length > 1) {
+                modalContent += `
                     <div class="overflow-x-auto">
                         <table class="table w-full">
                             <thead>
@@ -671,8 +675,8 @@
                             <tbody>
                 `;
 
-                    loan.items.forEach((item, index) => {
-                        modalContent += `
+                loan.items.forEach((item, index) => {
+                    modalContent += `
                         <tr>
                             <td>${item.name || 'N/A'}</td>
                             <td>${item.code || 'N/A'}</td>
@@ -685,18 +689,17 @@
                             </td>
                         </tr>
                     `;
-                    });
+                });
 
-                    modalContent += `
+                modalContent += `
                             </tbody>
                         </table>
                     </div>
                     <div id="itemDetailsContainer" class="mt-4"></div>
                 `;
-                } else {
-                    // For single item, show full details directly
-                    const item = loan.items[0];
-                    modalContent += `
+            } else {
+                const item = loan.items[0];
+                modalContent += `
                     <div class="border p-4 rounded-lg">
                         <div class="grid grid-cols-2 gap-4">
                             <div>
@@ -730,41 +733,41 @@
                         </div>
                     </div>
                 `;
-                }
-            } else {
-                modalContent += `<p class="text-gray-500">No items found for this loan</p>`;
             }
+        } else {
+            modalContent += `<p class="text-gray-500">No items found for this loan</p>`;
+        }
 
-            modalContent += `</div>`; // Close items section
+        modalContent += `</div>`; // Close items section
 
-            // Add close button
-            modalContent += `
+        // Add close button
+        modalContent += `
             <div class="w-full flex justify-end items-end gap-4 mt-4">
                 <button type="button" onclick="document.getElementById('itemDetailsDialogtwo').close()"
                     class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Close</button>
             </div>
         `;
 
-            // Update modal content
-            content.innerHTML = modalContent;
-            dialog.showModal();
+        // Update modal content
+        content.innerHTML = modalContent;
+        dialog.showModal();
 
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Failed to load loan details. See console for details.');
-        }
+    } catch (error) {
+        console.error('Error:', error);
+        showToast('Failed to load loan details. See console for details.', 'error');
     }
+}
 
-    async function showItemDetailsTwo(itemIndex, loanId) {
-        try {
-            const response = await fetch(`/api/history/${loanId}`);
-            const data = await response.json();
-            const item = data.data.items[itemIndex];
+async function showItemDetailsTwo(itemIndex, loanId) {
+    try {
+        const response = await fetch(`/api/history/${loanId}`);
+        const data = await response.json();
+        const item = data.data.items[itemIndex];
 
-            const dialog = document.getElementById('itemDetailsDialogtwo');
-            const content = document.getElementById('itemDetailsContenttwo');
+        const dialog = document.getElementById('itemDetailsDialogtwo');
+        const content = document.getElementById('itemDetailsContenttwo');
 
-            content.innerHTML = `
+        content.innerHTML = `
             <div class="flex gap-6">
                 <div class="w-2/3">
                     <h2 class="text-2xl font-bold mb-4">${item.name}</h2>
@@ -804,31 +807,32 @@
             </div>
         `;
 
-            dialog.showModal();
+        dialog.showModal();
 
-        } catch (error) {
-            console.error('Error showing item details:', error);
-            const content = document.getElementById('itemDetailsContenttwo');
-            content.innerHTML = `
+    } catch (error) {
+        console.error('Error showing item details:', error);
+        const content = document.getElementById('itemDetailsContenttwo');
+        content.innerHTML = `
             <div class="alert alert-error">
                 Failed to load item details: ${error.message}
             </div>
         `;
-            dialog.showModal();
-        }
+        showToast('Failed to load item details. See console for details.', 'error');
+        dialog.showModal();
     }
+}
 
-    // Function to show detailed view of a specific item
-    async function showItemDetails(itemIndex, loanId) {
-        try {
-            const response = await fetch(`/api/history/${loanId}`);
-            const data = await response.json();
-            const item = data.data.items[itemIndex];
+// Function to show detailed view of a specific item
+async function showItemDetails(itemIndex, loanId) {
+    try {
+        const response = await fetch(`/api/history/${loanId}`);
+        const data = await response.json();
+        const item = data.data.items[itemIndex];
 
-            const dialog = document.getElementById('itemDetailsDialog');
-            const content = document.getElementById('itemDetailsContent');
+        const dialog = document.getElementById('itemDetailsDialog');
+        const content = document.getElementById('itemDetailsContent');
 
-            content.innerHTML = `
+        content.innerHTML = `
             <div class="flex gap-6">
                 <div class="w-2/3">
                     <h2 class="text-2xl font-bold mb-4">${item.name}</h2>
@@ -868,70 +872,109 @@
             </div>
         `;
 
-            dialog.showModal();
+        dialog.showModal();
 
-        } catch (error) {
-            console.error('Error showing item details:', error);
-            const content = document.getElementById('itemDetailsContent');
-            content.innerHTML = `
+    } catch (error) {
+        console.error('Error showing item details:', error);
+        const content = document.getElementById('itemDetailsContent');
+        content.innerHTML = `
             <div class="alert alert-error">
                 Failed to load item details: ${error.message}
             </div>
         `;
-            dialog.showModal();
+        showToast('Failed to load item details. See console for details.', 'error');
+        dialog.showModal();
+    }
+}
+
+// edit product
+function closeEditModal() {
+    document.getElementById('editProductOutgoing').close();
+}
+
+function closeEditModalIncome() {
+    document.getElementById('editProductIncome').close();
+}
+
+function openEditModal(id, name, description, returnDate, loanDate) {
+    document.getElementById('edit_loan_id').value = id;
+    document.getElementById('edit_borrower_name').value = name;
+    document.getElementById('edit_description').value = description;
+    document.getElementById('edit_return_date').value = returnDate;
+    
+    // Simpan loan_date sebagai data attribute
+    document.getElementById('editProductOutgoing').dataset.loanDate = loanDate;
+    
+    document.getElementById('editProductOutgoing').showModal();
+    
+    // Set min dan max date untuk input return_date
+    const today = new Date().toISOString().split('T')[0];
+    const loanDateObj = new Date(loanDate);
+    const maxDateObj = new Date(loanDateObj);
+    maxDateObj.setDate(loanDateObj.getDate() + 14); // 2 minggu setelah loan_date
+    const maxDate = maxDateObj.toISOString().split('T')[0];
+    
+    const returnDateInput = document.getElementById('edit_return_date');
+    returnDateInput.min = today;
+    returnDateInput.max = maxDate;
+    
+    // Tambahkan pesan validasi
+    returnDateInput.title = `Return date must be between today and ${maxDate}`;
+}
+
+document.getElementById("editForm").addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const loanId = document.getElementById("edit_loan_id").value;
+    const returnDate = document.getElementById("edit_return_date").value;
+    const loanDate = document.getElementById('editProductOutgoing').dataset.loanDate;
+    
+    // Validasi tanggal
+    const today = new Date().toISOString().split('T')[0];
+    const loanDateObj = new Date(loanDate);
+    const maxDateObj = new Date(loanDateObj);
+    maxDateObj.setDate(loanDateObj.getDate() + 14);
+    const maxDate = maxDateObj.toISOString().split('T')[0];
+    
+    if (returnDate < today) {
+        showToast('Return date cannot be before today', 'error');
+        return;
+    }
+    
+    if (returnDate > maxDate) {
+        showToast('Return date cannot be more than 2 weeks from loan date', 'error');
+        return;
+    }
+
+    const payload = {
+        loaner_name: document.getElementById("edit_borrower_name").value,
+        return_date: returnDate,
+        description: document.getElementById("edit_description").value
+    };
+
+    try {
+        const response = await fetch(`/api/loans/${loanId}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+            },
+            body: JSON.stringify(payload)
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'Failed to update loan');
         }
+
+        const data = await response.json();
+        showToast('Loan updated successfully!', 'success');
+        location.reload();
+    } catch (error) {
+        console.error('Error:', error);
+        showToast(error.message || 'Failed to update loan', 'error');
     }
-
-    // edit product
-    function closeEditModal() {
-        document.getElementById('editProductOutgoing').close();
-    }
-
-    function closeEditModalIncome() {
-        document.getElementById('editProductIncome').close();
-    }
-
-    function openEditModal(id, name, description, returnDate) {
-        document.getElementById('edit_loan_id').value = id;
-        document.getElementById('edit_borrower_name').value = name;
-        document.getElementById('edit_description').value = description;
-        document.getElementById('edit_return_date').value = returnDate;
-        document.getElementById('editProductOutgoing').showModal();
-    }
-
-    document.getElementById("editForm").addEventListener("submit", async function(e) {
-        e.preventDefault();
-
-        const loanId = document.getElementById("edit_loan_id").value;
-        const payload = {
-            loaner_name: document.getElementById("edit_borrower_name").value
-            , return_date: document.getElementById("edit_return_date").value
-            , description: document.getElementById("edit_description").value
-        };
-
-        try {
-            const response = await fetch(`/api/loans/${loanId}`, {
-                method: 'PUT'
-                , headers: {
-                    'Content-Type': 'application/json'
-                    , 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-                }
-                , body: JSON.stringify(payload)
-            });
-
-            if (!response.ok) {
-                throw new Error('Failed to update loan');
-            }
-
-            const data = await response.json();
-            alert('Loan updated successfully!');
-            location.reload(); // Refresh the page to see changes
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Failed to update loan: ' + error.message);
-        }
-    });
-
+});
 </script>
 
 @stack('scripts')
