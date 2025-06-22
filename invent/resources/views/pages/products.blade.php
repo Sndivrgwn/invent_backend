@@ -2,7 +2,7 @@
 
 <div class="flex flex-col h-screen bg-gradient-to-b from-blue-100 to-white md:flex-row">
     <!-- Sidebar -->
-    <div class="w-full md:w-auto">
+    <div class="w-full md:w-auto relative">
         @include('template.sidebar')
     </div>
 
