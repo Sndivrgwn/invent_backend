@@ -230,14 +230,19 @@
             const data = await response.json();
 
             if (response.ok) {
-                alert(data.message || 'Loan deleted successfully');
-                window.location.reload();
+                handleAjaxResponse({
+                    toast: {
+                        message: data.message || 'Loan deleted successfully',
+                        type: 'success'
+                    },
+                    reload: true
+                });
             } else {
                 throw new Error(data.message || 'Failed to delete loan');
             }
         } catch (error) {
             console.error('Error:', error);
-            alert(error.message);
+            showToast(error.message || 'An error occurred while deleting the loan', 'error');
         } finally {
             document.getElementById("confirmDeleteDialog").close();
             deleteTargetId = null;
@@ -296,7 +301,7 @@
             modal.showModal();
         } catch (error) {
             console.error('Error:', error);
-            alert(error.message);
+            showToast(error.message || 'Failed to load loan details', 'error');
         }
     }
 
@@ -324,14 +329,19 @@
             const data = await response.json();
 
             if (response.ok) {
-                alert(data.message || 'Loan returned successfully');
-                window.location.reload();
+                handleAjaxResponse({
+                    toast: {
+                        message: data.message || 'Loan returned successfully',
+                        type: 'success'
+                    },
+                    reload: true
+                });
             } else {
                 throw new Error(data.message || 'Failed to return loan');
             }
         } catch (error) {
             console.error('Error:', error);
-            alert(error.message);
+            showToast(error.message || 'An error occurred while returning the loan', 'error');
         } finally {
             document.getElementById('returnProduct').close();
             returnTargetId = null;
@@ -375,7 +385,7 @@
             modal.showModal();
         } catch (error) {
             console.error('Error:', error);
-            alert(error.message);
+            showToast(error.message || 'Failed to load loan details', 'error');
         }
     }
 </script>

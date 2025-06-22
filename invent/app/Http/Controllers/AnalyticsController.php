@@ -9,124 +9,188 @@ use App\Models\Item;
 use App\Models\Loan;
 use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Log;
+use Exception;
 
 class AnalyticsController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * Display analytics dashboard
      */
-    public function index()
+   public function index()
 {
-    // Ambil semua kategori beserta item dan loan
-    $categories = Category::with(['items', 'items.loans'])->get();
+    try {
+        $categories = Category::with(['items.loans'])->get()
+            ->map(function ($category) {
+                $itemsCount = $category->items->count();
+                $loanCount = $category->items->sum(fn($item) => $item->loans->count());
+                $availableCount = $itemsCount - $loanCount;
 
-    foreach ($categories as $category) {
-        // Hitung total item dalam kategori
-        $category->items_count = $category->items->count();
+                $typeSummaries = $category->items->groupBy('type')->map(function ($items) {
+                    $total = $items->count();
+                    $loaned = $items->sum(fn($item) => $item->loans->count());
+                    $available = $total - $loaned;
 
-        // Hitung jumlah peminjaman dalam kategori
-        $category->loan_count = $category->items->reduce(function ($carry, $item) {
-            return $carry + $item->loans->count();
-        }, 0);
+                    return (object)[
+                        'type' => $items->first()->type,
+                        'quantity' => $total,
+                        'available' => $available,
+                        'loaned' => $loaned,
+                        'low_stock' => $available < 3 ? 'Yes' : 'No',
+                    ];
+                });
 
-        // Hitung jumlah tersedia
-        $category->available_count = $category->items_count - $category->loan_count;
+                // Add dynamic properties to the model
+                $category->items_count = $itemsCount;
+                $category->loan_count = $loanCount;
+                $category->available_count = $availableCount;
+                $category->low_stock = $availableCount < 3 ? 'Yes' : 'No';
+                $category->type_summaries = $typeSummaries->values();
 
-        // Tandai stok rendah
-        $category->low_stock = $category->available_count < 3 ? 'Yes' : 'No';
+                return $category;
+            });
 
-        // Kelompokkan item berdasarkan tipe
-        $types = $category->items->groupBy('type')->map(function ($items) {
-            $total = $items->count();
-            $loaned = $items->reduce(fn($carry, $item) => $carry + $item->loans->count(), 0);
-            $available = $total - $loaned;
-            $lowStock = $available < 3 ? 'Yes' : 'No';
+        return view('pages.analytics', compact('categories'));
 
-            return [
-                'type' => $items->first()->type,
-                'quantity' => $total,
-                'available' => $available,
-                'loaned' => $loaned,
-                'low_stock' => $lowStock,
-            ];
-        });
-
-        // Simpan data ke kategori
-        $category->type_summaries = $types->values(); // array numerik untuk loop di Blade
+    } catch (Exception $e) {
+        Log::error('Error in AnalyticsController@index: ' . $e->getMessage());
+        return redirect()->back()->with('toast', [
+            'type' => 'error',
+            'message' => 'Failed to load analytics data. Please try again.'
+        ]);
     }
-
-    return view('pages.analytics', compact('categories'));
 }
 
-
-
-
+    /**
+     * Export categories report
+     */
     public function export()
     {
-        return Excel::download(new CategoryExport, 'categories_report.xlsx');
+        try {
+            return Excel::download(new CategoryExport, 'categories_report_' . now()->format('Ymd_His') . '.xlsx');
+        } catch (Exception $e) {
+            Log::error('Error in AnalyticsController@export: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to generate export. Please try again.');
+        }
     }
 
-
     /**
-     * Store a newly created resource in storage.
+     * Store a new category
      */
-    public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
+    // In store method
+public function store(Request $request)
+{
+    try {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:categories,name',
+            'description' => 'nullable|string|max:500',
         ]);
 
-        $category = Category::create($request->only('name', 'description'));
+        Category::create($validated);
 
-        return redirect()->route('analytics')->with('success', 'Category created successfully.'); 
+        return redirect()->route('analytics')->with('toast', [
+            'type' => 'success',
+            'message' => 'Category created successfully!'
+        ]);
+
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        return redirect()->back()
+            ->withErrors($e->validator)
+            ->withInput()
+            ->with('toast', [
+                'type' => 'error',
+                'message' => 'Validation failed. Please check your input.'
+            ]);
+    } catch (Exception $e) {
+        Log::error('Error in AnalyticsController@store: ' . $e->getMessage());
+        return redirect()->back()->with('toast', [
+            'type' => 'error',
+            'message' => 'Failed to create category. Please try again.'
+        ]);
     }
+}
+
+// In destroy method
+public function destroy(string $id)
+{
+    try {
+        $category = Category::findOrFail($id);
+        
+        \DB::transaction(function () use ($category) {
+            $category->items()->each(function ($item) {
+                $item->loans()->detach();
+                $item->delete();
+            });
+            $category->delete();
+        });
+
+        return response()->json([
+            'success' => true,
+            'toast' => [
+                'type' => 'success',
+                'message' => 'Category and all related items deleted successfully!'
+            ],
+            'reload' => true
+        ]);
+
+    } catch (Exception $e) {
+        Log::error('Error in AnalyticsController@destroy: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'toast' => [
+                'type' => 'error',
+                'message' => 'Failed to delete category'
+            ]
+        ], 500);
+    }
+}
 
     /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
+     * Update a category
      */
     public function update(Request $request, string $id)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
+{
+    try {
+        $validated = $request->validate([
+            'name' => 'required|string|max:255|unique:categories,name,' . $id,
+            'description' => 'nullable|string|max:500',
         ]);
 
         $category = Category::findOrFail($id);
-        $category->update($request->only('name', 'description'));
+        $category->update($validated);
 
         return response()->json([
-            'message' => 'Category updated successfully',
-            'data' => $category,
-        ], 200);
+            'success' => true,
+            'toast' => [
+                'type' => 'success',
+                'message' => 'Category updated successfully!'
+            ],
+            'reload' => true
+        ]);
+
+    } catch (\Illuminate\Validation\ValidationException $e) {
+        return response()->json([
+            'success' => false,
+            'toast' => [
+                'type' => 'error',
+                'message' => 'Validation failed: ' . implode(' ', $e->validator->errors()->all())
+            ]
+        ], 422);
+        
+    } catch (Exception $e) {
+        Log::error('Error in AnalyticsController@update: ' . $e->getMessage());
+        return response()->json([
+            'success' => false,
+            'toast' => [
+                'type' => 'error',
+                'message' => 'Failed to update category'
+            ]
+        ], 500);
     }
+}
 
     /**
-     * Remove the specified resource from storage.
+     * Delete a category and its related items
      */
-    public function destroy(string $id)
-    {
-        $category = Category::findOrFail($id);
-
-        // Hapus semua item terkait kategori ini
-        foreach ($category->items as $item) {
-            $item->loans()->detach(); // Hapus relasi dengan loans
-            $item->delete(); // Hapus item
-        }
-
-        // Hapus kategori
-        $category->delete();
-
-        return response()->json([
-            'message' => 'Category and related items deleted successfully',
-        ], 200);
-    }
+    
 }

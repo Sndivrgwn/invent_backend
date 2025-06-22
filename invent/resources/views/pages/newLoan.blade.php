@@ -329,7 +329,9 @@ function submitLoan() {
                 console.error(data.error);
             } else {
                 showToast("Loan created successfully!", "success");
-                window.location.href = "/manageLoan";
+                setTimeout(() => {
+                    window.location.href = "/manageLoan";
+                }, 1000); 
             }
         })
         .catch(err => {
