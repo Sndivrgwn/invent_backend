@@ -15,60 +15,70 @@ class CategoryExport implements FromCollection, WithHeadings, WithStyles, Should
     protected $boldRows = [];
 
     public function collection()
-    {
-        $data = [];
-        $rowIndex = 2; // Baris pertama untuk heading
+{
+    $data = [];
+    $rowIndex = 2; // Baris pertama untuk heading
 
-        $categories = Category::with(['items', 'items.loans'])->get();
+    $categories = Category::with(['items.loans'])->get();
 
-        foreach ($categories as $category) {
-            $total = $category->items->count();
-            $loaned = $category->items->reduce(fn($carry, $item) => $carry + $item->loans->count(), 0);
-            $available = $total - $loaned;
-            $lowStock = $available < 3 ? 'Yes' : 'No';
+    foreach ($categories as $category) {
+        // Ambil hanya item unik per kategori
+        $uniqueItems = $category->items->unique('id');
 
-            // Tambah baris kategori (akan dibold dan diberi warna)
-            $data[] = [
-                'Category' => $category->name,
-                'Type' => '',
-                'Quantity' => $total,
-                'Loaned' => $loaned,
-                'Available' => $available,
-                'Low Stock' => $lowStock,
+        $total = $uniqueItems->count();
+
+        // Hitung hanya loan dengan status 'borrowed'
+        $loaned = $uniqueItems->reduce(function ($carry, $item) {
+            return $carry + $item->loans->where('status', 'borrowed')->count();
+        }, 0);
+
+        $available = $total - $loaned;
+        $lowStock = $available < 3 ? 'Yes' : 'No';
+
+        // Tambah baris kategori (akan dibold dan diberi warna)
+        $data[] = [
+            'Category' => $category->name,
+            'Type' => '',
+            'Quantity' => $total,
+            'Loaned' => $loaned,
+            'Available' => $available,
+            'Low Stock' => $lowStock,
+        ];
+        $this->boldRows[] = $rowIndex++;
+        
+        // Tambah per type dari item unik
+        $types = $uniqueItems->groupBy('type')->map(function ($items) {
+            $qty = $items->count();
+            $loan = $items->reduce(function ($carry, $item) {
+                return $carry + $item->loans->where('status', 'borrowed')->count();
+            }, 0);
+            $avail = $qty - $loan;
+            $low = $avail < 3 ? 'Yes' : 'No';
+
+            return [
+                'type' => $items->first()->type,
+                'quantity' => $qty,
+                'loaned' => $loan,
+                'available' => $avail,
+                'low_stock' => $low,
             ];
-            $this->boldRows[] = $rowIndex++;
-            
-            // Tambah per type
-            $types = $category->items->groupBy('type')->map(function ($items) {
-                $qty = $items->count();
-                $loan = $items->reduce(fn($carry, $item) => $carry + $item->loans->count(), 0);
-                $avail = $qty - $loan;
-                $low = $avail < 3 ? 'Yes' : 'No';
+        });
 
-                return [
-                    'type' => $items->first()->type,
-                    'quantity' => $qty,
-                    'loaned' => $loan,
-                    'available' => $avail,
-                    'low_stock' => $low,
-                ];
-            });
-
-            foreach ($types as $type) {
-                $data[] = [
-                    'Category' => '',
-                    'Type' => $type['type'],
-                    'Quantity' => $type['quantity'],
-                    'Loaned' => $type['loaned'],
-                    'Available' => $type['available'],
-                    'Low Stock' => $type['low_stock'],
-                ];
-                $rowIndex++;
-            }
+        foreach ($types as $type) {
+            $data[] = [
+                'Category' => '',
+                'Type' => $type['type'],
+                'Quantity' => $type['quantity'],
+                'Loaned' => $type['loaned'],
+                'Available' => $type['available'],
+                'Low Stock' => $type['low_stock'],
+            ];
+            $rowIndex++;
         }
-
-        return collect($data);
     }
+
+    return collect($data);
+}
 
     public function headings(): array
     {
