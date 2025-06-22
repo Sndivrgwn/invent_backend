@@ -23,12 +23,21 @@ class AnalyticsController extends Controller
         $categories = Category::with(['items.loans'])->get()
             ->map(function ($category) {
                 $itemsCount = $category->items->count();
-                $loanCount = $category->items->sum(fn($item) => $item->loans->count());
+
+                // Hitung hanya loans yang status-nya 'borrowed'
+                $loanCount = $category->items->sum(function ($item) {
+                    return $item->loans->where('status', 'borrowed')->count();
+                });
+
                 $availableCount = $itemsCount - $loanCount;
 
                 $typeSummaries = $category->items->groupBy('type')->map(function ($items) {
                     $total = $items->count();
-                    $loaned = $items->sum(fn($item) => $item->loans->count());
+
+                    $loaned = $items->sum(function ($item) {
+                        return $item->loans->where('status', 'borrowed')->count();
+                    });
+
                     $available = $total - $loaned;
 
                     return (object)[
@@ -40,7 +49,7 @@ class AnalyticsController extends Controller
                     ];
                 });
 
-                // Add dynamic properties to the model
+                // Tambahkan properti dinamis ke model
                 $category->items_count = $itemsCount;
                 $category->loan_count = $loanCount;
                 $category->available_count = $availableCount;
