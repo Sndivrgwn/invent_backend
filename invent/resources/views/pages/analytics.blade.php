@@ -38,6 +38,8 @@
                     <div class="flex-1 relative w-full hidden md:block mr-4">
                         <p class="font-medium text-xl ms-5">Category Overview</p>
                     </div>
+                @can('isAdmin')
+                    
                     <div class="flex-none">
                         <button class="bg-[#2563EB] text-white rounded-lg py-2 px-4 mx-5 hover:bg-blue-400 cursor-pointer flex justify-center items-center" onclick="newProduct.showModal()">
                             <div class="gap-2 flex">
@@ -46,6 +48,7 @@
                             </div>
                         </button>
                     </div>
+                    @endcan
                     <dialog id="newProduct" class="modal">
                         <div class="modal-box">
                             <form method="POST" id="itemForm" action="{{ route('analytics.store') }}">
@@ -110,6 +113,8 @@
                     <td class="text-center">{{ $type->low_stock }}</td>
                 </tr>
                 @endforeach
+                @can('isAdmin')
+                
                 <tr>
                     <td colspan="5" class="text-end">
                         <button type="button" class="btn btn-primary text-white rounded-lg px-4 py-2 cursor-pointer" onclick="openEditModal({{ $category->id }}, '{{ $category->name }}', '{{ $category->description }}')">
@@ -118,6 +123,7 @@
                         <button type="button" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-red-800 cursor-pointer" onclick="deleteItem({{ $category->id }})">delete</button>
                     </td>
                 </tr>
+                @endcan
             </tbody>
         </table>
     </div>

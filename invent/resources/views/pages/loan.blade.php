@@ -284,6 +284,8 @@
                             <td class="text-center">{{ $loan->status }}</td>
 
                             <td class="text-center">
+                @can('isAdmin')
+                                
                                 <i class="fa fa-pen-to-square fa-lg cursor-pointer" 
    onclick="openEditModal(
        {{ $loan->id }}, 
@@ -292,6 +294,7 @@
        '{{ $loan->return_date }}',
        '{{ $loan->loan_date }}'
    )"></i>
+   @endcan
                                 <i class="fa-regular fa-eye fa-lg cursor-pointer" onclick="showLoanDetailsTwo({{ $loan->id }})"></i>
                             </td>
                             {{-- tampilan delete --}}

@@ -175,7 +175,9 @@
                             @if ($index === 0)
                             <td class="text-center whitespace-nowrap" rowspan="{{ count($loan->items) }}">
                                 <div class="flex justify-center items-center">
+                                    @can('isAdmin')
                                     <i class="fa fa-trash fa-lg cursor-pointer !leading-none" onclick="deleteItem({{ $loan->id }})"></i>
+                                    @endcan
                                     <i class="fa-regular fa-eye fa-lg cursor-pointer" onclick="showLoanDetails({{ $loan->id }})"></i> </div>
                             </td>
 

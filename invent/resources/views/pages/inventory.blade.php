@@ -14,6 +14,7 @@
             <div class="flex-1">
                 <h1 class="text-2xl font-semibold py-4">Inventory Management</h1>
             </div>
+            @can('isAdmin')
             <div class="flex-none">
                 <button class="bg-[#2563EB] text-white rounded-lg py-2 px-4 mx-5 hover:bg-blue-400 cursor-pointer flex justify-center items-center" onclick="document.getElementById('newInventory').showModal()">
                     <div class="gap-2 flex">
@@ -22,6 +23,7 @@
                     </div>
                 </button>
             </div>
+            @endcan
         </div>
 
         <!-- New Inventory Modal -->
@@ -128,8 +130,10 @@
                     </div>
 
                     <div class="w-full flex justify-end items-end gap-4 mt-6">
+                        @can('isAdmin')
                         <button type="button" class="btn btn-primary" onclick="prepareEditModal()">Edit</button>
                         <button type="button" class="btn btn-error" onclick="deleteItem(currentLocationId)">Delete</button>
+                        @endcan
                         <button type="button" class="btn btn-secondary" onclick="document.getElementById('viewProduct').close()">Close</button>
                     </div>
                 </form>

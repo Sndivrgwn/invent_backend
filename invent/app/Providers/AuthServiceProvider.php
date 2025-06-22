@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\ServiceProvider;
 
@@ -22,7 +23,16 @@ class AuthServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Auth::viaRemember(function ($user) {
-        Cookie::queue('remember_web_token', Cookie::get('remember_web_token'), 60 * 48); // 48 jam
-    });
+            Cookie::queue('remember_web_token', Cookie::get('remember_web_token'), 60 * 48); // 48 jam
+        });
+
+        // Define Gates for role-based authorization
+        Gate::define('isAdmin', function ($user) {
+            return $user->roles_id == 1; // 1 = admin
+        });
+
+        Gate::define('isUser', function ($user) {
+            return $user->roles_id == 2; // 2 = user
+        });
     }
 }

@@ -20,6 +20,7 @@
                 <h1 class="text-2xl font-semibold py-4">Products</h1>
             </div>
             <div class="flex-none">
+                @can('isAdmin')
                 {{-- new product --}}
                 <button class="bg-[#2563EB] text-white rounded-lg py-2 px-4 mx-5 hover:bg-blue-400 cursor-pointer flex justify-center items-center" onclick="newProduct.showModal()">
                     <div class="gap-2 flex">
@@ -27,6 +28,9 @@
                         <span>New Product</span>
                     </div>
                 </button>
+                @endcan
+
+                {{-- modal new product --}}
                 <dialog id="newProduct" class="modal">
                     <div class="modal-box">
                         <!-- close button -->
@@ -385,8 +389,11 @@
                             </td>
                             <td class="text-center flex">
                                 <div class="flex justify-center items-center">
+                @can('isAdmin')
+
                                     <i class="fa fa-trash fa-lg cursor-pointer !leading-none" onclick="deleteItem({{ $item->id }})"></i>
                                     <i class="fa fa-pen-to-square fa-lg cursor-pointer !leading-none" onclick="document.getElementById('editProduct').showModal()"></i>
+                @endcan
                                     <i class="fa-regular fa-eye fa-lg cursor-pointer" onclick="document.getElementById('viewProduct').showModal()"></i>
                                 </div>
                             </td>
