@@ -30,11 +30,11 @@
 
         <!-- Filters and Actions -->
         <div class="list bg-base-100 rounded-box shadow-md">
-            <div class="flex place-content-between">
-                <div class="p-4 pb-2 flex flex-wrap gap-3">
+            <div class="flex flex-col sm:flex-row sm:place-content-between">
+                <div class="p-2 sm:p-4 pb-0 sm:pb-2 flex items-center gap-2 w-full">
                     <!-- Search -->
-                    <form method="GET" action="{{ route('history') }}" class="relative w-full md:w-auto">
-                        <div class="absolute inset-y-2  start-0 mb-7 md:mb-1 flex items-center justify-center ps-3 pointer-events-none">
+                    <form method="GET" action="{{ route('history') }}" class="relative w-full sm:w-auto">
+                        <div class="absolute inset-y-2 start-0 mb-7 sm:mb-1 flex items-center justify-center ps-3 pointer-events-none">
                             <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
                             </svg>
@@ -43,29 +43,43 @@
                     </form>
 
                     <!-- Filter Button -->
-                    <button class="btn bg-transparent" onclick="filterProduct.showModal()">Filter <i class="fa fa-filter ml-2"></i></button>
-
+                    <button class="btn bg-transparent btn-sm sm:btn-md" onclick="filterProduct.showModal()">
+                        <span class="hidden sm:inline">Filter</span> <i class="fa fa-filter sm:ml-2"></i>
+                    </button>
                 </div>
-                <div class="calender w-[100%]">
-                    <!-- Date Filter Section -->
-                    <!-- Filter Date -->
-                    <form method="GET" action="{{ route('history') }}" class="flex flex-wrap items-center gap-3 mt-4 p-1">
-                        <div class="w-[95%] ">
-                            <input type="date" id="myDatePicker" name="start_date" value="{{ request('start_date') }}" class="input input-bordered max-w-xs" />
-                        </div>
-                        <div class="flex inline-block sm:gap-3 self-end"> 
-                            <button type="submit" class="btn btn-primary m-1">Filter Date</button>
-                            <a href="{{ route('history') }}" class="btn btn-secondary m-1">Reset Filter</a>
-                        </div>
-                    </form>
-                </div>
+                
+                <!-- Date Filter Section -->
+                <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 p-2 sm:p-4 w-full sm:w-auto">
+    <!-- Date Range Filter -->
+    <form method="GET" action="{{ route('history') }}" class="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full">
+        <div class="flex flex-row gap-2 sm:gap-3 flex-grow w-full"> <!-- Changed to flex-row for all screens -->
+            <div class="flex flex-col w-full sm:w-auto">
+                <label for="start_date" class="text-xs sm:text-sm font-medium mb-1">From</label>
+                <input type="date" id="start_date" name="start_date" 
+                       value="{{ request('start_date') ?? \Carbon\Carbon::today()->format('Y-m-d') }}" 
+                       class="input input-bordered input-sm sm:input-md w-full"
+                       placeholder="Select start date" />
+            </div>
+            <div class="flex flex-col w-full sm:w-auto">
+                <label for="end_date" class="text-xs sm:text-sm font-medium mb-1">To</label>
+                <input type="date" id="end_date" name="end_date" 
+                       value="{{ request('end_date') ?? \Carbon\Carbon::today()->format('Y-m-d') }}" 
+                       class="input input-bordered input-sm sm:input-md w-full"
+                       placeholder="Select end date" />
+            </div>
+        </div>
+        <div class="flex gap-2 self-end mt-2 sm:mt-0"> <!-- Added mt-2 for mobile spacing -->
+            <button type="submit" class="btn btn-primary btn-sm sm:btn-md">Apply</button>
+            <a href="{{ route('history') }}" class="btn btn-secondary btn-sm sm:btn-md">Reset</a>
+        </div>
+    </form>
+</div>
             </div>
 
             <!-- Filter Modal -->
             <dialog id="filterProduct" class="modal">
                 <div class="modal-box">
                     <form method="GET" id="filterForm" onsubmit="event.preventDefault(); applyFilter();">
-
                         <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" type="button" onclick="filterProduct.close()">✕</button>
 
                         @php
@@ -75,45 +89,45 @@
                         <!-- Brand -->
                         <div class="mb-4">
                             <h1 class="text-lg font-semibold mb-2">Brand</h1>
-                            <div class="flex flex-wrap gap-1">
-                                <button type="button" class="btn btn-square" onclick="resetFilter('brand')">×</button>
+                            <select name="brand" class="select select-bordered w-full max-w-xs">
+                                <option value="" selected>All Brands</option>
                                 @foreach($allItems->pluck('brand')->filter()->unique() as $brand)
-                                <input class="btn" type="radio" name="brand" value="{{ $brand }}" aria-label="{{ $brand }}" {{ request('brand') == $brand ? 'checked' : '' }} />
+                                    <option value="{{ $brand }}" {{ request('brand') == $brand ? 'selected' : '' }}>{{ $brand }}</option>
                                 @endforeach
-                            </div>
+                            </select>
                         </div>
 
                         <!-- Category -->
                         <div class="mb-4">
                             <h1 class="text-lg font-semibold mb-2">Category</h1>
-                            <div class="flex flex-wrap gap-1">
-                                <button type="button" class="btn btn-square" onclick="resetFilter('category')">×</button>
+                            <select name="category" class="select select-bordered w-full max-w-xs">
+                                <option value="" selected>All Categories</option>
                                 @foreach($allItems->pluck('category.name')->filter()->unique() as $category)
-                                <input class="btn" type="radio" name="category" value="{{ $category }}" aria-label="{{ $category }}" {{ request('category') == $category ? 'checked' : '' }} />
+                                    <option value="{{ $category }}" {{ request('category') == $category ? 'selected' : '' }}>{{ $category }}</option>
                                 @endforeach
-                            </div>
+                            </select>
                         </div>
 
                         <!-- Type -->
                         <div class="mb-4">
                             <h1 class="text-lg font-semibold mb-2">Type</h1>
-                            <div class="flex flex-wrap gap-1">
-                                <button type="button" class="btn btn-square" onclick="resetFilter('type')">×</button>
+                            <select name="type" class="select select-bordered w-full max-w-xs">
+                                <option value="" selected>All Types</option>
                                 @foreach($allItems->pluck('type')->filter()->unique() as $type)
-                                <input class="btn" type="radio" name="type" value="{{ $type }}" aria-label="{{ $type }}" {{ request('type') == $type ? 'checked' : '' }} />
+                                    <option value="{{ $type }}" {{ request('type') == $type ? 'selected' : '' }}>{{ $type }}</option>
                                 @endforeach
-                            </div>
+                            </select>
                         </div>
 
                         <!-- Location -->
                         <div class="mb-4">
                             <h1 class="text-lg font-semibold mb-2">Location</h1>
-                            <div class="flex flex-wrap gap-1">
-                                <button type="button" class="btn btn-square" onclick="resetFilter('location')">×</button>
+                            <select name="location" class="select select-bordered w-full max-w-xs">
+                                <option value="" selected>All Locations</option>
                                 @foreach($locations->pluck('description')->unique() as $loc)
-                                <input class="btn" type="radio" name="location" value="{{ $loc }}" aria-label="{{ $loc }}" {{ request('location') == $loc ? 'checked' : '' }} />
+                                    <option value="{{ $loc }}" {{ request('location') == $loc ? 'selected' : '' }}>{{ $loc }}</option>
                                 @endforeach
-                            </div>
+                            </select>
                         </div>
 
                         <!-- Condition -->
@@ -126,7 +140,6 @@
                             </div>
                         </div>
 
-
                         <!-- status filter -->
                         <div class="mb-4">
                             <h1 class="text-lg font-semibold mb-2">Status</h1>
@@ -137,10 +150,7 @@
                             </div>
                         </div>
 
-                        <!-- Date Filter -->
-
                         <button type="button" class="btn btn-primary mt-4" onclick="applyFilter()">Apply</button>
-
                     </form>
                 </div>
             </dialog>
@@ -259,6 +269,8 @@
      function resetFilter(name) {
         document.querySelectorAll(`input[name="${name}"]`).forEach(r => r.checked = false);
     }
+
+    
 
     async function showLoanDetails(loanId) {
         try {
@@ -527,14 +539,14 @@
                         }
 
                         html += `
-                            <td>${loan.return?.return_date || ''}</td>
-                            <td>${loan.return_date}</td>
-                            <td>${loan.code_loans}</td>
-                            <td>${loan.loaner_name}</td>
-                            <td class="font-semibold">${item.code}</td>
-                            <td>${item.name}</td>
-                            <td><span class="badge badge-warning text-xs">${loan.status}</span></td>
-                        `;
+    <td>${loan.return?.return_date || '-'}</td>
+    <td>${loan.return_date}</td>
+    <td>${loan.code_loans}</td>
+    <td>${loan.loaner_name}</td>
+    <td class="font-semibold">${item.code}</td>
+    <td>${item.name}</td>
+    <td><span class="badge badge-warning text-xs">${loan.status}</span></td>
+`;
 
                         if (index === 0) {
                             html += `
@@ -594,13 +606,6 @@
         document.getElementById("confirmDeleteDialog").close();
         deleteTargetId = null;
     }
-
-// datepicker 
-flatpickr("#myDatePicker", {
-        dateFormat: "dd/mm/yyyy", // Ini mengatur format tampilan
-        defaultDate: "{{ request('start_date') ? request('start_date') : 'null' }}", // Set default date jika ada
-        // Tambahkan opsi lain sesuai kebutuhan, misalnya untuk mobile
-    });
 </script>
 
 @stack('scripts')
