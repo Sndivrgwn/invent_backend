@@ -155,46 +155,89 @@
   input.max = maxDate.toISOString().split('T')[0];
 
    document.addEventListener('DOMContentLoaded', function() {
-    const input = document.getElementById('loanSN');
+    // Initialize variables
+    const tempItems = [];
+    const allItems = @json($items);
+    let itemIndexToDelete = -1;
+    
+    // Set date input constraints
+    const dateInput = document.getElementById('returnDate');
+    const today = new Date().toISOString().split('T')[0];
+    const maxDate = new Date();
+    maxDate.setDate(maxDate.getDate() + 14);
+    dateInput.min = today;
+    dateInput.max = maxDate.toISOString().split('T')[0];
+
+    // Initialize enhanced dropdown
+    const snInput = document.getElementById('loanSN');
     const dropdown = document.getElementById('enhancedDropdown');
     const datalist = document.getElementById('snList');
     
-    // Create enhanced dropdown options from datalist
-    const options = Array.from(datalist.options).map(option => {
-        return {
-            value: option.value,
-            name: option.getAttribute('data-name'),
-            type: option.getAttribute('data-type'),
-            status: option.getAttribute('data-status')
-        };
-    });
-    
+    // Create optimized dropdown options
+    const dropdownOptions = Array.from(datalist.options).map(option => ({
+        value: option.value,
+        name: option.getAttribute('data-name'),
+        type: option.getAttribute('data-type'),
+        status: option.getAttribute('data-status')
+    }));
+
     // Disable native autocomplete
-    input.setAttribute('autocomplete', 'off');
-    input.setAttribute('list', 'none');
-    
-    input.addEventListener('focus', showDropdown);
-    input.addEventListener('input', showDropdown);
-    input.addEventListener('click', showDropdown);
-    
+    snInput.setAttribute('autocomplete', 'off');
+    snInput.setAttribute('list', 'none');
+
+    // Event listeners with debouncing
+    snInput.addEventListener('focus', showDropdown);
+    snInput.addEventListener('click', showDropdown);
+    snInput.addEventListener('input', debounce(showDropdown, 300));
+
+    // Event delegation for delete buttons
+    document.getElementById('tempLoanTableBody').addEventListener('click', function(e) {
+        if (e.target.classList.contains('fa-trash')) {
+            const row = e.target.closest('tr');
+            itemIndexToDelete = parseInt(row.dataset.index);
+            document.getElementById('deleteConfirmationModal').showModal();
+        }
+    });
+
+    // Delete confirmation handler
+    document.getElementById('confirmDeleteButton').addEventListener('click', function() {
+        if (itemIndexToDelete !== -1) {
+            tempItems.splice(itemIndexToDelete, 1);
+            updateTempTable();
+            document.getElementById('deleteConfirmationModal').close();
+            showToast("Item removed successfully", "success");
+        }
+    });
+
+    // Helper functions
+    function debounce(func, timeout = 300) {
+        let timer;
+        return (...args) => {
+            clearTimeout(timer);
+            timer = setTimeout(() => { func.apply(this, args); }, timeout);
+        };
+    }
+
     function showDropdown() {
+        const inputValue = snInput.value.toLowerCase();
         dropdown.innerHTML = '';
-        const inputValue = input.value.toLowerCase();
-        
+
         if (!inputValue) {
             dropdown.classList.add('hidden');
             return;
         }
-        
-        const filteredOptions = options.filter(option => 
+
+        const filteredOptions = dropdownOptions.filter(option => 
             option.value.toLowerCase().includes(inputValue) || 
             option.name.toLowerCase().includes(inputValue)
-        );
-        
+        ).slice(0, 50); // Limit to 50 results for performance
+
         if (filteredOptions.length === 0) {
             dropdown.classList.add('hidden');
             return;
         }
+
+        const fragment = document.createDocumentFragment();
         
         filteredOptions.forEach(option => {
             const item = document.createElement('div');
@@ -208,139 +251,139 @@
             `;
             
             item.addEventListener('click', () => {
-                input.value = option.value;
+                snInput.value = option.value;
                 dropdown.classList.add('hidden');
-                input.focus(); // Keep focus on input after selection
             });
             
-            dropdown.appendChild(item);
+            fragment.appendChild(item);
         });
-        
+
+        dropdown.appendChild(fragment);
         dropdown.classList.remove('hidden');
     }
-    
-    // Hide dropdown when clicking outside
-    document.addEventListener('click', (e) => {
-        if (!input.contains(e.target) && !dropdown.contains(e.target)) {
-            dropdown.classList.add('hidden');
-        }
-    });
-});
 
-function handleAddItem() {
-    const sn = document.getElementById("loanSN").value;
-    const qty = parseInt(document.getElementById("loanQty").value);
-    const selectedItem = allItems.find(i => i.code === sn);
+    function updateTempTable() {
+        const tbody = document.getElementById("tempLoanTableBody");
+        tbody.innerHTML = "";
+        const fragment = document.createDocumentFragment();
 
-    if (!selectedItem || isNaN(qty)) {
-        showToast("Invalid data", "error");
-        return;
-    }
-
-    // CEK STATUS BORROWED
-    if (selectedItem.status === 'borrowed') {
-        showToast("This item is currently borrowed and cannot be added", "error");
-        return;
-    }
-
-    tempItems.push({
-        item_id: selectedItem.id,
-        name: selectedItem.name,
-        type: selectedItem.type,
-        code: selectedItem.code,
-        quantity: qty
-    });
-
-    updateTempTable();
-    document.getElementById("modalLoanForm").reset();
-    document.getElementById("newLoan").close();
-    showToast("Item added successfully", "success");
-}
-
-function updateTempTable() {
-    const tbody = document.getElementById("tempLoanTableBody");
-    tbody.innerHTML = "";
-    tempItems.forEach((item, index) => {
-        tbody.innerHTML += `
-            <tr>
+        tempItems.forEach((item, index) => {
+            const tr = document.createElement('tr');
+            tr.dataset.index = index;
+            tr.innerHTML = `
                 <td>${item.code}</td>
                 <td>${item.name}</td>
                 <td>${item.type}</td>
                 <td>${item.quantity}</td>
                 <td>
                     <div class="flex justify-center items-center">
-                        <i class="fa fa-trash fa-lg cursor-pointer" onclick="showDeleteConfirmation(${index})"></i>
+                        <i class="fa fa-trash fa-lg cursor-pointer"></i>
                     </div>
                 </td>
-            </tr>
-        `;
-    });
-}
+            `;
+            fragment.appendChild(tr);
+        });
 
-function showDeleteConfirmation(index) {
-    itemIndexToDelete = index;
-    document.getElementById('deleteConfirmationModal').showModal();
-}
+        tbody.appendChild(fragment);
+    }
 
-document.getElementById('confirmDeleteButton').addEventListener('click', function() {
-    if (itemIndexToDelete !== -1) {
-        tempItems.splice(itemIndexToDelete, 1);
+    function handleAddItem() {
+        const sn = document.getElementById("loanSN").value.trim();
+        const qty = parseInt(document.getElementById("loanQty").value);
+        const selectedItem = allItems.find(i => i.code === sn);
+
+        if (!selectedItem || isNaN(qty) || qty < 1) {
+            showToast("Invalid data", "error");
+            return;
+        }
+
+        if (selectedItem.status === 'NOT READY') {
+            showToast("This item is currently borrowed and cannot be added", "error");
+            return;
+        }
+
+        // Check if item already exists in temp items
+        const existingIndex = tempItems.findIndex(item => item.item_id === selectedItem.id);
+        if (existingIndex >= 0) {
+            tempItems[existingIndex].quantity += qty;
+        } else {
+            tempItems.push({
+                item_id: selectedItem.id,
+                name: selectedItem.name,
+                type: selectedItem.type,
+                code: selectedItem.code,
+                quantity: qty
+            });
+        }
+
         updateTempTable();
-        itemIndexToDelete = -1;
-        document.getElementById('deleteConfirmationModal').close();
-        showToast("Item removed successfully", "success");
-    }
-});
-
-function submitLoan() {
-    if (tempItems.length === 0) {
-        showToast("Please add at least one item", "error");
-        return;
+        document.getElementById("modalLoanForm").reset();
+        document.getElementById("newLoan").close();
+        showToast("Item added successfully", "success");
     }
 
-    const payload = {
-        code_loans: document.getElementById("codeLoans").value,
-        loan_date: document.getElementById("loanDate").value,
-        return_date: document.getElementById("returnDate").value,
-        status: document.getElementById("status").value,
-        loaner_name: document.getElementById("loanerName").value,
-        description: document.getElementById("loanDescription").value,
-        user_id: document.getElementById("userId").value,
-        items: tempItems.map(item => ({
-            item_id: item.item_id,
-            quantity: item.quantity
-        }))
-    };
+    async function submitLoan() {
+        if (tempItems.length === 0) {
+            showToast("Please add at least one item", "error");
+            return;
+        }
 
-    const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+        const submitBtn = document.querySelector('#loanForm button[type="button"]');
+        const originalBtnText = submitBtn.innerHTML;
+        
+        try {
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="loading loading-spinner"></span> Processing...';
 
-    fetch("/loans", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Accept": "application/json",
-                "X-CSRF-TOKEN": token
-            },
-            body: JSON.stringify(payload)
-        })
-        .then(res => {
-            if (!res.ok) {
-                return res.json().then(err => Promise.reject(err));
+            const payload = {
+                code_loans: document.getElementById("codeLoans").value,
+                loan_date: document.getElementById("loanDate").value,
+                return_date: document.getElementById("returnDate").value,
+                status: document.getElementById("status").value,
+                loaner_name: document.getElementById("loanerName").value,
+                description: document.getElementById("loanDescription").value,
+                user_id: document.getElementById("userId").value,
+                items: tempItems.map(item => ({
+                    item_id: item.item_id,
+                    quantity: item.quantity
+                }))
+            };
+
+            const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+
+            const response = await fetch("/loans", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept": "application/json",
+                    "X-CSRF-TOKEN": token
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || "Failed to save loan");
             }
-            return res.json();
-        })
-        .then(data => {
+
             showToast("Loan created successfully!", "success");
             setTimeout(() => {
                 window.location.href = "/manageLoan";
-            }, 1000); 
-        })
-        .catch(err => {
-            console.error(err);
-            const errorMessage = err.message || "Failed to save loan";
-            showToast(errorMessage, "error");
-        });
-}
+            }, 1000);
+        } catch (error) {
+            console.error("Loan submission error:", error);
+            showToast(error.message, "error");
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = originalBtnText;
+        }
+    }
+
+    // Expose functions to global scope for HTML onclick handlers
+    window.handleAddItem = handleAddItem;
+    window.submitLoan = submitLoan;
+});
 
 </script>
 @endpush
