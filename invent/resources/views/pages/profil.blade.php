@@ -21,73 +21,78 @@
             </div>
         </div>
 
-        <div class="list bg-base-100 rounded-box shadow-md p-14 overflow-x-auto">
-            <div class="flex gap-4">
-                <div class="w-50 rounded-full me-5 relative">
-                    <img alt="profile image" src="{{ auth()->user()->avatar ? asset('storage/' . auth()->user()->avatar) : 'https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp' }}" class="rounded w-32 h-32 object-cover" />
-                    <label for="avatar-modal" class="absolute bottom-0 right-0 bg-blue-500 text-white p-2 rounded-full cursor-pointer">
-                        <i class="fa-solid fa-camera"></i>
-                    </label>
+        <div class="list bg-base-100 rounded-box shadow-md p-4 sm:p-6 md:p-8 max-w-lg mx-auto"> 
+    <div class="flex flex-col items-center mb-4 mt-2"> 
+        <div class="relative">
+            <img alt="profile image" src="{{ auth()->user()->avatar ? asset('storage/' . auth()->user()->avatar) : 'https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp' }}" class="rounded-full w-32 h-32 object-cover border-2 border-gray-300" />
+            <label for="avatar-modal" class="absolute bottom-0 right-0 bg-blue-500 text-white p-2 rounded-full cursor-pointer flex items-center justify-center w-8 h-8">
+                <i class="fa-solid fa-camera text-sm"></i>
+            </label>
+        </div>
+    </div>
+
+    {{-- Daftar item profil --}}
+    <div class="flex flex-col"> 
+
+        {{-- Name Section --}}
+        <div class="flex items-start justify-between py-3"> 
+            <div class="flex items-start">
+                <div class="p-2 me-4">
+                    <i class="fa-solid fa-user text-xl text-gray-600"></i>
                 </div>
-
-                <div class="flex w-full">
-                    <div class="flex flex-col justify-evenly pe-20">
-                        <!-- Name Section -->
-                        <div class="flex justify-between w-full">
-                            <div class="flex">
-                                <div class="flex justify-center align-middle p-4.5">
-                                    <i class="fa-solid fa-user fa-2xl"></i>
-                                </div>
-                                <div>
-                                    <h1 class="text-xl font-semibold">Name</h1>
-                                    <h1 class="text-lg font-medium">{{$user->name}}</h1>
-                                </div>
-                            </div>
-                            <label for="name-modal" class="flex justify-center align-middle p-4.5 cursor-pointer">
-                                <i class="fa-solid fa-pen-to-square fa-2xl"></i>
-                            </label>
-                        </div>
-
-                        <!-- Email Section -->
-                        <div class="flex">
-                            <div class="flex me-10">
-                                <div class="flex justify-center align-middle p-4.5">
-                                    <i class="fa-solid fa-envelope fa-2xl"></i>
-                                </div>
-                                <div>
-                                    <h1 class="text-xl font-semibold">Email</h1>
-                                    <h1 class="text-lg font-medium">{{$user->email}}</h1>
-                                </div>
-                            </div>
-                            <label for="email-modal" class="flex justify-center align-middle p-4.5 cursor-pointer">
-                                <i class="fa-solid fa-pen-to-square fa-2xl"></i>
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="flex flex-col justify-evenly">
-                        <div class="flex">
-                            <div class="flex justify-center align-middle p-4.5">
-                                <i class="fa-solid fa-right-left fa-2xl"></i>
-                            </div>
-                            <div>
-                                <h1 class="text-xl font-semibold">Jumlah Loan</h1>
-                                <h1 class="text-lg font-medium">{{$totalLoans}}</h1>
-                            </div>
-                        </div>
-                        <div class="flex">
-                            <div class="flex justify-center align-middle p-4.5">
-                                <i class="fa-solid fa-rotate-left fa-2xl"></i>
-                            </div>
-                            <div>
-                                <h1 class="text-xl font-semibold">Jumlah Return</h1>
-                                <h1 class="text-lg font-medium">{{$totalReturns}}</h1>
-                            </div>
-                        </div>
-                    </div>
+                <div>
+                    <h1 class="text-sm text-gray-500">Nama</h1>
+                    <h1 class="text-base font-medium">{{$user->name}}</h1>
                 </div>
             </div>
+            <label for="name-modal" class="flex items-center p-2 cursor-pointer">
+                <i class="fa-solid fa-pen-to-square text-xl text-gray-600"></i> 
+            </label>
         </div>
+        <hr class="border-gray-200 mx-auto w-full"> 
+
+        {{-- Email Section --}}
+        <div class="flex items-start justify-between py-3">
+            <div class="flex items-start">
+                <div class="p-2 me-4">
+                    <i class="fa-solid fa-envelope text-xl text-gray-600"></i>
+                </div>
+                <div>
+                    <h1 class="text-sm text-gray-500">Email</h1>
+                    <h1 class="text-base font-medium">{{$user->email}}</h1>
+                </div>
+            </div>
+            <label for="email-modal" class="flex items-center p-2 cursor-pointer">
+                <i class="fa-solid fa-pen-to-square text-xl text-gray-600"></i>
+            </label>
+        </div>
+        <hr class="border-gray-200 mx-auto w-full"> 
+
+        {{-- Jumlah Loan Section --}}
+        <div class="flex items-start py-3">
+            <div class="p-2 me-4">
+                <i class="fa-solid fa-right-left text-xl text-gray-600"></i>
+            </div>
+            <div>
+                <h1 class="text-sm text-gray-500">Jumlah Loan</h1>
+                <h1 class="text-base font-medium">{{$totalLoans}}</h1>
+            </div>
+        </div>
+        <hr class="border-gray-200 mx-auto w-full">
+
+        {{-- Jumlah Return Section --}}
+        <div class="flex items-start py-3">
+            <div class="p-2 me-4">
+                <i class="fa-solid fa-rotate-left text-xl text-gray-600"></i>
+            </div>
+            <div>
+                <h1 class="text-sm text-gray-500">Jumlah Return</h1>
+                <h1 class="text-base font-medium">{{$totalReturns}}</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
     </div>
 </div>
 
