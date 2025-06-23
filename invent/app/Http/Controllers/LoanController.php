@@ -12,6 +12,7 @@ use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Log;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Support\Facades\Crypt;
 
 class LoanController extends Controller
 {
@@ -135,14 +136,17 @@ class LoanController extends Controller
     public function printPdf(string $id)
 {
     try {
-        $loan = Loan::with(['items.category', 'user'])->findOrFail($id);
+        $loanId = Crypt::decryptString($id);
+        $loan = Loan::with(['items.category', 'user'])->findOrFail($loanId);
+
         $pdf = Pdf::loadView('print.loan-detail', compact('loan'))
                   ->setPaper('A4', 'portrait');
 
         return $pdf->stream('loan_form_' . $loan->code_loans . '.pdf');
+
     } catch (\Exception $e) {
-        Log::error('Loan PDF print failed: ' . $e->getMessage());
-        return redirect()->back()->with('toast_error', 'Gagal membuat PDF. Coba lagi.');
+        Log::error('Loan PDF stream failed: ' . $e->getMessage());
+        return redirect()->back()->with('toast_error', 'Gagal menampilkan PDF');
     }
 }
 

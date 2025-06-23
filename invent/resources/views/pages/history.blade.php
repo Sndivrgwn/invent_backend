@@ -182,8 +182,9 @@
                                     <i class="fa fa-trash fa-lg cursor-pointer !leading-none" onclick="deleteItem({{ $loan->id }})"></i>
                                     @endcan
                                     <i class="fa-solid fa-file-pdf fa-lg text-red-600 cursor-pointer"
-   title="Download PDF"
-   onclick="window.open('{{ route('loan.print.pdf', $loan->id) }}', '_blank')"></i>
+   title="Lihat PDF"
+   onclick="window.open('{{ route('loan.print.pdf', ['id' => \Illuminate\Support\Facades\Crypt::encryptString($loan->id)]) }}', '_blank')"></i>
+
 
                                     <i class="fa-regular fa-eye fa-lg cursor-pointer" onclick="showLoanDetails({{ $loan->id }})"></i> </div>
                             </td>
