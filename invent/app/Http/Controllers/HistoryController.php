@@ -8,6 +8,7 @@ use App\Models\Loan;
 use App\Models\Location;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Log;
 
 class HistoryController extends Controller
@@ -74,7 +75,11 @@ class HistoryController extends Controller
                 });
         })
         ->when($request->status, fn($q) => $q->where('status', $request->status))
-        ->get();
+        ->get()->map(function ($loan) {
+            // Tambahkan encrypted_id ke setiap loan
+            $loan->encrypted_id = Crypt::encryptString($loan->id);
+            return $loan;
+        });
 
     return response()->json($loans);
 }

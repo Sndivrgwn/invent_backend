@@ -812,9 +812,25 @@
                             </div>
                         </td>
                         <td class="text-center">
-                            <i class="fa fa-trash fa-lg cursor-pointer" onclick="deleteItem(${item.id})"></i>
-                            <i class="fa fa-pen-to-square fa-lg"></i>
-                            <i class="fa-regular fa-eye fa-lg"></i>
+                            <div class="flex justify-center items-center">
+                                    @can('isAdmin')
+                                    <i class="fa fa-trash fa-lg cursor-pointer !leading-none" onclick="deleteItem(${item.id})"></i>
+                                    <i class="fa fa-pen-to-square fa-lg cursor-pointer !leading-none" onclick="openEditModal({
+                                        id:${item.id},
+                                        name: '${item.name}',
+                                        brand: '${item.brand}',
+                                        type: '${item.type}',
+                                        condition: '${item.condition}',
+                                        status: '${item.status}',
+                                        code: '${item.code}',
+                                        description: '${item.description}',
+                                        location_id: ${item.location_id},
+                                        category_id: ${item.category_id},
+                                        image: '${item.image}'
+                                    })"></i>
+                                    @endcan
+                                    <i class="fa-regular mb-2 fa-eye fa-lg cursor-pointer" onclick="openPreviewModal(${item.id})"></i>
+                                </div>
                         </td>
                     </tr>
                 `;

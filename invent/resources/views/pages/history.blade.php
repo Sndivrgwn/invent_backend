@@ -549,15 +549,20 @@
 `;
 
                         if (index === 0) {
-                            html += `
-                                <td class="text-center whitespace-nowrap" rowspan="${loan.items.length}">
-                                    <div class="flex justify-center items-center">
-                                        <i class="fa fa-trash fa-lg cursor-pointer !leading-none" onclick="deleteItem(${loan.id})"></i>
-                                        <i class="fa-regular fa-eye fa-lg cursor-pointer" onclick="showLoanDetails(${loan.id})"></i>
-                                    </div>
-                                </td>
-                            `;
-                        }
+                html += `
+                    <td class="text-center whitespace-nowrap" rowspan="${loan.items.length}">
+                        <div class="flex justify-center items-center gap-2">
+                        @can('isAdmin')
+                        <i class="fa fa-trash fa-lg cursor-pointer !leading-none mt-1" onclick="deleteItem(${loan.id})"></i>
+                        @endcan
+                        <i class="fa-solid fa-file-pdf fa-lg text-red-600 cursor-pointer !leading-none"
+                        title="Lihat PDF"
+                        onclick="window.open('/loan/${loan.encrypted_id}/pdf', '_blank')"></i>
+                        <i class="fa-regular fa-eye fa-lg cursor-pointer" onclick="showLoanDetails(${loan.id})"></i> 
+                    </div>
+                    </td>
+                `;
+            }
 
                         row.innerHTML = html;
                         tbody.appendChild(row);
