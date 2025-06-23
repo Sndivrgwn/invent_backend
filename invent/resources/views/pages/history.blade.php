@@ -34,8 +34,8 @@
                 <div class="p-4 pb-2 flex flex-wrap gap-3">
                     <!-- Search -->
                     <form method="GET" action="{{ route('history') }}" class="relative w-full md:w-auto">
-                        <div class="absolute inset-y-2  start-0 flex items-center justify-center ps-3 pointer-events-none">
-                            <svg class="w-4 h-4 my-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <div class="absolute inset-y-2  start-0 mb-7 md:mb-1 flex items-center justify-center ps-3 pointer-events-none">
+                            <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
                             </svg>
                         </div>
@@ -176,17 +176,16 @@
                             <td>{{ $item->name }}</td>
                             <td><span class="badge badge-warning text-xs">{{ $loan->status }}</span></td>
                             @if ($index === 0)
-                            <td class="text-center whitespace-nowrap" rowspan="{{ count($loan->items) }}">
-                                <div class="flex justify-center items-center">
+                            <td class="whitespace-nowrap" rowspan="{{ count($loan->items) }}">
+                                <div class="flex justify-center items-center gap-2">
                                     @can('isAdmin')
-                                    <i class="fa fa-trash fa-lg cursor-pointer !leading-none" onclick="deleteItem({{ $loan->id }})"></i>
+                                    <i class="fa fa-trash fa-lg cursor-pointer !leading-none mt-1" onclick="deleteItem({{ $loan->id }})"></i>
                                     @endcan
-                                    <i class="fa-solid fa-file-pdf fa-lg text-red-600 cursor-pointer"
-   title="Lihat PDF"
-   onclick="window.open('{{ route('loan.print.pdf', ['id' => \Illuminate\Support\Facades\Crypt::encryptString($loan->id)]) }}', '_blank')"></i>
-
-
-                                    <i class="fa-regular fa-eye fa-lg cursor-pointer" onclick="showLoanDetails({{ $loan->id }})"></i> </div>
+                                    <i class="fa-solid fa-file-pdf fa-lg text-red-600 cursor-pointer !leading-none"
+                                    title="Lihat PDF"
+                                    onclick="window.open('{{ route('loan.print.pdf', ['id' => \Illuminate\Support\Facades\Crypt::encryptString($loan->id)]) }}', '_blank')"></i>
+                                    <i class="fa-regular fa-eye fa-lg cursor-pointer" onclick="showLoanDetails({{ $loan->id }})"></i> 
+                                </div>
                             </td>
 
                             {{-- tampilan preview --}}

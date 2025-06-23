@@ -70,15 +70,13 @@
                                     <td><span class="badge badge-warning text-xs">{{ $loan->status }}</span></td>
                                     <td>{{ $loan->return_date }}</td>
                                     @if ($index === 0)
-                                    <td class="text-center whitespace-nowrap" rowspan="{{ count($loan->items) }}">
-                                        <div class="flex justify-center items-center">
+                                    <td class="whitespace-nowrap" rowspan="{{ count($loan->items) }}">
+                                        <div class="flex justify-center items-center gap-2">
                                             <i class="fa-solid fa-file-pdf fa-lg text-red-600 cursor-pointer"
-   title="Lihat PDF"
-   onclick="window.open('{{ route('loan.print.pdf', ['id' => \Illuminate\Support\Facades\Crypt::encryptString($loan->id)]) }}', '_blank')"></i>
-
-
+                                                title="Lihat PDF"
+                                                onclick="window.open('{{ route('loan.print.pdf', ['id' => \Illuminate\Support\Facades\Crypt::encryptString($loan->id)]) }}', '_blank')"></i>
                                             <i class="fa-solid fa-right-left fa-lg cursor-pointer !leading-none" onclick="showReturnProduct({{ $loan->id }})"></i>
-                                            <i class="fa fa-trash fa-lg cursor-pointer !leading-none" onclick="deleteItem({{ $loan->id }})"></i>
+                                            <i class="fa fa-trash fa-lg cursor-pointer !leading-none mt-1" onclick="deleteItem({{ $loan->id }})"></i>
                                             <i class="fa-regular fa-eye fa-lg cursor-pointer" onclick="showLoanDetails({{ $loan->id }})"></i>
                                         </div>
                                     </td>

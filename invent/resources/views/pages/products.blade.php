@@ -273,7 +273,7 @@
                                     {{ $item->status }}
                                 </div>
                             </td>
-                            <td class="text-center flex">
+                            <td class="">
                                 <div class="flex justify-center items-center">
                                     @can('isAdmin')
                                     <i class="fa fa-trash fa-lg cursor-pointer !leading-none" onclick="deleteItem({{ $item->id }})"></i>
@@ -291,7 +291,7 @@
                                         image: '{{ $item->image }}'
                                     })"></i>
                                     @endcan
-                                    <i class="fa-regular fa-eye fa-lg cursor-pointer" onclick="openPreviewModal({{$item->id}})"></i>
+                                    <i class="fa-regular mb-2 fa-eye fa-lg cursor-pointer" onclick="openPreviewModal({{$item->id}})"></i>
                                 </div>
                             </td>
                         </tr>

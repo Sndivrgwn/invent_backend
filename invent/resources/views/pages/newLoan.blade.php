@@ -277,7 +277,7 @@
                 <td>${item.type}</td>
                 <td>${item.quantity}</td>
                 <td>
-                    <div class="flex justify-center items-center">
+                    <div class="flex items-center">
                         <i class="fa fa-trash fa-lg cursor-pointer"></i>
                     </div>
                 </td>
