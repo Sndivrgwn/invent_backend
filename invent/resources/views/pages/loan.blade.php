@@ -121,6 +121,10 @@
                             <td class="text-center">{{ $loan->status }}</td>
 
                             <td class="text-center">
+                                <i class="fa-solid fa-file-pdf fa-lg text-red-600 cursor-pointer"
+   title="Download PDF"
+   onclick="window.open('{{ route('loan.print.pdf', $loan->id) }}', '_blank')"></i>
+
                                 <i class="fa-regular fa-eye fa-lg cursor-pointer" onclick="showLoanDetails({{ $loan->id }})"></i>
                             </td>
                             {{-- tampilan edit --}}
@@ -290,7 +294,10 @@
     
                                 <td class="text-center">
                     @can('isAdmin')
-                                    
+                                    <i class="fa-solid fa-file-pdf fa-lg text-red-600 cursor-pointer"
+   title="Download PDF"
+   onclick="window.open('{{ route('loan.print.pdf', $loan->id) }}', '_blank')"></i>
+
                                     <i class="fa fa-pen-to-square fa-lg cursor-pointer" 
        onclick="openEditModal(
            {{ $loan->id }}, 

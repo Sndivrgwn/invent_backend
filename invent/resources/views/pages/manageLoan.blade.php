@@ -72,6 +72,9 @@
                                     @if ($index === 0)
                                     <td class="text-center whitespace-nowrap" rowspan="{{ count($loan->items) }}">
                                         <div class="flex justify-center items-center">
+                                            <i class="fa-solid fa-file-pdf fa-lg text-red-600 cursor-pointer"
+   title="Download PDF"
+   onclick="window.open('{{ route('loan.print.pdf', $loan->id) }}', '_blank')"></i>
                                             <i class="fa-solid fa-right-left fa-lg cursor-pointer !leading-none" onclick="showReturnProduct({{ $loan->id }})"></i>
                                             <i class="fa fa-trash fa-lg cursor-pointer !leading-none" onclick="deleteItem({{ $loan->id }})"></i>
                                             <i class="fa-regular fa-eye fa-lg cursor-pointer" onclick="showLoanDetails({{ $loan->id }})"></i>

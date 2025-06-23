@@ -11,6 +11,7 @@ use App\Exports\HistoryExport;
 use Illuminate\Support\Facades\Validator;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Log;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class LoanController extends Controller
 {
@@ -130,6 +131,21 @@ class LoanController extends Controller
             return back()->with('toast_error', 'Failed to generate export. Please try again.');
         }
     }
+
+    public function printPdf(string $id)
+{
+    try {
+        $loan = Loan::with(['items.category', 'user'])->findOrFail($id);
+        $pdf = Pdf::loadView('print.loan-detail', compact('loan'))
+                  ->setPaper('A4', 'portrait');
+
+        return $pdf->download('loan_form_' . $loan->code_loans . '.pdf');
+    } catch (\Exception $e) {
+        Log::error('Loan PDF print failed: ' . $e->getMessage());
+        return redirect()->back()->with('toast_error', 'Gagal membuat PDF. Coba lagi.');
+    }
+}
+
 
     public function search(Request $request)
     {

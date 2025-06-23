@@ -45,6 +45,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/loans/export-history', [LoanController::class, 'exportHistory'])->name('loans.exportHistory');
     Route::get('/analytics/export', [AnalyticsController::class, 'export'])->name('analytics.export');
     Route::post('/logout', [App\Http\Controllers\Auth\LogoutController::class, 'logout'])->name('logout');
+Route::get('/loan/{id}/pdf', [LoanController::class, 'printPdf'])->name('loan.print.pdf');
+
 
     // Admin-only routes
     // routes/web.php
