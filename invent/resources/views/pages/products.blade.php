@@ -166,79 +166,74 @@
                 <!-- filter -->
                 <button class="btn flex justify-center items-center bg-transparent" onclick="filterProduct.showModal()">All Categories <i class="fa fa-filter" style="display: flex; justify-content: center; align-items: center;"></i></button>
                 <dialog id="filterProduct" class="modal">
-                    <div class="modal-box">
-                        <form method="dialog">
-                            <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-                        </form>
+    <div class="modal-box">
+        <form method="dialog">
+            <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+        </form>
 
-                        <form id="filterForm">
-                            <!-- brand filter -->
-                            <div class="mb-4">
-                                <h1 class="text-lg font-semibold mb-2">Brand</h1>
-                                <div class="flex flex-wrap gap-1">
-                                    <input class="btn btn-square" type="reset" value="×" onclick="resetFilter('brand')" />
-                                    @foreach($items->pluck('brand')->unique() as $brand)
-                                    <input class="btn" type="radio" name="brand" value="{{ $brand }}" aria-label="{{ $brand }}" />
-                                    @endforeach
-                                </div>
-                            </div>
+        <form id="filterForm">
+            <div class="mb-4">
+                <h1 class="text-lg font-semibold mb-2">Brand</h1>
+                <select name="brand" class="select select-bordered w-full max-w-xs">
+                    <option value="" selected>All Brands</option> {{-- Opsi default untuk reset/tidak memilih filter --}}
+                    @foreach($items->pluck('brand')->unique() as $brand)
+                        <option value="{{ $brand }}" {{ request('brand') == $brand ? 'selected' : '' }}>{{ $brand }}</option>
+                    @endforeach
+                </select>
+            </div>
 
-                            <!-- category filter -->
-                            <div class="mb-4">
-                                <h1 class="text-lg font-semibold mb-2">Category</h1>
-                                <div class="flex flex-wrap gap-1">
-                                    <input class="btn btn-square" type="reset" value="×" onclick="resetFilter('category')" />
-                                    @foreach($items->pluck('category.name')->unique() as $category)
-                                    <input class="btn" type="radio" name="category" value="{{ $category }}" aria-label="{{ $category }}" />
-                                    @endforeach
-                                </div>
-                            </div>
+            <div class="mb-4">
+                <h1 class="text-lg font-semibold mb-2">Category</h1>
+                <select name="category" class="select select-bordered w-full max-w-xs">
+                    <option value="" selected>All Categories</option> {{-- Opsi default untuk reset/tidak memilih filter --}}
+                    @foreach($items->pluck('category.name')->unique() as $category)
+                        <option value="{{ $category }}" {{ request('category') == $category ? 'selected' : '' }}>{{ $category }}</option>
+                    @endforeach
+                </select>
+            </div>
 
-                            <!-- type filter -->
-                            <div class="mb-4">
-                                <h1 class="text-lg font-semibold mb-2">Type</h1>
-                                <div class="flex flex-wrap gap-1">
-                                    <input class="btn btn-square" type="reset" value="×" onclick="resetFilter('type')" />
-                                    @foreach($items->pluck('type')->unique() as $type)
-                                    <input class="btn" type="radio" name="type" value="{{ $type }}" aria-label="{{ $type }}" />
-                                    @endforeach
-                                </div>
-                            </div>
+            <div class="mb-4">
+                <h1 class="text-lg font-semibold mb-2">Type</h1>
+                <select name="type" class="select select-bordered w-full max-w-xs">
+                    <option value="" selected>All Types</option> {{-- Opsi default untuk reset/tidak memilih filter --}}
+                    @foreach($items->pluck('type')->unique() as $type)
+                        <option value="{{ $type }}" {{ request('type') == $type ? 'selected' : '' }}>{{ $type }}</option>
+                    @endforeach
+                </select>
+            </div>
 
-                            <div class="mb-4">
-                                <h1 class="text-lg font-semibold mb-2">Location</h1>
-                                <div class="flex flex-wrap gap-1">
-                                    <input class="btn btn-square" type="reset" value="×" onclick="resetFilter('type')" />
-                                    @foreach($locations->pluck('description')->unique() as $type)
-                                    <input class="btn" type="radio" name="location" value="{{ $type }}" aria-label="{{ $type }}" />
-                                    @endforeach
-                                </div>
-                            </div>
-                            
-                            <!-- condition filter -->
-                            <div class="mb-4">
-                                <h1 class="text-lg font-semibold mb-2">Condition</h1>
-                                <div class="flex flex-wrap gap-1">
-                                    <input class="btn btn-square" type="reset" value="×" onclick="resetFilter('condition')" />
-                                    <input class="btn" type="radio" name="condition" value="GOOD" aria-label="GOOD" />
-                                    <input class="btn" type="radio" name="condition" value="NOT GOOD" aria-label="NOT GOOD" />
-                                </div>
-                            </div>
+            <div class="mb-4">
+                <h1 class="text-lg font-semibold mb-2">Location</h1>
+                <select name="location" class="select select-bordered w-full max-w-xs">
+                    <option value="" selected>All Locations</option> {{-- Opsi default untuk reset/tidak memilih filter --}}
+                    @foreach($locations->pluck('description')->unique() as $location)
+                        <option value="{{ $location }}" {{ request('location') == $location ? 'selected' : '' }}>{{ $location }}</option>
+                    @endforeach
+                </select>
+            </div>
+            
+            <div class="mb-4">
+                <h1 class="text-lg font-semibold mb-2">Condition</h1>
+                <div class="flex flex-wrap gap-1">
+                    <input class="btn btn-square" type="reset" value="×" onclick="resetFilter('condition')" />
+                    <input class="btn" type="radio" name="condition" value="GOOD" aria-label="GOOD" {{ request('condition') == 'GOOD' ? 'checked' : '' }} />
+                    <input class="btn" type="radio" name="condition" value="NOT GOOD" aria-label="NOT GOOD" {{ request('condition') == 'NOT GOOD' ? 'checked' : '' }} />
+                </div>
+            </div>
 
-                            <!-- status filter -->
-                            <div class="mb-4">
-                                <h1 class="text-lg font-semibold mb-2">Status</h1>
-                                <div class="flex flex-wrap gap-1">
-                                    <input class="btn btn-square" type="reset" value="×" onclick="resetFilter('status')" />
-                                    <input class="btn" type="radio" name="status" value="READY" aria-label="READY" />
-                                    <input class="btn" type="radio" name="status" value="NOT READY" aria-label="NOT READY" />
-                                </div>
-                            </div>
+            <div class="mb-4">
+                <h1 class="text-lg font-semibold mb-2">Status</h1>
+                <div class="flex flex-wrap gap-1">
+                    <input class="btn btn-square" type="reset" value="×" onclick="resetFilter('status')" />
+                    <input class="btn" type="radio" name="status" value="READY" aria-label="READY" {{ request('status') == 'READY' ? 'checked' : '' }} />
+                    <input class="btn" type="radio" name="status" value="NOT READY" aria-label="NOT READY" {{ request('status') == 'NOT READY' ? 'checked' : '' }} />
+                </div>
+            </div>
 
-                            <button type="button" class="btn btn-primary mt-4" onclick="applyFilter()">Apply</button>
-                        </form>
-                    </div>
-                </dialog>
+            <button type="button" class="btn btn-primary mt-4" onclick="applyFilter()">Apply</button>
+        </form>
+    </div>
+</dialog>
             </div>
             
             <!-- table -->
@@ -260,9 +255,9 @@
                         @forelse ($items as $item)
                         <tr>
                             <td class="flex justify-center">
-    <img src="{{ $item->image === 'items/default.png' || $item->image === 'default.png' ? asset('image/default.png') : asset('storage/' . $item->image) }}" 
-         alt="Product Image" class="w-12 h-12 object-cover" />
-</td>
+                                <img src="{{ $item->image === 'items/default.png' || $item->image === 'default.png' ? asset('image/default.png') : asset('storage/' . $item->image) }}" 
+                                    alt="Product Image" class="w-12 h-12 object-cover" />
+                            </td>
                             <td class="text-center">{{ $item->name }}</td>
                             <td class="text-center">{{ $item->location->name }}</td>
                             <td class="text-center">{{ $item->code }}</td>

@@ -1,5 +1,5 @@
     <!-- script tailwind -->
-
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {

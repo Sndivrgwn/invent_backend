@@ -51,7 +51,7 @@
                     <!-- Filter Date -->
                     <form method="GET" action="{{ route('history') }}" class="flex flex-wrap items-center gap-3 mt-4 p-1">
                         <div class="w-[95%] ">
-                            <input type="date" name="start_date" value="{{ request('start_date') }}" class="input input-bordered max-w-xs" />
+                            <input type="date" id="myDatePicker" name="start_date" value="{{ request('start_date') }}" class="input input-bordered max-w-xs" />
                         </div>
                         <div class="flex inline-block sm:gap-3 self-end"> 
                             <button type="submit" class="btn btn-primary m-1">Filter Date</button>
@@ -595,6 +595,12 @@
         deleteTargetId = null;
     }
 
+// datepicker 
+flatpickr("#myDatePicker", {
+        dateFormat: "dd/mm/yyyy", // Ini mengatur format tampilan
+        defaultDate: "{{ request('start_date') ? request('start_date') : 'null' }}", // Set default date jika ada
+        // Tambahkan opsi lain sesuai kebutuhan, misalnya untuk mobile
+    });
 </script>
 
 @stack('scripts')

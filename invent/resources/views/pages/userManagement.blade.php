@@ -257,15 +257,19 @@
 
                             <!-- Add these password fields -->
                             <div class="flex gap-5 justify-between text-gray-600 mb-3">
-                                <div class="w-[50%]">
-                                    <h1 class="font-medium">NEW PASSWORD (Leave blank to keep current)</h1>
-                                    <input type="password" name="password" class="input" placeholder="New password">
-                                </div>
-                                <div class="w-[50%]">
-                                    <h1 class="font-medium">CONFIRM NEW PASSWORD</h1>
-                                    <input type="password" name="password_confirmation" class="input" placeholder="Confirm new password">
+                                <div class="w-[100%]">
+                                    <h1 class="font-medium">NEW PASSWORD </h1>
+                                    <input type="password" name="password" class="input" placeholder="Leave blank to keep current" style="width: 100%;">
                                 </div>
                             </div>
+                            <div class="flex gap-5 justify-between text-gray-600 mb-3">
+                                <div class="w-[100%]">
+                                    <h1 class="font-medium">CONFIRM NEW PASSWORD</h1>
+                                    <input type="password" name="password_confirmation" class="input" placeholder="Confirm new password" style="width: 100%;">
+                                </div>
+                            </div>
+                            {{-- <div class="flex gap-5 justify-between text-gray-600 mb-3">
+                            </div> --}}
 
                             <div class="flex justify-end gap-4 mt-4">
                                 <button type="button" onclick="closeEditModal()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Cancel</button>
