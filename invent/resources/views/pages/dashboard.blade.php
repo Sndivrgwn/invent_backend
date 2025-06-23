@@ -122,7 +122,9 @@
                                 <td>{{ $item->name }}</td>
                                 <td>{{ $item->condition }}</td>
                                 <td>
-                                    <span class="badge badge-warning text-xs">{{$item->status}}</span>
+                                    <div class="badge badge-soft p-5 {{ $item->status === 'READY' ? 'badge-success' : 'badge-error' }}">
+                                        {{ $item->status }}
+                                    </div>
                                 </td>
 
                                 {{-- Tampilkan action hanya di baris pertama --}}

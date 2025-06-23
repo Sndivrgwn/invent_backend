@@ -52,19 +52,20 @@
                 <button type="button" onclick="document.getElementById('newLoan').showModal()" class="btn btn-primary my-3">
                     <i class="fa fa-plus mr-2"></i> Add Item
                 </button>
-
-                <table class="table mt-4">
-                    <thead>
-                        <tr>
-                            <th>SN</th>
-                            <th>Nama</th>
-                            <th>Type</th>
-                            <th>Qty</th>
-                            <th>Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tempLoanTableBody"></tbody>
-                </table>
+                <div class="overflow-x-auto">
+                    <table class="table mt-4">
+                        <thead>
+                            <tr>
+                                <th>SN</th>
+                                <th>Nama</th>
+                                <th>Type</th>
+                                <th>Qty</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tempLoanTableBody"></tbody>
+                    </table>
+                </div>
 
                 <input type="hidden" id="userId" value="{{ auth()->user()->id }}">
                 <input type="hidden" id="codeLoans" value="LN-{{ date('YmdHis') }}">
