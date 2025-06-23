@@ -110,7 +110,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach ($incomingLoans as $loan)
+                        @forelse ($incomingLoans as $loan)
                         <tr>
                             <td class="text-center">{{ $loan->loaner_name }}</td>
                             <td class="text-center">@foreach ($loan->items as $item)
@@ -139,8 +139,6 @@
 
                                         <!-- Tombol close -->
                                         <button type="button" onclick="document.getElementById('viewProduct').close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-
-
                                     </form>
                                 </div>
                             </dialog>
@@ -208,7 +206,11 @@
                             </dialog>
                             {{-- tampilan preview --}}
                         </tr>
-                        @endforeach
+                        @empty
+                                <tr>
+                                    <td colspan="8" class="text-center text-gray-500">No Loan found</td>
+                                </tr>
+                        @endforelse
                     </tbody>
 
                 </table>
@@ -276,7 +278,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($outgoingLoans as $loan)
+                            @forelse ($outgoingLoans as $loan)
                             <tr>
                                 <td class="text-center">{{ $loan->loaner_name }}</td>
                                 <td class="text-center">@foreach ($loan->items as $item)
@@ -386,7 +388,11 @@
     
                                 {{-- tampilan preview --}}
                             </tr>
-                            @endforeach
+                            @empty
+                                <tr>
+                                    <td colspan="8" class="text-center text-gray-500">No Loan found</td>
+                                </tr>
+                            @endforelse
                         </tbody>
     
     

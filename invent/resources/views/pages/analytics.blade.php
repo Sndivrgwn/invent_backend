@@ -32,23 +32,29 @@
 
         <div class="list bg-base-100 rounded-box shadow-md ">
 
-            <div class="p-4 pb-2 flex">
-                <!-- search -->
+            <div class="p-4 pb-2">
                 <div class="navbar ">
-                    <div class="flex-1 relative w-full hidden md:block mr-4">
-                        <p class="font-medium text-xl ms-5">Category Overview</p>
+                    <div class="navbar-start">
+            <p class="font-medium text-xl ms-5 hidden md:block">Category Overview</p> {{-- Gunakan hidden md:block di sini --}}
+        </div>
+
+        {{-- Bagian TENGAH Navbar (biasanya kosong atau untuk logo di tengah jika diperlukan) --}}
+        <div class="navbar-center">
+            {{-- Elemen tengah jika ada, misalnya logo di mobile --}}
+        </div>
+
+        {{-- Bagian KANAN Navbar (New Category Button) --}}
+        <div class="navbar-end">
+            @can('isAdmin')
+                {{-- Hapus div class="flex-none" yang membungkus button, karena navbar-end sudah mengelola layoutnya --}}
+                <button class="bg-[#2563EB] text-white rounded-lg py-2 px-4 mr-5 hover:bg-blue-400 cursor-pointer flex justify-center items-center" onclick="newProduct.showModal()">
+                    <div class="gap-2 flex">
+                        <i class="fa fa-plus" style="display: flex; justify-content: center; align-items: center;"></i>
+                        <span>New Category</span>
                     </div>
-                @can('isAdmin')
-                    
-                    <div class="flex-none">
-                        <button class="bg-[#2563EB] text-white rounded-lg py-2 px-4 mx-5 hover:bg-blue-400 cursor-pointer flex justify-center items-center" onclick="newProduct.showModal()">
-                            <div class="gap-2 flex">
-                                <i class="fa fa-plus" style="display: flex; justify-content: center; align-items: center;"></i>
-                                <span>New Category</span>
-                            </div>
-                        </button>
-                    </div>
-                    @endcan
+                </button>
+            @endcan
+        </div>
                     <dialog id="newProduct" class="modal">
                         <div class="modal-box">
                             <form method="POST" id="itemForm" action="{{ route('analytics.store') }}">
@@ -87,48 +93,58 @@
                 </div>
             </div>
             <div class="flex flex-col gap-8 p-4">
-                <!-- table -->
-                @foreach($categories as $category)
-<div class="mb-6 flex flex-col gap-4">
-    <h2 class="text-lg ms-12 font-bold mb-2">{{ $category->name }}</h2>
-    <p class="ms-12 font-italic">{{ $category->description }}</p>
-    <div class="overflow-x-auto">
-        <table class="table w-full bg-white rounded shadow-md">
-            <thead>
-                <tr>
-                    <th class="text-center">TYPE</th>
-                    <th class="text-center">QUANTITY</th>
-                    <th class="text-center">AVAILABLE</th>
-                    <th class="text-center">LOANED</th>
-                    <th class="text-center">LOW STOCK</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach($category->type_summaries as $type)
-                <tr>
-                    <td class="text-center">{{ $type->type }}</td>
-                    <td class="text-center">{{ $type->quantity }}</td>
-                    <td class="text-center">{{ $type->available }}</td>
-                    <td class="text-center">{{ $type->loaned }}</td>
-                    <td class="text-center">{{ $type->low_stock }}</td>
-                </tr>
-                @endforeach
-                @can('isAdmin')
-                
-                <tr>
-                    <td colspan="5" class="text-end">
-                        <button type="button" class="btn btn-primary text-white rounded-lg px-4 py-2 cursor-pointer" onclick="openEditModal({{ $category->id }}, '{{ $category->name }}', '{{ $category->description }}')">
-                            edit
-                        </button>
-                        <button type="button" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-red-800 cursor-pointer" onclick="deleteItem({{ $category->id }})">delete</button>
-                    </td>
-                </tr>
-                @endcan
-            </tbody>
-        </table>
-    </div>
+    @forelse($categories as $category)
+        <div class="mb-6 flex flex-col gap-4">
+            <h2 class="text-lg ms-12 font-bold mb-2">{{ $category->name }}</h2>
+            <p class="ms-12 font-italic">{{ $category->description }}</p>
+            <div class="overflow-x-auto">
+                <table class="table w-full bg-white rounded shadow-md">
+                    <thead>
+                        <tr>
+                            <th class="text-center">TYPE</th>
+                            <th class="text-center">QUANTITY</th>
+                            <th class="text-center">AVAILABLE</th>
+                            <th class="text-center">LOANED</th>
+                            <th class="text-center">LOW STOCK</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach($category->type_summaries as $type)
+                        <tr>
+                            <td class="text-center">{{ $type->type }}</td>
+                            <td class="text-center">{{ $type->quantity }}</td>
+                            <td class="text-center">{{ $type->available }}</td>
+                            <td class="text-center">{{ $type->loaned }}</td>
+                            <td class="text-center">{{ $type->low_stock }}</td>
+                        </tr>
+                        @endforeach
+                        {{-- Jika Anda ingin @empty untuk $category->type_summaries,
+                             maka @empty-nya akan ada di sini setelah @foreach ($category->type_summaries as $type)
+                             dan sebelum @endforeach --}}
+                    </tbody>
+                    {{-- @can isAdmin dan tombol edit/delete adalah bagian dari setiap tabel kategori --}}
+                    @can('isAdmin')
+                        <tfoot>
+                            <tr>
+                                <td colspan="5" class="text-end">
+                                    <button type="button" class="btn btn-primary text-white rounded-lg px-4 py-2 cursor-pointer" onclick="openEditModal({{ $category->id }}, '{{ $category->name }}', '{{ $category->description }}')">
+                                        edit
+                                    </button>
+                                    <button type="button" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-red-800 cursor-pointer" onclick="deleteItem({{ $category->id }})">delete</button>
+                                </td>
+                            </tr>
+                        </tfoot>
+                    @endcan
+                </table>
+            </div>
+        </div>
+    @empty 
+        <div class="w-full text-center text-gray-500 py-8">
+            <p>No Category found</p>
+        </div>
+    @endforelse
 </div>
-@endforeach
+</div>
             </div>
 
             <dialog id="confirmDeleteDialog" class="modal">

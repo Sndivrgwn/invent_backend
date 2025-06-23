@@ -109,7 +109,7 @@
                             </tr>
                         </thead>
                         <tbody class="text-sm">
-                            @foreach($loans as $loan)
+                            @forelse($loans as $loan)
                             @foreach ($loan->items as $index => $item)
                             <tr class="hover">
                                 {{-- Tampilkan loan_date hanya di baris pertama --}}
@@ -127,19 +127,15 @@
 
                                 {{-- Tampilkan action hanya di baris pertama --}}
                                 @if ($index === 0)
-                            
-
-                                {{-- tampilan edit --}}
-                            
-                            {{-- tampilan edit --}}
-
-                            {{-- tampilan preview --}}
-                            
-                            {{-- tampilan preview --}}
+                           
                                 @endif
                             </tr>
                             @endforeach
-                            @endforeach
+                            @empty
+                                <tr>
+                                    <td colspan="8" class="text-center text-gray-500">No Loan Recently</td>
+                                </tr>
+                            @endforelse
                         </tbody>
 
                     </table>

@@ -115,7 +115,7 @@
                     </div>
 
                     <!-- filter -->
-                    <button class="btn flex justify-center items-center bg-transparent" onclick="filterUsers.showModal()">All Categories <i class="fa fa-filter" style="display: flex; justify-content: center; align-items: center;"></i></button>
+                    <button class="btn flex justify-center items-center bg-transparent me-2" onclick="filterUsers.showModal()">All Categories <i class="fa fa-filter" style="display: flex; justify-content: center; align-items: center;"></i></button>
                     <button class="btn flex justify-center items-center btn-secondary" onclick="resetFilter()">Reset Filter</button>
                     <dialog id="filterUsers" class="modal">
                         <div class="modal-box">

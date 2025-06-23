@@ -257,7 +257,7 @@
                         </tr>
                     </thead>
                     <tbody id="itemTableBody">
-                        @foreach ($items as $item)
+                        @forelse ($items as $item)
                         <tr>
                             <td class="flex justify-center">
     <img src="{{ $item->image === 'items/default.png' || $item->image === 'default.png' ? asset('image/default.png') : asset('storage/' . $item->image) }}" 
@@ -295,7 +295,11 @@
                                 </div>
                             </td>
                         </tr>
-                        @endforeach
+                        @empty
+                                <tr>
+                                    <td colspan="8" class="text-center text-gray-500">No Product found</td>
+                                </tr>
+                        @endforelse
                     </tbody>
                 </table>
             </div>
