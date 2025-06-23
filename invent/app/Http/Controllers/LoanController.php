@@ -139,7 +139,7 @@ class LoanController extends Controller
         $pdf = Pdf::loadView('print.loan-detail', compact('loan'))
                   ->setPaper('A4', 'portrait');
 
-        return $pdf->download('loan_form_' . $loan->code_loans . '.pdf');
+        return $pdf->stream('loan_form_' . $loan->code_loans . '.pdf');
     } catch (\Exception $e) {
         Log::error('Loan PDF print failed: ' . $e->getMessage());
         return redirect()->back()->with('toast_error', 'Gagal membuat PDF. Coba lagi.');
