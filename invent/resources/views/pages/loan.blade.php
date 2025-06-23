@@ -34,9 +34,9 @@
         <div class="tabs tabs-border w-full">
 
             <!-- Tab 1 -->
-            <label class="tab text-blue-700 text-center">
-                <input type="radio" name="my_tabs_4" checked="checked" />
-                <i class="fa fa-circle-arrow-down mr-1" style="display: flex;"></i>
+            <label class="tab border-0 text-blue-700 my-2 w-[100%] sm:w-[40%]">
+                <input type="radio" name="my_tabs_4" />
+                <i class="fa-solid fa-circle-arrow-up mr-2" style="display: flex; justify-content: center;"></i>
                 Outgoing Product
             </label>
             <!-- Value Tab 1 -->
@@ -248,7 +248,7 @@
             </div>
 
             <!-- Tab 2 -->
-            <label class="tab border-0 text-blue-700">
+            <label class="tab border-0 text-blue-700 w-[100%] sm:w-[40%] sm:my-2">
                 <input type="radio" name="my_tabs_4" />
                 <i class="fa-solid fa-circle-arrow-up mr-2" style="display: flex; justify-content: center;"></i>
                 Incoming Product

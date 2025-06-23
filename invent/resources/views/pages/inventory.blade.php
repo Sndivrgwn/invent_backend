@@ -22,8 +22,8 @@
             </div>
             @can('isAdmin')
             <div class="flex-none">
-                <button class="bg-[#2563EB] text-white rounded-lg py-2 px-4 mx-5 hover:bg-blue-400 cursor-pointer flex justify-center items-center" onclick="document.getElementById('newInventory').showModal()">
-                    <div class="gap-2 flex">
+                <button class="bg-[#2563EB] text-white rounded-lg py-2 px-2 mx-3 hover:bg-blue-400 cursor-pointer flex justify-center items-center" onclick="document.getElementById('newInventory').showModal()">
+                    <div class=" flex">
                         <i class="fa fa-plus flex justify-center items-center"></i>
                         <span>New Inventory</span>
                     </div>

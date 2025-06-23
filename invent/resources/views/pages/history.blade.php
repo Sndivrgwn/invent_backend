@@ -43,15 +43,15 @@
                     </form>
 
                     <!-- Filter Button -->
-                    <button class="btn bg-transparent" onclick="filterProduct.showModal()">All Categories <i class="fa fa-filter ml-2"></i></button>
+                    <button class="btn bg-transparent" onclick="filterProduct.showModal()">Filter <i class="fa fa-filter ml-2"></i></button>
 
                 </div>
-                <div class="calender px-5">
+                <div class="calender w-[100%]">
                     <!-- Date Filter Section -->
                     <!-- Filter Date -->
                     <form method="GET" action="{{ route('history') }}" class="flex flex-wrap items-center gap-3 mt-4 p-1">
-                        <div>
-                            <input type="date" name="start_date" value="{{ request('start_date') }}" class="input input-bordered w-full max-w-xs" />
+                        <div class="w-[95%] ">
+                            <input type="date" name="start_date" value="{{ request('start_date') }}" class="input input-bordered max-w-xs" />
                         </div>
                         <div class="flex inline-block sm:gap-3 self-end"> 
                             <button type="submit" class="btn btn-primary m-1">Filter Date</button>

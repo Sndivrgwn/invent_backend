@@ -35,18 +35,11 @@
             <div class="p-4 pb-2">
                 <div class="navbar ">
                     <div class="navbar-start">
-            <p class="font-medium text-xl ms-5 hidden md:block">Category Overview</p> {{-- Gunakan hidden md:block di sini --}}
+            <p class="font-semibold text-xl ms-5">Category Overview</p>
         </div>
 
-        {{-- Bagian TENGAH Navbar (biasanya kosong atau untuk logo di tengah jika diperlukan) --}}
-        <div class="navbar-center">
-            {{-- Elemen tengah jika ada, misalnya logo di mobile --}}
-        </div>
-
-        {{-- Bagian KANAN Navbar (New Category Button) --}}
         <div class="navbar-end">
             @can('isAdmin')
-                {{-- Hapus div class="flex-none" yang membungkus button, karena navbar-end sudah mengelola layoutnya --}}
                 <button class="bg-[#2563EB] text-white rounded-lg py-2 px-4 mr-5 hover:bg-blue-400 cursor-pointer flex justify-center items-center" onclick="newProduct.showModal()">
                     <div class="gap-2 flex">
                         <i class="fa fa-plus" style="display: flex; justify-content: center; align-items: center;"></i>
@@ -127,7 +120,7 @@
                         <tfoot>
                             <tr>
                                 <td colspan="5" class="text-end">
-                                    <button type="button" class="btn btn-primary text-white rounded-lg px-4 py-2 cursor-pointer" onclick="openEditModal({{ $category->id }}, '{{ $category->name }}', '{{ $category->description }}')">
+                                    <button type="button" class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer " onclick="openEditModal({{ $category->id }}, '{{ $category->name }}', '{{ $category->description }}')">
                                         edit
                                     </button>
                                     <button type="button" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-red-800 cursor-pointer" onclick="deleteItem({{ $category->id }})">delete</button>

@@ -66,16 +66,20 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div class="flex gap-5  justify-between text-gray-600 mb-3">
-                                    <div class="w-[50%]">
+                                <div class="flex gap-5 justify-between text-gray-600 mb-3">
+                                    <div class="w-[100%]">
                                         <h1 class="font-medium">PASSWORD</h1>
-                                        <input type="password" name="password" class="input" />
-                                    </div>
-                                    <div class="w-[50%]">
-                                        <h1 class="font-medium">CONFIRM PASSWORD</h1>
-                                        <input type="password" name="password_confirmation" class="input" />
+                                        <input type="password" name="password" placeholder="insert password" class="input" style="width: 100%;" />
                                     </div>
                                 </div>
+                                <div class="flex gap-5 justify-between text-gray-600 mb-3">
+                                    <div class="w-[100%] mb-4">
+                                        <h1 class="font-medium">CONFIRM PASSWORD</h1>
+                                        <input type="password" name="password_confirmation" placeholder="please confirm password" class="input" style="width: 100%;" />
+                                    </div>
+                                </div>
+                                {{-- <div class="flex gap-5  justify-between text-gray-600 mb-3">
+                                </div> --}}
                                 <div class="flex gap-5 justify-between text-gray-600">
 
                                     <!-- button -->
@@ -92,9 +96,9 @@
 
             <div class="list bg-base-100 rounded-box shadow-md">
 
-                <div class="p-4 pb-2 flex">
+                <div class="p-4 pb-2 md:flex">
                     <!-- search -->
-                    <div class="relative w-full hidden md:block mr-4">
+                    <div class="relative w-full mr-4">
                         <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                             <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
@@ -109,14 +113,13 @@
                                 <span class="sr-only">Search icon</span>
                             </div>
                             <input type="text" id="searchInput" name="searchInput" class="block w-full p-2 ps-10 text-sm border border-gray-400 rounded-lg" placeholder="Search...">
-
                         </form>
 
                     </div>
 
                     <!-- filter -->
-                    <button class="btn flex justify-center items-center bg-transparent me-2" onclick="filterUsers.showModal()">All Categories <i class="fa fa-filter" style="display: flex; justify-content: center; align-items: center;"></i></button>
-                    <button class="btn flex justify-center items-center btn-secondary" onclick="resetFilter()">Reset Filter</button>
+                    <button class="btn flex justify-center items-center bg-transparent me-2 mt-3 md:mt-0" onclick="filterUsers.showModal()">Filter Role <i class="fa fa-filter" style="display: flex; justify-content: center; align-items: center;"></i></button>
+                    <button class="btn flex justify-center items-center btn-secondary mt-3 md:mt-0" onclick="resetFilter()">Reset Filter</button>
                     <dialog id="filterUsers" class="modal">
                         <div class="modal-box">
                             <!-- close button -->
@@ -162,11 +165,11 @@
                                 <td class="text-center">{{ $usr->email }}</td>
                                 <td class="text-center">{{ $usr->roles->name }}</td>
                                 <td class="text-center">{{ $usr->last_active_at }}</td>
-                                <td class="text-center flex justify-center  ">
+                                <td class="justify-center  ">
                                     <div class="flex justify-center items-center">
                                         <i class="fa fa-trash  fa-lg cursor-pointer !leading-none" onclick="deleteItem({{ $usr->id }})"></i>
                                         <i class="fa fa-pen-to-square fa-lg cursor-pointer !leading-none" onclick="openEditModal({{ $usr->id }}, '{{ $usr->name }}', '{{ $usr->email }}', {{ $usr->roles_id }})"></i>
-                                        <i class="fa-regular fa-eye fa-lg cursor-pointer" onclick="showUserDetails({{ $usr->id }})"></i>
+                                        <i class="fa-regular fa-eye fa-lg cursor-pointer mb-2" onclick="showUserDetails({{ $usr->id }})"></i>
                                     </div>
                                 </td>
                             </tr>
