@@ -323,24 +323,22 @@ function submitLoan() {
             },
             body: JSON.stringify(payload)
         })
-        .then(res => res.json())
-        .then(data => {
-            if (data.errors) {
-                showToast("Validation failed", "error");
-                console.error(data.errors);
-            } else if (data.error) {
-                showToast(data.error, "error");
-                console.error(data.error);
-            } else {
-                showToast("Loan created successfully!", "success");
-                setTimeout(() => {
-                    window.location.href = "/manageLoan";
-                }, 1000); 
+        .then(res => {
+            if (!res.ok) {
+                return res.json().then(err => Promise.reject(err));
             }
+            return res.json();
+        })
+        .then(data => {
+            showToast("Loan created successfully!", "success");
+            setTimeout(() => {
+                window.location.href = "/manageLoan";
+            }, 1000); 
         })
         .catch(err => {
             console.error(err);
-            showToast("Failed to save loan", "error");
+            const errorMessage = err.message || "Failed to save loan";
+            showToast(errorMessage, "error");
         });
 }
 

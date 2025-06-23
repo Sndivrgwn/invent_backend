@@ -98,29 +98,24 @@ class LoanController extends Controller
         foreach ($request->items as $item) {
             $itemModel = Item::findOrFail($item['item_id']);
 
-            // Cek apakah item sedang dipinjam
             if ($itemModel->status === 'NOT READY') {
-                throw new \Exception("Item '{$itemModel->name}' | '{$itemModel->code}' borrowed item cannot loaned repeatedly.");
+                throw new \Exception("Item '{$itemModel->name}' (SN: {$itemModel->code}) is currently borrowed and cannot be loaned again.");
             }
 
-            // Simpan ke pivot
             $loan->items()->attach($item['item_id'], [
                 'quantity' => $item['quantity'],
             ]);
 
-            // Update status item jadi dipinjam
             $itemModel->update(['status' => 'NOT READY']);
         }
 
         DB::commit();
         return response()->json([
-            'status' => 'success',
             'message' => 'Loan successfully created!'
-        ]);
+        ], 201);
     } catch (\Exception $e) {
         DB::rollBack();
         return response()->json([
-            'status' => 'error',
             'message' => $e->getMessage()
         ], 400);
     }
