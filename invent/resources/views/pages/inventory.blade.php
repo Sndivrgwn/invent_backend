@@ -23,10 +23,8 @@
             @can('isAdmin')
             <div class="flex-none">
                 <button class="bg-[#2563EB] text-white rounded-lg py-2 px-2 mx-3 hover:bg-blue-400 cursor-pointer flex justify-center items-center" onclick="document.getElementById('newInventory').showModal()">
-                    <div class=" flex">
-                        <i class="fa fa-plus flex justify-center items-center"></i>
-                        <span>New Inventory</span>
-                    </div>
+                    <i class="fa-regular me-2 fa-plus flex justify-center items-center"></i>
+                    <span class="">New Inventory</span>
                 </button>
             </div>
             @endcan
@@ -84,7 +82,9 @@
                                     <p class="text-[#64748B]">{{ $location['location']->name }}</p>
                                     <p class="text-3xl font-bold">{{ $location['total_items'] }}</p>
                                 </div>
-                                <i class="fa fa-server bg-[rgba(37,99,235,0.25)] rounded-3xl text-blue-500 text-2xl p-2"></i>
+                                <span class="text-[#2563EB]">
+                                    see details
+                                </span>
                             </div>
                             @if($location['categories']->isNotEmpty())
                             <div class="flex flex-wrap gap-2 justify-center items-center py-4 px-4">

@@ -50,7 +50,7 @@
                     <input type="date" id="returnDate" class="input w-full text-gray-600" placeholder="YYYY-MM-DD" required>
                 </div>
                 <button type="button" onclick="document.getElementById('newLoan').showModal()" class="btn btn-primary my-3">
-                    <i class="fa fa-plus mr-2"></i> Add Item
+                    <i class="fa-regular fa-plus mr-2"></i> Add Item
                 </button>
                 <div class="overflow-x-auto">
                     <table class="table mt-4">

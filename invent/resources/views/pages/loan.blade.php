@@ -35,7 +35,7 @@
 
             <!-- Tab 1 -->
             <label class="tab border-0 text-blue-700 my-2 w-[100%] sm:w-[40%]">
-                <input type="radio" name="my_tabs_4" />
+                <input type="radio" name="my_tabs_4" checked="checked"/>
                 <i class="fa-solid fa-circle-arrow-up mr-2" style="display: flex; justify-content: center;"></i>
                 Outgoing Product
             </label>
@@ -120,13 +120,10 @@
                             <td class="text-center">{{ $loan->return_date }}</td>
                             <td class="text-center">{{ $loan->status }}</td>
 
-                            <td class="text-center">
+                            <td class="text-center gap-2">
                                 <i class="fa-solid fa-file-pdf fa-lg text-red-600 cursor-pointer"
-   title="Lihat PDF"
-   onclick="window.open('{{ route('loan.print.pdf', ['id' => \Illuminate\Support\Facades\Crypt::encryptString($loan->id)]) }}', '_blank')"></i>
-
-
-
+                                title="Lihat PDF"
+                                onclick="window.open('{{ route('loan.print.pdf', ['id' => \Illuminate\Support\Facades\Crypt::encryptString($loan->id)]) }}', '_blank')"></i>
                                 <i class="fa-regular fa-eye fa-lg cursor-pointer" onclick="showLoanDetails({{ $loan->id }})"></i>
                             </td>
                             {{-- tampilan edit --}}
@@ -295,22 +292,19 @@
                                 <td class="text-center">{{ $loan->status }}</td>
     
                                 <td class="text-center">
-                    @can('isAdmin')
-                    
-                    
-                    <i class="fa fa-pen-to-square fa-lg cursor-pointer" 
-                    onclick="openEditModal(
-           {{ $loan->id }}, 
-           '{{ $loan->loaner_name }}', 
-           '{{ $loan->description }}', 
-           '{{ $loan->return_date }}',
-           '{{ $loan->loan_date }}'
-       )"></i>
-       @endcan
-       <i class="fa-solid fa-file-pdf fa-lg text-red-600 cursor-pointer"
-   title="Lihat PDF"
-   onclick="window.open('{{ route('loan.print.pdf', ['id' => \Illuminate\Support\Facades\Crypt::encryptString($loan->id)]) }}', '_blank')"></i>
-
+                                                @can('isAdmin') 
+                                                <i class="fa fa-pen-to-square fa-lg cursor-pointer" 
+                                                onclick="openEditModal(
+                                    {{ $loan->id }}, 
+                                    '{{ $loan->loaner_name }}', 
+                                    '{{ $loan->description }}', 
+                                    '{{ $loan->return_date }}',
+                                    '{{ $loan->loan_date }}'
+                                )"></i>
+                                @endcan
+                                <i class="fa-solid fa-file-pdf fa-lg text-red-600 cursor-pointer"
+                            title="Lihat PDF"
+                            onclick="window.open('{{ route('loan.print.pdf', ['id' => \Illuminate\Support\Facades\Crypt::encryptString($loan->id)]) }}', '_blank')"></i>
                                     <i class="fa-regular fa-eye fa-lg cursor-pointer" onclick="showLoanDetailsTwo({{ $loan->id }})"></i>
                                 </td>
                                 {{-- tampilan delete --}}

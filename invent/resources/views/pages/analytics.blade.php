@@ -40,7 +40,7 @@
 
         <div class="navbar-end">
             @can('isAdmin')
-                <button class="bg-[#2563EB] text-white rounded-lg py-2 px-4 mr-5 hover:bg-blue-400 cursor-pointer flex justify-center items-center" onclick="newProduct.showModal()">
+                <button class="bg-[#2563EB] text-white rounded-lg p-2 px-5 w-full hover:bg-blue-400 cursor-pointer flex justify-center items-center gap-2 sm:w-[50%]" onclick="newProduct.showModal()">
                     <div class="gap-2 flex">
                         <i class="fa fa-plus" style="display: flex; justify-content: center; align-items: center;"></i>
                         <span>New Category</span>
