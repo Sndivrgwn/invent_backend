@@ -19,7 +19,7 @@
         <button class="p-2 md:hidden z-50" id="close-sidebar">
             <i class="fa fa-times"></i>
         </button>
-        <button class="p-2 hidden md:block" id="toggle-sidebar">
+        <button class="p-2 hidden md:block cursor-pointer" id="toggle-sidebar">
             <i class="fa fa-chevron-left"></i>
         </button>
     </div>
