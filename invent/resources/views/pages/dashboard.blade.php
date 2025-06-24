@@ -101,7 +101,7 @@
                         <thead class="text-gray-500 text-sm font-semibold border-b">
                             <tr>
                                 <th>DATE</th>
-                                <th>LOANER NAME</th>
+                                <th>BORROWER NAME</th>
                                 <th>SERIAL NUMBER</th>
                                 <th>PRODUCT</th>
                                 <th>CONDITION</th>

@@ -36,7 +36,7 @@
                 <h1 class="font-semibold text-2xl mb-4">New Loan</h1>
 
                 <div class="mb-4">
-                    <label class="font-medium text-gray-600">NAMA PEMINJAM</label>
+                    <label class="font-medium text-gray-600">BORROWER NAME</label>
                     <input class="input w-full text-gray-600" type="text" id="loanerName" placeholder="Nama Peminjam" required>
                 </div>
 
@@ -46,7 +46,7 @@
                 </div>
                 
                 <div class="mb-4">
-                    <label class="font-medium text-gray-600">TANGGAL PENGEMBALIAN</label>
+                    <label class="font-medium text-gray-600">RETURN DATE</label>
                     <input type="date" id="returnDate" class="input w-full text-gray-600" placeholder="YYYY-MM-DD" required>
                 </div>
                 <button type="button" onclick="document.getElementById('newLoan').showModal()" class="btn btn-primary my-3">

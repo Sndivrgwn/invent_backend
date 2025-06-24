@@ -48,7 +48,7 @@
                                 <tr>
                                     <th>DATE</th>
                                     <th>CODE</th>
-                                    <th>NAME</th>
+                                    <th>BORROWER NAME</th>
                                     <th>SERIAL NUMBER</th>
                                     <th>PRODUCT</th>
                                     <th>STATUS</th>

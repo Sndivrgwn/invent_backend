@@ -101,7 +101,7 @@
                     <table class="table">
                         <thead>
                             <tr>
-                                <th class="text-center font-semibold">NAME</th>
+                                <th class="text-center font-semibold">BORROWER NAME</th>
                                 <th class="text-center font-semibold">PRODUCT</th>
                                 <th class="text-center font-semibold">BORROW DATE</th>
                                 <th class="text-center font-semibold">DUE DATE</th>

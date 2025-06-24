@@ -160,7 +160,7 @@
                             <th>RETURNED AT</th>
                             <th>DUE DATE</th>
                             <th>LOAN CODE</th>
-                            <th>NAME</th>
+                            <th>BORROWER NAME</th>
                             <th>SERIAL NUMBER</th>
                             <th>PRODUCT</th>
                             <th>STATUS</th>
