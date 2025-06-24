@@ -270,7 +270,7 @@
                             </td>
                             <td class="">
                                 <div class="flex justify-center items-center">
-                                    @can('isAdadminFunctionmin')
+                                    @can('adminFunction')
                                     <i class="fa fa-trash fa-lg cursor-pointer !leading-none" onclick="deleteItem({{ $item->id }})"></i>
                                     <i class="fa fa-pen-to-square fa-lg cursor-pointer !leading-none" onclick="openEditModal({
                                         id: {{ $item->id }},
