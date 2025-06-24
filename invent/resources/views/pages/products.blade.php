@@ -687,55 +687,52 @@
     }
 
     function submitEditForm() {
-        if (!currentEditId) return;
+    if (!currentEditId) return;
 
-        const formData = new FormData();
-        const imageInput = document.getElementById("edit_imageUpload");
-        const preview = document.getElementById("edit_imagePreview");
-        
-        // // Only include image if a new one was selected and it's not the default
-        // if (imageInput.files.length > 0 && !preview.src.includes('image/default.png')) {
-        //     formData.append("image", imageInput.files[0]);
-        // } else if (preview.src.includes('image/default.png')) {
-        //     // Explicitly set image to null if default image is shown
-        //     formData.append("image", "items/default.png");
-        // }
-
-        formData.append("name", document.getElementById("edit_product").value);
-        formData.append("brand", document.getElementById("edit_brand").value);
-        formData.append("type", document.getElementById("edit_type").value);
-        formData.append("location_id", document.getElementById("edit_rack").value);
-        formData.append("condition", document.getElementById("edit_condition").value);
-        formData.append("status", document.getElementById("edit_status").value);
-        formData.append("code", document.getElementById("edit_serialNumber").value);
-        formData.append("description", document.getElementById("edit_description").value);
-        formData.append("category_id", document.getElementById("edit_category").value);
-        formData.append("_method", "PUT");
-
-        fetch(`/api/items/${currentEditId}`, {
-            method: "POST",
-            body: formData,
-            headers: {
-                'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                'Accept': 'application/json'
-            }
-        })
-        .then(response => {
-            if (!response.ok) {
-                return response.json().then(err => { throw err; });
-            }
-            return response.json();
-        })
-        .then(data => {
-            showToast("Item updated successfully", "success");
-            closeEditModal();
-            window.location.reload();
-        })
-        .catch(error => {
-            console.error("Error updating item:", error);
-            showToast(error.errors ? Object.values(error.errors).join(', ') : "Failed to update item", "error");
-        });
+    const formData = new FormData();
+    const imageInput = document.getElementById("edit_imageUpload");
+    
+    // Always append the image if a file is selected
+    if (imageInput.files.length > 0) {
+        formData.append("image", imageInput.files[0]);
     }
+
+    // Append other form data
+    formData.append("name", document.getElementById("edit_product").value);
+    formData.append("brand", document.getElementById("edit_brand").value);
+    formData.append("type", document.getElementById("edit_type").value);
+    formData.append("location_id", document.getElementById("edit_rack").value);
+    formData.append("condition", document.getElementById("edit_condition").value);
+    formData.append("status", document.getElementById("edit_status").value);
+    formData.append("code", document.getElementById("edit_serialNumber").value);
+    formData.append("description", document.getElementById("edit_description").value);
+    formData.append("category_id", document.getElementById("edit_category").value);
+    formData.append("_method", "PUT");
+
+    fetch(`/api/items/${currentEditId}`, {
+        method: "POST",
+        body: formData,
+        headers: {
+            'X-CSRF-TOKEN': '{{ csrf_token() }}',
+            // Don't set Content-Type header - let the browser set it with the boundary
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            return response.json().then(err => { throw err; });
+        }
+        return response.json();
+    })
+    .then(data => {
+        showToast("Item updated successfully", "success");
+        closeEditModal();
+        window.location.reload();
+    })
+    .catch(error => {
+        console.error("Error updating item:", error);
+        showToast(error.errors ? Object.values(error.errors).join(', ') : "Failed to update item", "error");
+    });
+}
 
     // Delete functions
     function deleteItem(id) {

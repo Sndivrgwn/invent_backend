@@ -174,7 +174,6 @@ class ItemController extends Controller
     public function update(Request $request, string $id)
 {
     try {
-        // Find the item
         $item = Item::find($id);
         if (!$item) {
             return response()->json([
@@ -183,7 +182,6 @@ class ItemController extends Controller
             ], 404);
         }
 
-        // Validate input
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'code' => 'required|string|unique:items,code,' . $id,
@@ -194,20 +192,24 @@ class ItemController extends Controller
             'category_id' => 'required|exists:categories,id',
             'location_id' => 'required|exists:locations,id',
             'description' => 'nullable|string',
-            'image' => 'nullable|image|max:2048', // Added image validation like in store
+            'image' => 'nullable|image|max:2048',
         ]);
 
-        // Handle image upload if present
+        // Handle image upload
         if ($request->hasFile('image')) {
-            // Delete old image if it's not the default
-            if ($item->image && $item->image !== 'default.png') {
+            // Delete old image if it exists and isn't the default
+            if ($item->image && $item->image !== 'default.png' && Storage::disk('public')->exists($item->image)) {
                 Storage::disk('public')->delete($item->image);
             }
+            
+            // Store new image
             $path = $request->file('image')->store('items', 'public');
             $validated['image'] = $path;
+        } else {
+            // Keep the existing image if no new image is uploaded
+            $validated['image'] = $item->image;
         }
 
-        // Update the item
         $item->update($validated);
 
         return response()->json([
@@ -222,13 +224,7 @@ class ItemController extends Controller
             'message' => 'Validation failed',
             'errors' => $e->errors()
         ], 422);
-    } catch (QueryException $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Database error',
-            'error' => $e->getMessage()
-        ], 500);
-    } catch (Exception $e) {
+    } catch (\Exception $e) {
         return response()->json([
             'success' => false,
             'message' => 'Server error',
