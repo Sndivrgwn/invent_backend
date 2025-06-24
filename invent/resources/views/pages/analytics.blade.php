@@ -39,7 +39,7 @@
         </div>
 
         <div class="navbar-end">
-            @can('isAdmin')
+            @can('adminFunction')
                 <button class="bg-[#2563EB] text-white rounded-lg p-2 px-5 w-full hover:bg-blue-400 cursor-pointer flex justify-center items-center gap-2 sm:w-[50%]" onclick="newProduct.showModal()">
                     <div class="flex">
                         <i class="fa fa-plus" style="display: flex; justify-content: center; align-items: center;"></i>
@@ -115,8 +115,8 @@
                              maka @empty-nya akan ada di sini setelah @foreach ($category->type_summaries as $type)
                              dan sebelum @endforeach --}}
                     </tbody>
-                    {{-- @can isAdmin dan tombol edit/delete adalah bagian dari setiap tabel kategori --}}
-                    @can('isAdmin')
+                    {{-- @can adminFunction dan tombol edit/delete adalah bagian dari setiap tabel kategori --}}
+                    @can('adminFunction')
                         <tfoot>
                             <tr>
                                 <td colspan="5" class="text-end">

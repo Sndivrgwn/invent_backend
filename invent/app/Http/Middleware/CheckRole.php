@@ -10,30 +10,31 @@ class CheckRole
 {
     /**
      * Handle an incoming request.
-     *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    // app/Http/Middleware/CheckRole.php
-    // app/Http/Middleware/CheckRole.php
- public function handle(Request $request, Closure $next, string $role = null)
+    public function handle(Request $request, Closure $next, ...$roles): Response
     {
-        // If no role is specified, just continue
-        if (!$role) {
-            return $next($request);
-        }
-
-        // If user is not authenticated, redirect to login
         if (!$request->user()) {
             return redirect()->route('login');
         }
 
-        //if the user roles_id = 1, they are an admin
-        if ($request->user()->roles_id == 1) {
-            // If the user is an admin, allow access to the route
+        $userRoleId = $request->user()->roles_id;
+
+        // Mapping role name to ID
+        $roleMap = [
+            'admin' => 1,
+            'user' => 2,
+            'superadmin' => 3,
+        ];
+
+        $allowedRoleIds = collect($roles)
+            ->map(fn($role) => $roleMap[$role] ?? null)
+            ->filter()
+            ->toArray();
+
+        if (in_array($userRoleId, $allowedRoleIds)) {
             return $next($request);
         }
 
-        // For non-admin users trying to access admin routes
         return redirect()->route('dashboard')->with('error', 'You do not have the required privileges.');
     }
 }

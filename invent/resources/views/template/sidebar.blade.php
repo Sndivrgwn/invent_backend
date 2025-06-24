@@ -90,9 +90,10 @@
 
         <!-- ADMINISTRATION -->
         <div>
+            {{-- @can('isSuperAdmin') --}}
+            @can('adminFunction')
             <p class="text-gray-500 text-xs font-semibold uppercase mb-2 sidebar-text">Administration</p>
             <ul class="space-y-1">
-                @can('isAdmin')
                 <li class="rounded-lg">
                     <a href="/users" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-100 active:bg-blue-200 transition-colors duration-200
         {{ request()->is('users') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-700 hover:text-blue-700 active:text-blue-800' }}">
@@ -101,16 +102,19 @@
                     </a>
                 </li>
                 @endcan
+                {{-- @can('isSuperAdmin')
                 <li class="rounded-lg">
                     <a href="/settings" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-100 active:bg-blue-200 transition-colors duration-200
-        {{ request()->is('settings') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-700 hover:text-blue-700 active:text-blue-800' }}">
-                        <i class="fa fa-cog" style="display: flex; justify-content: center;"></i>
-                        <span class="sidebar-text">System Settings</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
+                    {{ request()->is('settings') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-700 hover:text-blue-700 active:text-blue-800' }}">
+                    <i class="fa fa-cog" style="display: flex; justify-content: center;"></i>
+                    <span class="sidebar-text">System Settings</span>
+                </a>
+            </li>
+            @endcan --}}
+        </ul>
+        {{-- @endcan --}}
     </div>
+</div>
 
     <!-- LOGOUT -->
     <div class="mt-3">

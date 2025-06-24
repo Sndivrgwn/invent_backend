@@ -16,6 +16,10 @@ class UserManagementController extends Controller
         $query = User::with('roles');
         $roles = Roles::all();
 
+           if (auth()->user()->roles_id == 1) { // Jika admin
+        $query->whereIn('roles_id', [1, 2]); // Hanya tampilkan admin (1) dan user (2)
+    }
+
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
@@ -41,12 +45,20 @@ class UserManagementController extends Controller
     public function store(Request $request)
     {
         try {
+            
             $validated = $request->validate([
                 'name' => 'required|string|max:255',
                 'email' => 'required|email|unique:users,email',
                 'password' => 'required|string|min:8|confirmed',
                 'roles_id' => 'required|exists:roles,id',
             ]);
+
+            if ((int)$validated['roles_id'] === 3) {
+            return redirect()->back()->with('toast', [
+                'type' => 'error',
+                'message' => 'You are not allowed to create a SuperAdmin user.'
+            ])->withInput();
+        }
 
             $validated['password'] = bcrypt($validated['password']);
             User::create($validated);

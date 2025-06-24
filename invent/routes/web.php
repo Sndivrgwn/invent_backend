@@ -35,6 +35,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/manageLoan', [ManageLoanController::class, 'index'])->name('pages.manageLoan');
     Route::post('/loans', [LoanController::class, 'store']);
     Route::get('/settings', [SettingController::class, 'index'])->name('setting');
+
     Route::get('/profil', [profilController::class, 'index'])->name('profil');
     Route::put('/profile/name', [profilController::class, 'updateName'])->name('profile.update.name');
     Route::put('/profile/email', [profilController::class, 'updateEmail'])->name('profile.update.email');
@@ -50,7 +51,7 @@ Route::get('/loan/{id}/pdf', [LoanController::class, 'printPdf'])->name('loan.pr
 
     // Admin-only routes
     // routes/web.php
-Route::middleware('role:admin')->group(function () {
+Route::middleware('role:admin,superadmin')->group(function () {
     Route::get('/users', [UserManagementController::class, 'index'])->name('users');
     Route::post('/users/store', [UserManagementController::class, 'store'])->name('users.store');
     // ... other admin routes ...

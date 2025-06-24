@@ -78,4 +78,10 @@ public function isUser()
 {
     return $this->roles_id == 2;
 }
+
+public function isSuperAdmin() 
+{
+    return $this->roles_id == 3;
+}
+
 }

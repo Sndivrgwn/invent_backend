@@ -56,12 +56,21 @@
                                         <h1 class="font-medium">ROLE</h1>
                                         <div>
                                             <label class="select">
-                                                <select id="condition" name="roles_id" class="select select-bordered w-full">
-                                                    <option value="" disabled selected>Select Role</option>
-                                                    @foreach ($roles as $u)
-                                                    <option value="{{ $u->id }}">{{ $u->name }}</option>
-                                                    @endforeach
-                                                </select>
+                                               <!-- In new user modal -->
+<!-- Di bagian new user modal -->
+<select id="condition" name="roles_id" class="select select-bordered w-full">
+    <option value="" disabled selected>Select Role</option>
+    @auth
+        @if(auth()->user()->roles_id == 3) <!-- Superadmin -->
+            <option value="3">Superadmin</option>
+            <option value="1">Admin</option>
+            <option value="2">User</option>
+        @elseif(auth()->user()->roles_id == 1) <!-- Admin -->
+            <option value="1">Admin</option>
+            <option value="2">User</option>
+        @endif
+    @endauth
+</select>
                                             </label>
                                         </div>
                                     </div>
@@ -159,23 +168,35 @@
                             </tr>
                         </thead>
                         <tbody id="itemTableBody">
-                            @foreach ($user as $usr)
-                            <tr>
-                                <td class="text-center">{{ $usr->name }}</td>
-                                <td class="text-center">{{ $usr->email }}</td>
-                                <td class="text-center">{{ $usr->roles->name }}</td>
-                                <td class="text-center">{{ $usr->last_active_at }}</td>
-                                <td class="justify-center  ">
-                                    <div class="flex justify-center items-center">
-                                        <i class="fa fa-trash  fa-lg cursor-pointer !leading-none" onclick="deleteItem({{ $usr->id }})"></i>
-                                        <i class="fa fa-pen-to-square fa-lg cursor-pointer !leading-none" onclick="openEditModal({{ $usr->id }}, '{{ $usr->name }}', '{{ $usr->email }}', {{ $usr->roles_id }})"></i>
-                                        <i class="fa-regular fa-eye fa-lg cursor-pointer mb-2" onclick="showUserDetails({{ $usr->id }})"></i>
-                                    </div>
-                                </td>
-                            </tr>
-                            @endforeach
-
-                        </tbody>
+    @foreach ($user as $usr)
+        @if(auth()->user()->roles_id == 3 || $usr->roles_id != 3)
+        <tr>
+            <td class="text-center">{{ $usr->name }}</td>
+            <td class="text-center">{{ $usr->email }}</td>
+            <td class="text-center">{{ $usr->roles->name }}</td>
+            <td class="text-center">{{ $usr->last_active_at }}</td>
+            <td class="justify-center">
+                <div class="flex justify-center items-center">
+                    @auth
+                        @if(auth()->user()->roles_id == 3) <!-- Superadmin -->
+                            @if($usr->id != auth()->id()) <!-- Tidak bisa menghapus/mengedit dirinya sendiri -->
+                                <i class="fa fa-trash fa-lg cursor-pointer !leading-none" onclick="deleteItem({{ $usr->id }})"></i>
+                                <i class="fa fa-pen-to-square fa-lg cursor-pointer !leading-none" onclick="openEditModal({{ $usr->id }}, '{{ $usr->name }}', '{{ $usr->email }}', {{ $usr->roles_id }})"></i>
+                            @endif
+                        @elseif(auth()->user()->roles_id == 1) <!-- Admin -->
+                            @if($usr->roles_id == 2) <!-- Hanya bisa mengedit/menghapus user biasa -->
+                                <i class="fa fa-trash fa-lg cursor-pointer !leading-none" onclick="deleteItem({{ $usr->id }})"></i>
+                                <i class="fa fa-pen-to-square fa-lg cursor-pointer !leading-none" onclick="openEditModal({{ $usr->id }}, '{{ $usr->name }}', '{{ $usr->email }}', {{ $usr->roles_id }})"></i>
+                            @endif
+                        @endif
+                        <i class="fa-regular fa-eye fa-lg cursor-pointer mb-2" onclick="showUserDetails({{ $usr->id }})"></i>
+                    @endauth
+                </div>
+            </td>
+        </tr>
+        @endif
+    @endforeach
+</tbody>
                     </table>
                 </div>
 
@@ -246,12 +267,20 @@
                             <div class="flex gap-5 justify-between text-gray-600 mb-6">
                                 <div class="w-full">
                                     <h1 class="font-medium">ROLE</h1>
-                                    <select id="edit_role" name="roles_id" class="select select-bordered w-full">
-                                        <option value="" disabled selected>Select Role</option>
-                                        @foreach ($roles as $role)
-                                        <option value="{{ $role->id }}">{{ $role->name }}</option>
-                                        @endforeach
-                                    </select>
+                                   <!-- Di bagian edit modal -->
+<select id="edit_role" name="roles_id" class="select select-bordered w-full">
+    <option value="" disabled selected>Select Role</option>
+    @auth
+        @if(auth()->user()->roles_id == 3) <!-- Superadmin -->
+            <option value="3">Superadmin</option>
+            <option value="1">Admin</option>
+            <option value="2">User</option>
+        @elseif(auth()->user()->roles_id == 1) <!-- Admin -->
+            <option value="1">Admin</option>
+            <option value="2">User</option>
+        @endif
+    @endauth
+</select>
                                 </div>
                             </div>
 
@@ -363,48 +392,64 @@
 
     // User management functions
     async function deleteItem(id) {
+    try {
+        // Cek role user yang akan dihapus
+        const response = await fetch(`/api/users/${id}/role`);
+        const data = await response.json();
+        
+        @if(auth()->user()->roles_id == 1) // Jika admin
+            if (data.roles_id == 3) { // Coba hapus superadmin
+                showToast('You are not authorized to delete superadmin', 'error');
+                return;
+            }
+        @endif
+        
         deleteTargetId = id;
         document.getElementById("confirmDeleteDialog").showModal();
+    } catch (error) {
+        showToast('Error checking user role', 'error');
+        console.error(error);
     }
+}
 
-    async function confirmDelete() {
-        if (!deleteTargetId) return;
+   async function confirmDelete() {
+    if (!deleteTargetId) return;
 
-        try {
-            const res = await fetch(`/api/users/${deleteTargetId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Accept': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+    try {
+        const res = await fetch(`/api/users/${deleteTargetId}`, {
+            method: 'DELETE',
+            headers: {
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            }
+        });
+
+        const data = await res.json();
+        
+        if (res.ok) {
+            handleAjaxResponse({
+                toast: {
+                    type: 'success',
+                    message: 'User deleted successfully'
+                },
+                reload: true
+            });
+        } else {
+            handleAjaxResponse({
+                toast: {
+                    type: 'error',
+                    message: data.message || 'Failed to delete user'
                 }
             });
-
-            const data = await res.json();
-            
-            if (res.ok) {
-                handleAjaxResponse({
-                    toast: {
-                        type: 'success',
-                        message: 'User deleted successfully'
-                    },
-                    reload: true
-                });
-            } else {
-                handleAjaxResponse({
-                    toast: {
-                        type: 'error',
-                        message: data.message || 'Failed to delete user'
-                    }
-                });
-            }
-        } catch (error) {
-            showToast('An error occurred while deleting user', 'error');
-            console.error(error);
         }
-
-        deleteTargetId = null;
-        closeDeleteDialog();
+    } catch (error) {
+        showToast('An error occurred while deleting user', 'error');
+        console.error(error);
     }
+
+    deleteTargetId = null;
+    closeDeleteDialog();
+}
 
     function closeDeleteDialog() {
         document.getElementById("confirmDeleteDialog").close();
@@ -590,11 +635,11 @@
     document.getElementById("editForm").addEventListener("submit", async function(e) {
         e.preventDefault();
 
+        try {
         const id = document.getElementById("edit_user_id").value;
         const formData = new FormData(this);
         formData.append('_method', 'PUT');
 
-        try {
             const response = await fetch(`/api/users/${id}`, {
                 method: 'POST',
                 headers: {

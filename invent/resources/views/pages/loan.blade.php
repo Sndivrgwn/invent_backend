@@ -292,7 +292,7 @@
                                 <td class="text-center">{{ $loan->status }}</td>
     
                                 <td class="text-center">
-                                                @can('isAdmin') 
+                                                @can('adminFunction') 
                                                 <i class="fa fa-pen-to-square fa-lg cursor-pointer" 
                                                 onclick="openEditModal(
                                     {{ $loan->id }}, 

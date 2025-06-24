@@ -18,7 +18,7 @@
                 <h1 class="text-2xl font-semibold py-4">Products</h1>
             </div>
             <div class="flex-none">
-                @can('isAdmin')
+                @can('adminFunction')
                 <button class="bg-[#2563EB] text-white rounded-lg py-2 px-4 mx-5 hover:bg-blue-400 cursor-pointer flex justify-center items-center" onclick="newProduct.showModal()">
                     <div class="gap-2 flex">
                         <i class="fa fa-plus" style="display: flex; justify-content: center; align-items: center;"></i>
@@ -270,7 +270,7 @@
                             </td>
                             <td class="">
                                 <div class="flex justify-center items-center">
-                                    @can('isAdmin')
+                                    @can('isAdadminFunctionmin')
                                     <i class="fa fa-trash fa-lg cursor-pointer !leading-none" onclick="deleteItem({{ $item->id }})"></i>
                                     <i class="fa fa-pen-to-square fa-lg cursor-pointer !leading-none" onclick="openEditModal({
                                         id: {{ $item->id }},
@@ -813,7 +813,7 @@
                         </td>
                         <td class="text-center">
                             <div class="flex justify-center items-center">
-                                    @can('isAdmin')
+                                    @can('adminFunction')
                                     <i class="fa fa-trash fa-lg cursor-pointer !leading-none" onclick="deleteItem(${item.id})"></i>
                                     <i class="fa fa-pen-to-square fa-lg cursor-pointer !leading-none" onclick="openEditModal({
                                         id:${item.id},

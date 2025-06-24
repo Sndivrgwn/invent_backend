@@ -20,7 +20,7 @@
             <div class="flex-1">
                 <h1 class="text-2xl font-semibold py-4">Inventory Management</h1>
             </div>
-            @can('isAdmin')
+            @can('adminFunction')
             <div class="flex-none">
                 <button class="bg-[#2563EB] text-white rounded-lg py-2 px-2 mx-3 hover:bg-blue-400 cursor-pointer flex justify-center items-center" onclick="document.getElementById('newInventory').showModal()">
                     <i class="fa-regular me-2 fa-plus flex justify-center items-center"></i>
@@ -136,7 +136,7 @@
                     </div>
 
                     <div class="w-full flex justify-end items-end gap-4 mt-6">
-                        @can('isAdmin')
+                        @can('adminFunction')
                         <button type="button" class="btn btn-primary" onclick="prepareEditModal()">Edit</button>
                         <button type="button" class="btn btn-error !text-white" onclick="deleteItem(currentLocationId)">Delete</button>
                         @endcan
