@@ -23,7 +23,7 @@
             </div>
             <div class="flex-none">
                 <a href="{{ route('loans.exportHistory') }}" class="bg-white rounded-lg py-2 px-4 mx-5 hover:bg-blue-400 cursor-pointer flex items-center gap-2">
-                    <i class="fa fa-download"></i> Export Report
+                    <i class="fa fa-download" style="display: flex; justify-content: center; align-items: center;"></i> Export Report
                 </a>
             </div>
         </div>
