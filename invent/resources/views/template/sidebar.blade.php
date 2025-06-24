@@ -16,7 +16,7 @@
 
     <div class="flex items-center justify-between mb-6 border-b pb-2 border-gray-400">
         <h2 class="text-xl font-bold text-blue-700 sidebar-text">StockFlowICT</h2>
-        <button class="p-2 md:hidden" id="close-sidebar">
+        <button class="p-2 md:hidden z-50" id="close-sidebar">
             <i class="fa fa-times"></i>
         </button>
         <button class="p-2 hidden md:block" id="toggle-sidebar">
@@ -185,6 +185,10 @@
     });
 
     overlay?.addEventListener('click', function() {
+        sidebar.classList.add('-translate-x-full');
+        overlay.classList.add('hidden');
+    });
+        document.getElementById('close-sidebar')?.addEventListener('touchstart', function () {
         sidebar.classList.add('-translate-x-full');
         overlay.classList.add('hidden');
     });
