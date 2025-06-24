@@ -30,11 +30,11 @@
 
         <!-- Filters and Actions -->
         <div class="list bg-base-100 rounded-box shadow-md">
-            <div class="flex flex-col sm:flex-row sm:place-content-between">
+            <div class="flex flex-col overflow-x-auto sm:flex-row sm:place-content-between">
                 <div class="p-2 sm:p-4 pb-0 sm:pb-2 flex items-center gap-2 w-full">
                     <!-- Search -->
                     <form method="GET" action="{{ route('history') }}" class="relative w-full sm:w-auto">
-                        <div class="absolute inset-y-2 start-0 mb-7 sm:mb-1 flex items-center justify-center ps-3 pointer-events-none">
+                        <div class="absolute inset-y-2 start-0 sm:mb-1 flex items-center justify-center ps-3 pointer-events-none">
                             <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
                             </svg>
@@ -43,37 +43,37 @@
                     </form>
 
                     <!-- Filter Button -->
-                    <button class="btn bg-transparent btn-sm sm:btn-md" onclick="filterProduct.showModal()">
-                        <span class="hidden sm:inline">Filter</span> <i class="fa fa-filter sm:ml-2"></i>
+                    <button class="btn bg-transparent btn-sm sm:btn-md items-center justify-center" onclick="filterProduct.showModal()">
+                        <span class="hidden sm:inline">Filter</span> <i class="fa fa-filter sm:ml-2" style="display: flex; justify-content: center; align-items: center;"></i>
                     </button>
                 </div>
                 
                 <!-- Date Filter Section -->
                 <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 p-2 sm:p-4 w-full sm:w-auto">
-    <!-- Date Range Filter -->
-    <form method="GET" action="{{ route('history') }}" class="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full">
-        <div class="flex flex-row gap-2 sm:gap-3 flex-grow w-full"> <!-- Changed to flex-row for all screens -->
-            <div class="flex flex-col w-full sm:w-auto">
-                <label for="start_date" class="text-xs sm:text-sm font-medium mb-1">From</label>
-                <input type="date" id="start_date" name="start_date" 
-                       value="{{ request('start_date') ?? \Carbon\Carbon::today()->format('Y-m-d') }}" 
-                       class="input input-bordered input-sm sm:input-md w-full"
-                       placeholder="Select start date" />
-            </div>
-            <div class="flex flex-col w-full sm:w-auto">
-                <label for="end_date" class="text-xs sm:text-sm font-medium mb-1">To</label>
-                <input type="date" id="end_date" name="end_date" 
-                       value="{{ request('end_date') ?? \Carbon\Carbon::today()->format('Y-m-d') }}" 
-                       class="input input-bordered input-sm sm:input-md w-full"
-                       placeholder="Select end date" />
-            </div>
-        </div>
-        <div class="flex gap-2 self-end mt-2 sm:mt-0"> <!-- Added mt-2 for mobile spacing -->
-            <button type="submit" class="btn btn-primary btn-sm sm:btn-md">Apply</button>
-            <a href="{{ route('history') }}" class="btn btn-secondary btn-sm sm:btn-md">Reset</a>
-        </div>
-    </form>
-</div>
+                    <!-- Date Range Filter -->
+                    <form method="GET" action="{{ route('history') }}" class="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full">
+                        <div class="flex flex-row gap-2 sm:gap-3 flex-grow w-full"> <!-- Changed to flex-row for all screens -->
+                            <div class="flex flex-col w-full sm:w-auto">
+                                <label for="start_date" class="text-xs sm:text-sm font-medium mb-1">From</label>
+                                <input type="date" id="start_date" name="start_date" 
+                                    value="{{ request('start_date') ?? \Carbon\Carbon::today()->format('Y-m-d') }}" 
+                                    class="input input-bordered input-sm sm:input-md w-full"
+                                    placeholder="Select start date" />
+                            </div>
+                            <div class="flex flex-col w-full sm:w-auto">
+                                <label for="end_date" class="text-xs sm:text-sm font-medium mb-1">To</label>
+                                <input type="date" id="end_date" name="end_date" 
+                                    value="{{ request('end_date') ?? \Carbon\Carbon::today()->format('Y-m-d') }}" 
+                                    class="input input-bordered input-sm sm:input-md w-full"
+                                    placeholder="Select end date" />
+                            </div>
+                        </div>
+                        <div class="flex gap-2 self-end mt-2 sm:mt-0"> <!-- Added mt-2 for mobile spacing -->
+                            <button type="submit" class="btn btn-primary btn-sm sm:btn-md">Apply</button>
+                            <a href="{{ route('history') }}" class="btn btn-secondary btn-sm sm:btn-md">Reset</a>
+                        </div>
+                    </form>
+                </div>
             </div>
 
             <!-- Filter Modal -->

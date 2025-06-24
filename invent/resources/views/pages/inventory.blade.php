@@ -138,7 +138,7 @@
                     <div class="w-full flex justify-end items-end gap-4 mt-6">
                         @can('isAdmin')
                         <button type="button" class="btn btn-primary" onclick="prepareEditModal()">Edit</button>
-                        <button type="button" class="btn btn-error" onclick="deleteItem(currentLocationId)">Delete</button>
+                        <button type="button" class="btn btn-error !text-white" onclick="deleteItem(currentLocationId)">Delete</button>
                         @endcan
                         <button type="button" class="btn btn-secondary" onclick="document.getElementById('viewProduct').close()">Close</button>
                     </div>

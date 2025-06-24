@@ -41,7 +41,7 @@
                     <i class="fa-solid fa-user text-xl text-gray-600"></i>
                 </div>
                 <div>
-                    <h1 class="text-sm text-gray-500">Nama</h1>
+                    <h1 class="text-sm text-gray-500">Name</h1>
                     <h1 class="text-base font-medium">{{$user->name}}</h1>
                 </div>
             </div>
@@ -74,7 +74,7 @@
                 <i class="fa-solid fa-right-left text-xl text-gray-600"></i>
             </div>
             <div>
-                <h1 class="text-sm text-gray-500">Jumlah Loan</h1>
+                <h1 class="text-sm text-gray-500">Total Loan</h1>
                 <h1 class="text-base font-medium">{{$totalLoans}}</h1>
             </div>
         </div>
@@ -86,7 +86,7 @@
                 <i class="fa-solid fa-rotate-left text-xl text-gray-600"></i>
             </div>
             <div>
-                <h1 class="text-sm text-gray-500">Jumlah Return</h1>
+                <h1 class="text-sm text-gray-500">Total Return</h1>
                 <h1 class="text-base font-medium">{{$totalReturns}}</h1>
             </div>
         </div>
