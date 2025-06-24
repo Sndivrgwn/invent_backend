@@ -62,7 +62,6 @@
     <option value="" disabled selected>Select Role</option>
     @auth
         @if(auth()->user()->roles_id == 3) <!-- Superadmin -->
-            <option value="3">Superadmin</option>
             <option value="1">Admin</option>
             <option value="2">User</option>
         @elseif(auth()->user()->roles_id == 1) <!-- Admin -->
