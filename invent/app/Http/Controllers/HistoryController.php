@@ -78,6 +78,7 @@ class HistoryController extends Controller
         ->get()->map(function ($loan) {
             // Tambahkan encrypted_id ke setiap loan
             $loan->encrypted_id = Crypt::encryptString($loan->id);
+            $loan->can_delete = auth()->user()->can('adminFunction');
             return $loan;
         });
 
