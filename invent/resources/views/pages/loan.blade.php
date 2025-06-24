@@ -35,7 +35,7 @@
 
             <!-- Tab 1 -->
             <label class="tab border-0 text-blue-700 my-2 w-[100%] sm:w-[40%]">
-                <input type="radio" name="my_tabs_4" checked="checked"/>
+                <input type="radio" name="my_tabs_4" checked="checked" />
                 <i class="fa-solid fa-circle-arrow-up mr-2" style="display: flex; justify-content: center;"></i>
                 Outgoing Product
             </label>
@@ -98,125 +98,123 @@
                 </div>
                 <!-- table -->
                 <div class="overflow-x-auto">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th class="text-center font-semibold">NAME</th>
-                            <th class="text-center font-semibold">PRODUCT</th>
-                            <th class="text-center font-semibold">BORROW DATE</th>
-                            <th class="text-center font-semibold">DUE DATE</th>
-                            <th class="text-center font-semibold">STATUS</th>
-                            <th class="text-center font-semibold">ACTIONS</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($incomingLoans as $loan)
-                        <tr>
-                            <td class="text-center">{{ $loan->loaner_name }}</td>
-                            <td class="text-center">@foreach ($loan->items as $item)
-                                {{ $item->name }}{{ !$loop->last ? ', ' : '' }}
-                                @endforeach</td>
-                            <td class="text-center">{{ $loan->loan_date }}</td>
-                            <td class="text-center">{{ $loan->return_date }}</td>
-                            <td class="text-center">{{ $loan->status }}</td>
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th class="text-center font-semibold">NAME</th>
+                                <th class="text-center font-semibold">PRODUCT</th>
+                                <th class="text-center font-semibold">BORROW DATE</th>
+                                <th class="text-center font-semibold">DUE DATE</th>
+                                <th class="text-center font-semibold">STATUS</th>
+                                <th class="text-center font-semibold">ACTIONS</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @forelse ($incomingLoans as $loan)
+                            <tr>
+                                <td class="text-center">{{ $loan->loaner_name }}</td>
+                                <td class="text-center">@foreach ($loan->items as $item)
+                                    {{ $item->name }}{{ !$loop->last ? ', ' : '' }}
+                                    @endforeach</td>
+                                <td class="text-center">{{ $loan->loan_date }}</td>
+                                <td class="text-center">{{ $loan->return_date }}</td>
+                                <td class="text-center">{{ $loan->status }}</td>
 
-                            <td class="text-center gap-2">
-                                <i class="fa-solid fa-file-pdf fa-lg text-red-600 cursor-pointer"
-                                title="Lihat PDF"
-                                onclick="window.open('{{ route('loan.print.pdf', ['id' => \Illuminate\Support\Facades\Crypt::encryptString($loan->id)]) }}', '_blank')"></i>
-                                <i class="fa-regular fa-eye fa-lg cursor-pointer" onclick="showLoanDetails({{ $loan->id }})"></i>
-                            </td>
-                            {{-- tampilan edit --}}
-                            <dialog id="itemDetailsDialog" class="modal">
-                                <div class="modal-box w-11/12 max-w-5xl">
-                                    <button onclick="document.getElementById('itemDetailsDialog').close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-                                    <div id="itemDetailsContent"></div>
-                                </div>
-                            </dialog>
-                            <dialog id="viewProduct" class="modal">
-                                <div class="modal-box w-11/12 max-w-5xl">
-                                    <form method="dialog" id="viewForm">
-                                        <!-- Image will be dynamically updated -->
+                                <td class="text-center gap-2">
+                                    <i class="fa-solid fa-file-pdf fa-lg text-red-600 cursor-pointer" title="Lihat PDF" onclick="window.open('{{ route('loan.print.pdf', ['id' => \Illuminate\Support\Facades\Crypt::encryptString($loan->id)]) }}', '_blank')"></i>
+                                    <i class="fa-regular fa-eye fa-lg cursor-pointer" onclick="showLoanDetails({{ $loan->id }})"></i>
+                                </td>
+                                {{-- tampilan edit --}}
+                                <dialog id="itemDetailsDialog" class="modal">
+                                    <div class="modal-box w-11/12 max-w-5xl">
+                                        <button onclick="document.getElementById('itemDetailsDialog').close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                                        <div id="itemDetailsContent"></div>
+                                    </div>
+                                </dialog>
+                                <dialog id="viewProduct" class="modal">
+                                    <div class="modal-box w-11/12 max-w-5xl">
+                                        <form method="dialog" id="viewForm">
+                                            <!-- Image will be dynamically updated -->
 
-                                        <!-- Loan details will be inserted here by JavaScript -->
+                                            <!-- Loan details will be inserted here by JavaScript -->
 
-                                        <!-- Tombol close -->
-                                        <button type="button" onclick="document.getElementById('viewProduct').close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-                                    </form>
-                                </div>
-                            </dialog>
-                            {{-- tampilan edit --}}
+                                            <!-- Tombol close -->
+                                            <button type="button" onclick="document.getElementById('viewProduct').close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                                        </form>
+                                    </div>
+                                </dialog>
+                                {{-- tampilan edit --}}
 
-                            {{-- tampilan preview --}}
-                            <dialog id="viewProductIncome" class="modal">
-                                <div class="modal-box">
-                                    <form method="dialog" id="viewForm">
-                                        <!-- Gambar atas -->
+                                {{-- tampilan preview --}}
+                                <dialog id="viewProductIncome" class="modal">
+                                    <div class="modal-box">
+                                        <form method="dialog" id="viewForm">
+                                            <!-- Gambar atas -->
 
-                                        <!-- Tombol close -->
-                                        <button type="button" onclick="document.getElementById('viewProductIncome').close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                                            <!-- Tombol close -->
+                                            <button type="button" onclick="document.getElementById('viewProductIncome').close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
 
-                                        <h1 class="font-semibold text-2xl mb-4">Product Details</h1>
+                                            <h1 class="font-semibold text-2xl mb-4">Product Details</h1>
 
-                                        <div class="flex gap-5 justify-between text-gray-600">
-                                            <div class="w-[50%]">
-                                                <h1 class="font-medium">PRODUCT</h1>
-                                                <p>Access Point</p>
+                                            <div class="flex gap-5 justify-between text-gray-600">
+                                                <div class="w-[50%]">
+                                                    <h1 class="font-medium">PRODUCT</h1>
+                                                    <p>Access Point</p>
+                                                </div>
+                                                <div class="w-[50%]">
+                                                    <h1 class="font-medium">RACK</h1>
+                                                    <p>Rack 1</p>
+                                                </div>
                                             </div>
-                                            <div class="w-[50%]">
-                                                <h1 class="font-medium">RACK</h1>
-                                                <p>Rack 1</p>
+
+                                            <div class="flex gap-5 justify-between text-gray-600 mt-3">
+                                                <div class="w-[50%]">
+                                                    <h1 class="font-medium">BRAND</h1>
+                                                    <p>TP-Link</p>
+                                                </div>
+                                                <div class="w-[50%]">
+                                                    <h1 class="font-medium">CONDITION</h1>
+                                                    <p>Good</p>
+                                                </div>
                                             </div>
-                                        </div>
 
-                                        <div class="flex gap-5 justify-between text-gray-600 mt-3">
-                                            <div class="w-[50%]">
-                                                <h1 class="font-medium">BRAND</h1>
-                                                <p>TP-Link</p>
+                                            <div class="flex gap-5 justify-between text-gray-600 mt-3">
+                                                <div class="w-[50%]">
+                                                    <h1 class="font-medium">TYPE</h1>
+                                                    <p>TL-WR840N</p>
+                                                </div>
+                                                <div class="w-[50%]">
+                                                    <h1 class="font-medium">STATUS</h1>
+                                                    <p>Ready</p>
+                                                </div>
                                             </div>
-                                            <div class="w-[50%]">
-                                                <h1 class="font-medium">CONDITION</h1>
-                                                <p>Good</p>
+
+                                            <div class="w-full mt-3">
+                                                <h1 class="font-medium text-gray-600">SERIAL NUMBER</h1>
+                                                <p>A1B2C3D4E5F6G7H</p>
                                             </div>
-                                        </div>
 
-                                        <div class="flex gap-5 justify-between text-gray-600 mt-3">
-                                            <div class="w-[50%]">
-                                                <h1 class="font-medium">TYPE</h1>
-                                                <p>TL-WR840N</p>
+                                            <div class="w-full mt-3">
+                                                <h1 class="font-medium text-gray-600">DESCRIPTION</h1>
+                                                <p class="text-gray-600">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vel enim eget lacus fermentum suscipit ut non ex.</p>
                                             </div>
-                                            <div class="w-[50%]">
-                                                <h1 class="font-medium">STATUS</h1>
-                                                <p>Ready</p>
+
+                                            <div class="w-full flex justify-end items-end gap-4 mt-4">
+                                                <button type="button" onclick="document.getElementById('viewProductIncome').close()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Close</button>
                                             </div>
-                                        </div>
+                                        </form>
+                                    </div>
+                                </dialog>
+                                {{-- tampilan preview --}}
+                            </tr>
+                            @empty
+                            <tr>
+                                <td colspan="8" class="text-center text-gray-500">No Loan found</td>
+                            </tr>
+                            @endforelse
+                        </tbody>
 
-                                        <div class="w-full mt-3">
-                                            <h1 class="font-medium text-gray-600">SERIAL NUMBER</h1>
-                                            <p>A1B2C3D4E5F6G7H</p>
-                                        </div>
-
-                                        <div class="w-full mt-3">
-                                            <h1 class="font-medium text-gray-600">DESCRIPTION</h1>
-                                            <p class="text-gray-600">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vel enim eget lacus fermentum suscipit ut non ex.</p>
-                                        </div>
-
-                                        <div class="w-full flex justify-end items-end gap-4 mt-4">
-                                            <button type="button" onclick="document.getElementById('viewProductIncome').close()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Close</button>
-                                        </div>
-                                    </form>
-                                </div>
-                            </dialog>
-                            {{-- tampilan preview --}}
-                        </tr>
-                        @empty
-                                <tr>
-                                    <td colspan="8" class="text-center text-gray-500">No Loan found</td>
-                                </tr>
-                        @endforelse
-                    </tbody>
-
-                </table>
+                    </table>
                 </div>
                 <div class="flex justify-end mb-4 mt-4">
                     <div class="join">
@@ -290,25 +288,23 @@
                                 <td class="text-center">{{ $loan->loan_date }}</td>
                                 <td class="text-center">{{ $loan->return_date }}</td>
                                 <td class="text-center">{{ $loan->status }}</td>
-    
+
                                 <td class="text-center">
-                                                @can('adminFunction') 
-                                                <i class="fa fa-pen-to-square fa-lg cursor-pointer" 
-                                                onclick="openEditModal(
+                                    @can('adminFunction')
+                                    <i class="fa-solid fa-right-left fa-lg cursor-pointer !leading-none" onclick="showReturnProduct({{ $loan->id }})"></i>
+                                    <i class="fa fa-pen-to-square fa-lg cursor-pointer" onclick="openEditModal(
                                     {{ $loan->id }}, 
                                     '{{ $loan->loaner_name }}', 
                                     '{{ $loan->description }}', 
                                     '{{ $loan->return_date }}',
                                     '{{ $loan->loan_date }}'
                                 )"></i>
-                                @endcan
-                                <i class="fa-solid fa-file-pdf fa-lg text-red-600 cursor-pointer"
-                            title="Lihat PDF"
-                            onclick="window.open('{{ route('loan.print.pdf', ['id' => \Illuminate\Support\Facades\Crypt::encryptString($loan->id)]) }}', '_blank')"></i>
+                                    @endcan
+                                    <i class="fa-solid fa-file-pdf fa-lg text-red-600 cursor-pointer" title="Lihat PDF" onclick="window.open('{{ route('loan.print.pdf', ['id' => \Illuminate\Support\Facades\Crypt::encryptString($loan->id)]) }}', '_blank')"></i>
                                     <i class="fa-regular fa-eye fa-lg cursor-pointer" onclick="showLoanDetailsTwo({{ $loan->id }})"></i>
                                 </td>
                                 {{-- tampilan delete --}}
-    
+
                                 <dialog id="itemDetailsDialogtwo" class="modal">
                                     <div class="modal-box w-11/12 max-w-5xl">
                                         <button onclick="document.getElementById('itemDetailsDialogtwo').close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
@@ -319,20 +315,20 @@
                                     <div class="modal-box w-11/12 max-w-5xl">
                                         <form method="dialog" id="viewForm">
                                             <!-- Image will be dynamically updated -->
-    
+
                                             <!-- Loan details will be inserted here by JavaScript -->
-    
+
                                             <!-- Tombol close -->
                                             <button type="button" onclick="document.getElementById('viewProduct').close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-    
-    
+
+
                                         </form>
                                     </div>
                                 </dialog>
                                 {{-- tampilan edit --}}
-    
+
                                 {{-- tampilan preview --}}
-    
+
                                 <dialog id="confirmDeleteDialog" class="modal">
                                     <div class="modal-box">
                                         <form method="dialog">
@@ -349,7 +345,7 @@
                                         </form>
                                     </div>
                                 </dialog>
-    
+
                                 {{-- tampilan edit --}}
                                 <dialog id="editProductOutgoing" class="modal">
                                     <div class="modal-box">
@@ -357,29 +353,29 @@
                                             <input type="hidden" id="edit_loan_id" name="loan_id">
                                             <button id="cancel" type="button" onclick="closeEditModal()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
                                             <h1 class="font-semibold text-2xl mb-4">Edit Product</h1>
-    
+
                                             <div class="flex gap-5 justify-between text-gray-600">
                                                 <div class="w-[100%]">
                                                     <h1 class="font-medium">BORROWER NAME</h1>
                                                     <input type="text" id="edit_borrower_name" class="input w-full" placeholder="Insert Borrower Name">
                                                 </div>
-    
+
                                             </div>
-    
+
                                             <div class="flex gap-5 justify-between text-gray-600">
                                                 <div class="w-[100%]">
                                                     <h1 class="font-medium">RETURN DATE</h1>
                                                     <input type="date" id="edit_return_date" class="input w-full" placeholder="Insert return date">
                                                 </div>
-    
+
                                             </div>
-    
-    
+
+
                                             <div class="w-full mt-3">
                                                 <h1 class="font-medium text-gray-600">DESCRIPTION</h1>
                                                 <textarea id="edit_description" class="textarea w-full text-gray-600" placeholder="Description"></textarea>
                                             </div>
-    
+
                                             <div class="w-full flex justify-end items-end gap-4 mt-4">
                                                 <button type="button" onclick="closeEditModal()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Cancel</button>
                                                 <button type="submit" class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Edit</button>
@@ -388,19 +384,64 @@
                                     </div>
                                 </dialog>
                                 {{-- tampilan edit --}}
-    
+                                <!-- Return Product Dialog -->
+                                <dialog id="returnProduct" class="modal">
+                                    <div class="modal-box max-w-sm sm:max-w-xl">
+                                        <form method="dialog" id="returnForm">
+
+                                            <button type="button" onclick="document.getElementById('returnProduct').close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+
+                                            <h1 class="font-semibold text-2xl mb-2">Product Details</h1>
+                                            <h2 class="font-semibold text-xl text-blue-600 mb-4" id="modalLocationName">-</h2>
+
+                                            <div class="w-full mt-4">
+                                                <h1 class="font-medium text-gray-600 mb-2">CONDITION</h1>
+                                                <select id="returnCondition" class="select select-bordered w-full">
+                                                    <option value="GOOD">GOOD</option>
+                                                    <option value="NOT GOOD">NOT GOOD</option>
+                                                </select>
+                                            </div>
+                                            <div class="w-full mt-4">
+                                                <h1 class="font-medium text-gray-600 mb-2">NOTES</h1>
+                                                <textarea id="returnNotes" class="textarea textarea-bordered w-full" placeholder="Any additional notes..."></textarea>
+                                            </div>
+
+                                            <div class="w-full mt-4">
+                                                <h1 class="font-medium text-gray-600 mb-2">ITEMS (Preview)</h1>
+                                                <ul id="modalItemList" class="list-disc pl-5 space-y-1 text-gray-700 text-sm max-h-40 overflow-y-auto">
+                                                </ul>
+
+                                                <button id="viewAllBtn" class="text-sm text-blue-600 mt-2 hover:underline hidden" onclick="openAllItemsModal()">
+                                                    Lihat Semua Item →
+                                                </button>
+                                            </div>
+
+                                            <div class="w-full mt-4">
+                                                <h1 class="font-medium text-gray-600 mb-2">CATEGORIES</h1>
+                                                <div id="modalCategoryList" class="flex flex-wrap gap-2">
+                                                </div>
+                                            </div>
+
+                                            <div class="w-full flex justify-end items-end gap-4 mt-6">
+                                                <button type="button" onclick="document.getElementById('returnProduct').close()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Close</button>
+                                                <button type="button" class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer" id="confirmReturnButton">Return Product</button>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </dialog>
+
                                 {{-- tampilan preview --}}
-    
+
                                 {{-- tampilan preview --}}
                             </tr>
                             @empty
-                                <tr>
-                                    <td colspan="8" class="text-center text-gray-500">No Loan found</td>
-                                </tr>
+                            <tr>
+                                <td colspan="8" class="text-center text-gray-500">No Loan found</td>
+                            </tr>
                             @endforelse
                         </tbody>
-    
-    
+
+
                     </table>
                 </div>
 
@@ -438,29 +479,29 @@
 
 <script>
     async function showLoanDetails(loanId) {
-    try {
-        const response = await fetch(`/api/history/${loanId}`);
+        try {
+            const response = await fetch(`/api/history/${loanId}`);
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
 
-        const contentType = response.headers.get('content-type');
-        if (!contentType || !contentType.includes('application/json')) {
-            throw new Error("Response isn't JSON");
-        }
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                throw new Error("Response isn't JSON");
+            }
 
-        const data = await response.json();
+            const data = await response.json();
 
-        if (!data.success) {
-            throw new Error(data.message || 'Failed to load loan');
-        }
+            if (!data.success) {
+                throw new Error(data.message || 'Failed to load loan');
+            }
 
-        const loan = data.data;
-        const modal = document.getElementById('viewProduct');
+            const loan = data.data;
+            const modal = document.getElementById('viewProduct');
 
-        // Build modal content (same as before)
-        let modalContent = `
+            // Build modal content (same as before)
+            let modalContent = `
             <button type="button" onclick="document.getElementById('viewProduct').close()"
                 class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
             <h1 class="font-semibold text-2xl mb-4">Loan Details</h1>
@@ -511,10 +552,10 @@
                 <h2 class="font-semibold text-lg mb-2">Items (${loan.items?.length || 0})</h2>
         `;
 
-        // Add items if they exist (same as before)
-        if (loan.items && loan.items.length > 0) {
-            if (loan.items.length > 1) {
-                modalContent += `
+            // Add items if they exist (same as before)
+            if (loan.items && loan.items.length > 0) {
+                if (loan.items.length > 1) {
+                    modalContent += `
                     <div class="overflow-x-auto">
                         <table class="table w-full">
                             <thead>
@@ -528,8 +569,8 @@
                             <tbody>
                 `;
 
-                loan.items.forEach((item, index) => {
-                    modalContent += `
+                    loan.items.forEach((item, index) => {
+                        modalContent += `
                         <tr>
                             <td>${item.name || 'N/A'}</td>
                             <td>${item.code || 'N/A'}</td>
@@ -542,17 +583,17 @@
                             </td>
                         </tr>
                     `;
-                });
+                    });
 
-                modalContent += `
+                    modalContent += `
                             </tbody>
                         </table>
                     </div>
                     <div id="itemDetailsContainer" class="mt-4"></div>
                 `;
-            } else {
-                const item = loan.items[0];
-                modalContent += `
+                } else {
+                    const item = loan.items[0];
+                    modalContent += `
                     <div class="border p-4 rounded-lg">
                         <div class="grid grid-cols-2 gap-4">
                             <div>
@@ -586,56 +627,56 @@
                         </div>
                     </div>
                 `;
+                }
+            } else {
+                modalContent += `<p class="text-gray-500">No items found for this loan</p>`;
             }
-        } else {
-            modalContent += `<p class="text-gray-500">No items found for this loan</p>`;
-        }
 
-        modalContent += `</div>`; // Close items section
+            modalContent += `</div>`; // Close items section
 
-        // Add close button
-        modalContent += `
+            // Add close button
+            modalContent += `
             <div class="w-full flex justify-end items-end gap-4 mt-4">
                 <button type="button" onclick="document.getElementById('viewProduct').close()"
                     class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Close</button>
             </div>
         `;
 
-        // Update modal content
-        modal.querySelector('form').innerHTML = modalContent;
-        modal.showModal();
+            // Update modal content
+            modal.querySelector('form').innerHTML = modalContent;
+            modal.showModal();
 
-    } catch (error) {
-        console.error('Error:', error);
-        showToast('Failed to load loan details. See console for details.', 'error');
+        } catch (error) {
+            console.error('Error:', error);
+            showToast('Failed to load loan details. See console for details.', 'error');
+        }
     }
-}
 
-async function showLoanDetailsTwo(loanId) {
-    try {
-        const response = await fetch(`/api/history/${loanId}`);
+    async function showLoanDetailsTwo(loanId) {
+        try {
+            const response = await fetch(`/api/history/${loanId}`);
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
 
-        const contentType = response.headers.get('content-type');
-        if (!contentType || !contentType.includes('application/json')) {
-            throw new Error("Response isn't JSON");
-        }
+            const contentType = response.headers.get('content-type');
+            if (!contentType || !contentType.includes('application/json')) {
+                throw new Error("Response isn't JSON");
+            }
 
-        const data = await response.json();
+            const data = await response.json();
 
-        if (!data.success) {
-            throw new Error(data.message || 'Failed to load loan');
-        }
+            if (!data.success) {
+                throw new Error(data.message || 'Failed to load loan');
+            }
 
-        const loan = data.data;
-        const dialog = document.getElementById('itemDetailsDialogtwo');
-        const content = document.getElementById('itemDetailsContenttwo');
+            const loan = data.data;
+            const dialog = document.getElementById('itemDetailsDialogtwo');
+            const content = document.getElementById('itemDetailsContenttwo');
 
-        // Build modal content (same as before)
-        let modalContent = `
+            // Build modal content (same as before)
+            let modalContent = `
             <h1 class="font-semibold text-2xl mb-4">Loan Details</h1>
             <div class="mb-6">
                 <h2 class="font-semibold text-lg mb-2">Loan Information</h2>
@@ -676,10 +717,10 @@ async function showLoanDetailsTwo(loanId) {
                 <h2 class="font-semibold text-lg mb-2">Items (${loan.items?.length || 0})</h2>
         `;
 
-        // Add items if they exist (same as before)
-        if (loan.items && loan.items.length > 0) {
-            if (loan.items.length > 1) {
-                modalContent += `
+            // Add items if they exist (same as before)
+            if (loan.items && loan.items.length > 0) {
+                if (loan.items.length > 1) {
+                    modalContent += `
                     <div class="overflow-x-auto">
                         <table class="table w-full">
                             <thead>
@@ -693,8 +734,8 @@ async function showLoanDetailsTwo(loanId) {
                             <tbody>
                 `;
 
-                loan.items.forEach((item, index) => {
-                    modalContent += `
+                    loan.items.forEach((item, index) => {
+                        modalContent += `
                         <tr>
                             <td>${item.name || 'N/A'}</td>
                             <td>${item.code || 'N/A'}</td>
@@ -707,17 +748,17 @@ async function showLoanDetailsTwo(loanId) {
                             </td>
                         </tr>
                     `;
-                });
+                    });
 
-                modalContent += `
+                    modalContent += `
                             </tbody>
                         </table>
                     </div>
                     <div id="itemDetailsContainer" class="mt-4"></div>
                 `;
-            } else {
-                const item = loan.items[0];
-                modalContent += `
+                } else {
+                    const item = loan.items[0];
+                    modalContent += `
                     <div class="border p-4 rounded-lg">
                         <div class="grid grid-cols-2 gap-4">
                             <div>
@@ -751,41 +792,41 @@ async function showLoanDetailsTwo(loanId) {
                         </div>
                     </div>
                 `;
+                }
+            } else {
+                modalContent += `<p class="text-gray-500">No items found for this loan</p>`;
             }
-        } else {
-            modalContent += `<p class="text-gray-500">No items found for this loan</p>`;
-        }
 
-        modalContent += `</div>`; // Close items section
+            modalContent += `</div>`; // Close items section
 
-        // Add close button
-        modalContent += `
+            // Add close button
+            modalContent += `
             <div class="w-full flex justify-end items-end gap-4 mt-4">
                 <button type="button" onclick="document.getElementById('itemDetailsDialogtwo').close()"
                     class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Close</button>
             </div>
         `;
 
-        // Update modal content
-        content.innerHTML = modalContent;
-        dialog.showModal();
+            // Update modal content
+            content.innerHTML = modalContent;
+            dialog.showModal();
 
-    } catch (error) {
-        console.error('Error:', error);
-        showToast('Failed to load loan details. See console for details.', 'error');
+        } catch (error) {
+            console.error('Error:', error);
+            showToast('Failed to load loan details. See console for details.', 'error');
+        }
     }
-}
 
-async function showItemDetailsTwo(itemIndex, loanId) {
-    try {
-        const response = await fetch(`/api/history/${loanId}`);
-        const data = await response.json();
-        const item = data.data.items[itemIndex];
+    async function showItemDetailsTwo(itemIndex, loanId) {
+        try {
+            const response = await fetch(`/api/history/${loanId}`);
+            const data = await response.json();
+            const item = data.data.items[itemIndex];
 
-        const dialog = document.getElementById('itemDetailsDialogtwo');
-        const content = document.getElementById('itemDetailsContenttwo');
+            const dialog = document.getElementById('itemDetailsDialogtwo');
+            const content = document.getElementById('itemDetailsContenttwo');
 
-        content.innerHTML = `
+            content.innerHTML = `
             <div class="flex gap-6">
                 <div class="w-2/3">
                     <h2 class="text-2xl font-bold mb-4">${item.name}</h2>
@@ -825,32 +866,32 @@ async function showItemDetailsTwo(itemIndex, loanId) {
             </div>
         `;
 
-        dialog.showModal();
+            dialog.showModal();
 
-    } catch (error) {
-        console.error('Error showing item details:', error);
-        const content = document.getElementById('itemDetailsContenttwo');
-        content.innerHTML = `
+        } catch (error) {
+            console.error('Error showing item details:', error);
+            const content = document.getElementById('itemDetailsContenttwo');
+            content.innerHTML = `
             <div class="alert alert-error">
                 Failed to load item details: ${error.message}
             </div>
         `;
-        showToast('Failed to load item details. See console for details.', 'error');
-        dialog.showModal();
+            showToast('Failed to load item details. See console for details.', 'error');
+            dialog.showModal();
+        }
     }
-}
 
-// Function to show detailed view of a specific item
-async function showItemDetails(itemIndex, loanId) {
-    try {
-        const response = await fetch(`/api/history/${loanId}`);
-        const data = await response.json();
-        const item = data.data.items[itemIndex];
+    // Function to show detailed view of a specific item
+    async function showItemDetails(itemIndex, loanId) {
+        try {
+            const response = await fetch(`/api/history/${loanId}`);
+            const data = await response.json();
+            const item = data.data.items[itemIndex];
 
-        const dialog = document.getElementById('itemDetailsDialog');
-        const content = document.getElementById('itemDetailsContent');
+            const dialog = document.getElementById('itemDetailsDialog');
+            const content = document.getElementById('itemDetailsContent');
 
-        content.innerHTML = `
+            content.innerHTML = `
             <div class="flex gap-6">
                 <div class="w-2/3">
                     <h2 class="text-2xl font-bold mb-4">${item.name}</h2>
@@ -890,109 +931,208 @@ async function showItemDetails(itemIndex, loanId) {
             </div>
         `;
 
-        dialog.showModal();
+            dialog.showModal();
 
-    } catch (error) {
-        console.error('Error showing item details:', error);
-        const content = document.getElementById('itemDetailsContent');
-        content.innerHTML = `
+        } catch (error) {
+            console.error('Error showing item details:', error);
+            const content = document.getElementById('itemDetailsContent');
+            content.innerHTML = `
             <div class="alert alert-error">
                 Failed to load item details: ${error.message}
             </div>
         `;
-        showToast('Failed to load item details. See console for details.', 'error');
-        dialog.showModal();
-    }
-}
-
-// edit product
-function closeEditModal() {
-    document.getElementById('editProductOutgoing').close();
-}
-
-function closeEditModalIncome() {
-    document.getElementById('editProductIncome').close();
-}
-
-function openEditModal(id, name, description, returnDate, loanDate) {
-    document.getElementById('edit_loan_id').value = id;
-    document.getElementById('edit_borrower_name').value = name;
-    document.getElementById('edit_description').value = description;
-    document.getElementById('edit_return_date').value = returnDate;
-    
-    // Simpan loan_date sebagai data attribute
-    document.getElementById('editProductOutgoing').dataset.loanDate = loanDate;
-    
-    document.getElementById('editProductOutgoing').showModal();
-    
-    // Set min dan max date untuk input return_date
-    const today = new Date().toISOString().split('T')[0];
-    const loanDateObj = new Date(loanDate);
-    const maxDateObj = new Date(loanDateObj);
-    maxDateObj.setDate(loanDateObj.getDate() + 14); // 2 minggu setelah loan_date
-    const maxDate = maxDateObj.toISOString().split('T')[0];
-    
-    const returnDateInput = document.getElementById('edit_return_date');
-    returnDateInput.min = today;
-    returnDateInput.max = maxDate;
-    
-    // Tambahkan pesan validasi
-    returnDateInput.title = `Return date must be between today and ${maxDate}`;
-}
-
-document.getElementById("editForm").addEventListener("submit", async function(e) {
-    e.preventDefault();
-
-    const loanId = document.getElementById("edit_loan_id").value;
-    const returnDate = document.getElementById("edit_return_date").value;
-    const loanDate = document.getElementById('editProductOutgoing').dataset.loanDate;
-    
-    // Validasi tanggal
-    const today = new Date().toISOString().split('T')[0];
-    const loanDateObj = new Date(loanDate);
-    const maxDateObj = new Date(loanDateObj);
-    maxDateObj.setDate(loanDateObj.getDate() + 14);
-    const maxDate = maxDateObj.toISOString().split('T')[0];
-    
-    if (returnDate < today) {
-        showToast('Return date cannot be before today', 'error');
-        return;
-    }
-    
-    if (returnDate > maxDate) {
-        showToast('Return date cannot be more than 2 weeks from loan date', 'error');
-        return;
+            showToast('Failed to load item details. See console for details.', 'error');
+            dialog.showModal();
+        }
     }
 
-    const payload = {
-        loaner_name: document.getElementById("edit_borrower_name").value,
-        return_date: returnDate,
-        description: document.getElementById("edit_description").value
-    };
+    // edit product
+    function closeEditModal() {
+        document.getElementById('editProductOutgoing').close();
+    }
 
-    try {
-        const response = await fetch(`/api/loans/${loanId}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
-            },
-            body: JSON.stringify(payload)
-        });
+    function closeEditModalIncome() {
+        document.getElementById('editProductIncome').close();
+    }
 
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || 'Failed to update loan');
+    function openEditModal(id, name, description, returnDate, loanDate) {
+        document.getElementById('edit_loan_id').value = id;
+        document.getElementById('edit_borrower_name').value = name;
+        document.getElementById('edit_description').value = description;
+        document.getElementById('edit_return_date').value = returnDate;
+
+        // Simpan loan_date sebagai data attribute
+        document.getElementById('editProductOutgoing').dataset.loanDate = loanDate;
+
+        document.getElementById('editProductOutgoing').showModal();
+
+        // Set min dan max date untuk input return_date
+        const today = new Date().toISOString().split('T')[0];
+        const loanDateObj = new Date(loanDate);
+        const maxDateObj = new Date(loanDateObj);
+        maxDateObj.setDate(loanDateObj.getDate() + 14); // 2 minggu setelah loan_date
+        const maxDate = maxDateObj.toISOString().split('T')[0];
+
+        const returnDateInput = document.getElementById('edit_return_date');
+        returnDateInput.min = today;
+        returnDateInput.max = maxDate;
+
+        // Tambahkan pesan validasi
+        returnDateInput.title = `Return date must be between today and ${maxDate}`;
+    }
+
+    document.getElementById("editForm").addEventListener("submit", async function(e) {
+        e.preventDefault();
+
+        const loanId = document.getElementById("edit_loan_id").value;
+        const returnDate = document.getElementById("edit_return_date").value;
+        const loanDate = document.getElementById('editProductOutgoing').dataset.loanDate;
+
+        // Validasi tanggal
+        const today = new Date().toISOString().split('T')[0];
+        const loanDateObj = new Date(loanDate);
+        const maxDateObj = new Date(loanDateObj);
+        maxDateObj.setDate(loanDateObj.getDate() + 14);
+        const maxDate = maxDateObj.toISOString().split('T')[0];
+
+        if (returnDate < today) {
+            showToast('Return date cannot be before today', 'error');
+            return;
         }
 
-        const data = await response.json();
-        showToast('Loan updated successfully!', 'success');
-        location.reload();
-    } catch (error) {
-        console.error('Error:', error);
-        showToast(error.message || 'Failed to update loan', 'error');
+        if (returnDate > maxDate) {
+            showToast('Return date cannot be more than 2 weeks from loan date', 'error');
+            return;
+        }
+
+        const payload = {
+            loaner_name: document.getElementById("edit_borrower_name").value
+            , return_date: returnDate
+            , description: document.getElementById("edit_description").value
+        };
+
+        try {
+            const response = await fetch(`/api/loans/${loanId}`, {
+                method: 'PUT'
+                , headers: {
+                    'Content-Type': 'application/json'
+                    , 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content')
+                }
+                , body: JSON.stringify(payload)
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.message || 'Failed to update loan');
+            }
+
+            const data = await response.json();
+            showToast('Loan updated successfully!', 'success');
+            location.reload();
+        } catch (error) {
+            console.error('Error:', error);
+            showToast(error.message || 'Failed to update loan', 'error');
+        }
+    });
+
+    async function showReturnProduct(id) {
+        returnTargetId = id;
+        try {
+            const response = await fetch(`/api/loans/${id}`);
+            const data = await response.json();
+
+            if (!data.success) {
+                throw new Error(data.message || 'Failed to fetch loan details');
+            }
+
+            const loan = data.data;
+            const modal = document.getElementById('returnProduct');
+
+            // Populate modal data
+            document.getElementById('modalLocationName').textContent = loan.code_loans;
+
+            const itemList = document.getElementById('modalItemList');
+            itemList.innerHTML = '';
+
+            loan.items.forEach((item, index) => {
+                const li = document.createElement('li');
+                li.textContent = `${item.code} - ${item.name}`;
+                if (index >= 3) li.classList.add('hidden');
+                itemList.appendChild(li);
+            });
+
+            // Show "View All" button if more than 3 items
+            const viewAllBtn = document.getElementById('viewAllBtn');
+            viewAllBtn.classList.toggle('hidden', loan.items.length <= 3);
+
+            const categoryList = document.getElementById('modalCategoryList');
+            categoryList.innerHTML = '';
+
+            // Get unique categories
+            const categories = [];
+            loan.items.forEach(item => {
+                if (item.category && !categories.find(c => c.id === item.category.id)) {
+                    categories.push(item.category);
+                }
+            });
+
+            categories.forEach(category => {
+                const span = document.createElement('span');
+                span.className = 'badge badge-primary';
+                span.textContent = category.name;
+                categoryList.appendChild(span);
+            });
+
+            modal.showModal();
+        } catch (error) {
+            console.error('Error:', error);
+            showToast(error.message || 'Failed to load loan details', 'error');
+        }
     }
-});
+
+    // Handle return confirmation
+    document.getElementById('confirmReturnButton').addEventListener('click', async function() {
+        if (!returnTargetId) return;
+
+        const condition = document.getElementById('returnCondition').value;
+        const notes = document.getElementById('returnNotes').value;
+
+        try {
+            const response = await fetch(`/api/return/${returnTargetId}`, {
+                method: 'POST'
+                , headers: {
+                    'Accept': 'application/json'
+                    , 'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    , 'Content-Type': 'application/json'
+                }
+                , body: JSON.stringify({
+                    condition: condition
+                    , notes: notes
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                handleAjaxResponse({
+                    toast: {
+                        message: data.message || 'Loan returned successfully'
+                        , type: 'success'
+                    }
+                });
+                window.location.href = "{{ route('history') }}";
+            } else {
+                throw new Error(data.message || 'Failed to return loan');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            showToast(error.message || 'An error occurred while returning the loan', 'error');
+        } finally {
+            document.getElementById('returnProduct').close();
+            returnTargetId = null;
+        }
+    });
+
 </script>
 
 @stack('scripts')
