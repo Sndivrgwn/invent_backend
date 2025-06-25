@@ -200,8 +200,8 @@ function sortLinkUser($field, $currentSortBy, $currentSortDir) {
             <td class="text-center">{{ $usr->email }}</td>
             <td class="text-center">{{ $usr->roles->name }}</td>
             <td class="text-center">{{ $usr->last_active_at }}</td>
-            <td class="justify-center">
-                <div class="flex justify-center items-center">
+            <td class="text-center">
+                <div class="flex justify-center items-center gap-2 min-w-[70px]">
                     @auth
                         @if(auth()->user()->roles_id == 3) <!-- Superadmin -->
                             @if($usr->id != auth()->id()) <!-- Tidak bisa menghapus/mengedit dirinya sendiri -->
@@ -737,6 +737,8 @@ function sortLinkUser($field, $currentSortBy, $currentSortDir) {
                 const isSelf = user.id === currentUserId;
                 const isSuperadmin = currentUserRoleId === 3;
                 const isAdmin = currentUserRoleId === 1;
+                const isUserFilter = roleFilter.value === 'user';
+                const mt2 = isUserFilter ? 'mt-5' : ''; 
 
                 // Kalau yang login bukan superadmin dan user target adalah superadmin, sembunyikan barisnya
                 if (!isSuperadmin && user.roles_id === 3) return;
@@ -747,28 +749,30 @@ function sortLinkUser($field, $currentSortBy, $currentSortDir) {
                 // Tambahkan tombol edit/hapus jika role login mengizinkan
                 if (isSuperadmin && !isSelf) {
                     actions = `
-                        <i class="fa fa-trash fa-lg cursor-pointer" onclick="deleteItem(${user.id})"></i>
-                        <i class="fa fa-pen-to-square fa-lg cursor-pointer" onclick="openEditModal(${user.id}, '${user.name}', '${user.email}', ${user.roles_id})"></i>
+                        <i class="fa fa-trash fa-lg cursor-pointer ${mt2}" onclick="deleteItem(${user.id})"></i>
+                        <i class="fa fa-pen-to-square fa-lg cursor-pointer ${mt2}" onclick="openEditModal(${user.id}, '${user.name}', '${user.email}', ${user.roles_id})"></i>
                         ${actions}
                     `;
                 }
 
                 if (isAdmin && user.roles_id === 2) {
                     actions = `
-                        <i class="fa fa-trash fa-lg cursor-pointer" onclick="deleteItem(${user.id})"></i>
-                        <i class="fa fa-pen-to-square fa-lg cursor-pointer" onclick="openEditModal(${user.id}, '${user.name}', '${user.email}', ${user.roles_id})"></i>
+                        <i class="fa fa-trash fa-lg cursor-pointer ${mt2}" onclick="deleteItem(${user.id})"></i>
+                        <i class="fa fa-pen-to-square fa-lg cursor-pointer ${mt2}" onclick="openEditModal(${user.id}, '${user.name}', '${user.email}', ${user.roles_id})"></i>
                         ${actions}
                     `;
                 }
-
+                
                 const row = `
                     <tr>
                         <td class="text-center">${user.name}</td>
                         <td class="text-center">${user.email}</td>
                         <td class="text-center">${user.roles?.name || '-'}</td>
                         <td class="text-center">${user.last_active_at || '-'}</td>
-                        <td class="text-center flex justify-center">
-                            <div class="flex justify-center items-center gap-2">${actions}</div>
+                        <td class="text-center">
+                            <div class="flex justify-center items-center gap-2 min-w-[70px]">
+                                ${actions}
+                            </div>
                         </td>
                     </tr>`;
                 tableBody.insertAdjacentHTML('beforeend', row);
