@@ -407,7 +407,11 @@ function sortLinkUser($field, $currentSortBy, $currentSortDir) {
         </div>
     </div>
 
-    
+    <script>
+    const currentUserRoleId = {{ auth()->user()->roles_id }};
+    const currentUserId = {{ auth()->user()->id }};
+</script>
+
 
 <script>
     // Global variables
@@ -710,49 +714,75 @@ function sortLinkUser($field, $currentSortBy, $currentSortDir) {
         
 
         async function fetchUsers() {
-            const search = searchInput.value;
-            const role = roleFilter.value;
+    const search = searchInput.value;
+    const role = roleFilter.value;
 
-            try {
-                const response = await fetch(`/users?search=${search}&role=${role}`, {
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
-                });
-                
-                if (!response.ok) {
-                    throw new Error('Failed to fetch users');
-                }
-                
-                const data = await response.json();
-                tableBody.innerHTML = '';
-                
-                if (data.data && data.data.length > 0) {
-                    data.data.forEach(user => {
-                        const row = `
-                            <tr>
-                                <td class="text-center">${user.name}</td>
-                                <td class="text-center">${user.email}</td>
-                                <td class="text-center">${user.roles?.name || '-'}</td>
-                                <td class="text-center">${user.last_active_at || '-'}</td>
-                                <td class="text-center flex justify-center">
-                                    <div class="flex justify-center items-center">
-                                        <i class="fa fa-trash fa-lg cursor-pointer" onclick="deleteItem(${user.id})"></i>
-                                        <i class="fa fa-pen-to-square fa-lg cursor-pointer" onclick="openEditModal(${user.id}, '${user.name}', '${user.email}', ${user.roles_id})"></i>
-                                        <i class="fa-regular fa-eye fa-lg cursor-pointer" onclick="showUserDetails(${user.id})"></i>
-                                    </div>
-                                </td>
-                            </tr>`;
-                        tableBody.insertAdjacentHTML('beforeend', row);
-                    });
-                } else {
-                    tableBody.innerHTML = '<tr><td colspan="5" class="text-center">No users found</td></tr>';
-                }
-            } catch (error) {
-                showToast('Error fetching users', 'error');
-                console.error(error);
+    try {
+        const response = await fetch(`/users?search=${search}&role=${role}`, {
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
             }
+        });
+
+        if (!response.ok) throw new Error('Failed to fetch users');
+
+        const data = await response.json();
+        tableBody.innerHTML = '';
+
+        if (data.data && data.data.length > 0) {
+            data.data.forEach(user => {
+                // Superadmin (3) boleh lihat semua
+                // Admin (1) boleh lihat semua (tapi nanti diatur hak akses tombol)
+                // Cek apakah user login adalah superadmin atau bukan
+                const isSelf = user.id === currentUserId;
+                const isSuperadmin = currentUserRoleId === 3;
+                const isAdmin = currentUserRoleId === 1;
+
+                // Kalau yang login bukan superadmin dan user target adalah superadmin, sembunyikan barisnya
+                if (!isSuperadmin && user.roles_id === 3) return;
+
+                // Default action hanya tombol detail
+                let actions = `<i class="fa-regular fa-eye fa-lg cursor-pointer" onclick="showUserDetails(${user.id})"></i>`;
+
+                // Tambahkan tombol edit/hapus jika role login mengizinkan
+                if (isSuperadmin && !isSelf) {
+                    actions = `
+                        <i class="fa fa-trash fa-lg cursor-pointer" onclick="deleteItem(${user.id})"></i>
+                        <i class="fa fa-pen-to-square fa-lg cursor-pointer" onclick="openEditModal(${user.id}, '${user.name}', '${user.email}', ${user.roles_id})"></i>
+                        ${actions}
+                    `;
+                }
+
+                if (isAdmin && user.roles_id === 2) {
+                    actions = `
+                        <i class="fa fa-trash fa-lg cursor-pointer" onclick="deleteItem(${user.id})"></i>
+                        <i class="fa fa-pen-to-square fa-lg cursor-pointer" onclick="openEditModal(${user.id}, '${user.name}', '${user.email}', ${user.roles_id})"></i>
+                        ${actions}
+                    `;
+                }
+
+                const row = `
+                    <tr>
+                        <td class="text-center">${user.name}</td>
+                        <td class="text-center">${user.email}</td>
+                        <td class="text-center">${user.roles?.name || '-'}</td>
+                        <td class="text-center">${user.last_active_at || '-'}</td>
+                        <td class="text-center flex justify-center">
+                            <div class="flex justify-center items-center gap-2">${actions}</div>
+                        </td>
+                    </tr>`;
+                tableBody.insertAdjacentHTML('beforeend', row);
+            });
+        } else {
+            tableBody.innerHTML = '<tr><td colspan="5" class="text-center">No users found</td></tr>';
         }
+    } catch (error) {
+        showToast('Error fetching users', 'error');
+        console.error(error);
+    }
+}
+
+
 
         searchInput.addEventListener('input', fetchUsers);
         roleFilter.addEventListener('change', fetchUsers);
