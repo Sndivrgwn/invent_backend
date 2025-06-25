@@ -12,35 +12,49 @@ use Illuminate\Http\Request;
 class UserManagementController extends Controller
 {
     public function index(Request $request)
-    {
-        $query = User::with('roles');
-        $roles = Roles::all();
+{
+    $query = User::with('roles');
+    $roles = Roles::all();
 
-           if (auth()->user()->roles_id == 1) { // Jika admin
-        $query->whereIn('roles_id', [1, 2]); // Hanya tampilkan admin (1) dan user (2)
+    // Jika admin, filter role
+    if (auth()->user()->roles_id == 1) {
+        $query->whereIn('roles_id', [1, 2]);
     }
 
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%$search%")
-                    ->orWhere('email', 'like', "%$search%");
-            });
-        }
-
-        if ($request->filled('role')) {
-            $query->whereHas('roles', function ($q) use ($request) {
-                $q->where('name', $request->role);
-            });
-        }
-
-        if ($request->ajax()) {
-            return response()->json(['data' => $query->get()]);
-        }
-
-        $user = $query->get();
-        return view('pages.userManagement', compact('user', 'roles'));
+    // Search
+    if ($request->filled('search')) {
+        $search = $request->search;
+        $query->where(function ($q) use ($search) {
+            $q->where('name', 'like', "%$search%")
+              ->orWhere('email', 'like', "%$search%");
+        });
     }
+
+    // Filter role
+    if ($request->filled('role')) {
+        $query->whereHas('roles', function ($q) use ($request) {
+            $q->where('name', $request->role);
+        });
+    }
+
+    // Sort
+    $sortBy = $request->input('sortBy', 'last_active_at');
+    $sortDir = $request->input('sortDir', 'desc');
+    $allowedSorts = ['name', 'email', 'last_active_at'];
+
+    if (in_array($sortBy, $allowedSorts)) {
+        $query->orderBy($sortBy, $sortDir);
+    }
+
+    // Return for AJAX
+    if ($request->ajax()) {
+        return response()->json(['data' => $query->get()]);
+    }
+
+    $user = $query->get();
+    return view('pages.userManagement', compact('user', 'roles', 'sortBy', 'sortDir'));
+}
+
 
     public function store(Request $request)
     {

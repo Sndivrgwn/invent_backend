@@ -155,15 +155,41 @@
 
                 </div>
                 <!-- table -->
+                @php
+function sortLinkUser($field, $currentSortBy, $currentSortDir) {
+    $newDir = ($currentSortBy === $field && $currentSortDir === 'asc') ? 'desc' : 'asc';
+    return request()->fullUrlWithQuery([
+        'sortBy' => $field,
+        'sortDir' => $newDir,
+    ]);
+}
+@endphp
                 <div id="itemTableContainer" class="overflow-x-auto px-2">
                     <table class="table">
                         <thead>
                             <tr>
-                                <th class="text-center font-semibold">NAME</th>
-                                <th class="text-center font-semibold">EMAIL</th>
-                                <th class="text-center font-semibold">ROLE</th>
-                                <th class="text-center font-semibold">LAST ACTIVE</th>
-                                <th class="text-center font-semibold">ACTION</th>
+                                <th class="text-center font-semibold">
+    <a href="{{ sortLinkUser('name', $sortBy, $sortDir) }}">
+        NAME {!! $sortBy === 'name' ? ($sortDir === 'asc' ? '&uarr;' : '&darr;') : '' !!}
+    </a>
+</th>
+
+<th class="text-center font-semibold">
+    <a href="{{ sortLinkUser('email', $sortBy, $sortDir) }}">
+        EMAIL {!! $sortBy === 'email' ? ($sortDir === 'asc' ? '&uarr;' : '&darr;') : '' !!}
+    </a>
+</th>
+
+<th class="text-center font-semibold">ROLE</th>
+
+<th class="text-center font-semibold">
+    <a href="{{ sortLinkUser('last_active_at', $sortBy, $sortDir) }}">
+        LAST ACTIVE {!! $sortBy === 'last_active_at' ? ($sortDir === 'asc' ? '&uarr;' : '&darr;') : '' !!}
+    </a>
+</th>
+
+<th class="text-center font-semibold">ACTION</th>
+
                             </tr>
                         </thead>
                         <tbody id="itemTableBody">
@@ -393,7 +419,7 @@
     async function deleteItem(id) {
     try {
         // Cek role user yang akan dihapus
-        const response = await fetch(`/api/users/${id}/role`);
+        const response = await fetch(`/api/users/${id}`);
         const data = await response.json();
         
         @if(auth()->user()->roles_id == 1) // Jika admin
@@ -673,7 +699,7 @@
     });
 
     function resetFilter() {
-        window.location.reload();
+        window.location.href = '/users'; // Reset to the base URL
     }
 
     // Search and filter functionality

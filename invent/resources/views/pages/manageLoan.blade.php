@@ -42,17 +42,42 @@
                             </form>
                         </div>
                     </div>
+                    @php
+                    function sortLinkMyLoan($field, $currentSortBy, $currentSortDir) {
+                    $newDir = ($currentSortBy === $field && $currentSortDir === 'asc') ? 'desc' : 'asc';
+                    return request()->fullUrlWithQuery([
+                    'sortBy' => $field,
+                    'sortDir' => $newDir
+                    ]);
+                    }
+                    @endphp
+
                     <div class="overflow-x-auto">
                         <table class="table w-full">
                             <thead class="text-gray-500 text-sm font-semibold border-b">
                                 <tr>
-                                    <th>DATE</th>
-                                    <th>CODE</th>
-                                    <th>BORROWER NAME</th>
-                                    <th>SERIAL NUMBER</th>
-                                    <th>PRODUCT</th>
-                                    <th>STATUS</th>
-                                    <th>DUE DATE</th>
+                                    <th><a href="{{ sortLinkMyLoan('loan_date', $sortBy, $sortDir) }}">
+                                            DATE {!! $sortBy === 'loan_date' ? ($sortDir === 'asc' ? '&uarr;' : '&darr;') : '' !!}
+                                        </a></th>
+
+                                    <th><a href="{{ sortLinkMyLoan('code_loans', $sortBy, $sortDir) }}">
+                                            CODE {!! $sortBy === 'code_loans' ? ($sortDir === 'asc' ? '&uarr;' : '&darr;') : '' !!}
+                                        </a></th>
+
+                                    <th><a href="{{ sortLinkMyLoan('loaner_name', $sortBy, $sortDir) }}">
+                                            BORROWER NAME {!! $sortBy === 'loaner_name' ? ($sortDir === 'asc' ? '&uarr;' : '&darr;') : '' !!}
+                                        </a></th>
+
+                                    <!-- SERIAL NUMBER dan PRODUCT tidak perlu disort karena dari items -->
+                                    <th class="whitespace-nowrap">SERIAL NUMBER</th>
+                                    <th class="whitespace-nowrap">PRODUCT</th>
+                                    <th class="whitespace-nowrap">STATUS</th>
+                                    <!-- STATUS tidak bisa di-sort -->
+
+                                    <th><a href="{{ sortLinkMyLoan('return_date', $sortBy, $sortDir) }}">
+                                            DUE DATE {!! $sortBy === 'return_date' ? ($sortDir === 'asc' ? '&uarr;' : '&darr;') : '' !!}
+                                        </a></th>
+
                                     <th class="text-center">ACTIONS</th>
                                 </tr>
                             </thead>
@@ -72,9 +97,7 @@
                                     @if ($index === 0)
                                     <td class="whitespace-nowrap" rowspan="{{ count($loan->items) }}">
                                         <div class="flex justify-center items-center gap-2">
-                                            <i class="fa-solid fa-file-pdf fa-lg text-red-600 cursor-pointer"
-                                                title="Lihat PDF"
-                                                onclick="window.open('{{ route('loan.print.pdf', ['id' => \Illuminate\Support\Facades\Crypt::encryptString($loan->id)]) }}', '_blank')"></i>
+                                            <i class="fa-solid fa-file-pdf fa-lg text-red-600 cursor-pointer" title="Lihat PDF" onclick="window.open('{{ route('loan.print.pdf', ['id' => \Illuminate\Support\Facades\Crypt::encryptString($loan->id)]) }}', '_blank')"></i>
                                             <i class="fa-solid fa-right-left fa-lg cursor-pointer !leading-none" onclick="showReturnProduct({{ $loan->id }})"></i>
                                             <i class="fa fa-trash fa-lg cursor-pointer !leading-none mt-1" onclick="deleteItem({{ $loan->id }})"></i>
                                             <i class="fa-regular fa-eye fa-lg cursor-pointer" onclick="showLoanDetails({{ $loan->id }})"></i>
@@ -226,11 +249,11 @@
 
         try {
             const response = await fetch(`/api/loans/${deleteTargetId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Accept': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Content-Type': 'application/json'
+                method: 'DELETE'
+                , headers: {
+                    'Accept': 'application/json'
+                    , 'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    , 'Content-Type': 'application/json'
                 }
             });
 
@@ -239,10 +262,10 @@
             if (response.ok) {
                 handleAjaxResponse({
                     toast: {
-                        message: data.message || 'Loan deleted successfully',
-                        type: 'success'
-                    },
-                    reload: true
+                        message: data.message || 'Loan deleted successfully'
+                        , type: 'success'
+                    }
+                    , reload: true
                 });
             } else {
                 throw new Error(data.message || 'Failed to delete loan');
@@ -321,15 +344,15 @@
 
         try {
             const response = await fetch(`/api/return/${returnTargetId}`, {
-                method: 'POST',
-                headers: {
-                    'Accept': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    condition: condition,
-                    notes: notes
+                method: 'POST'
+                , headers: {
+                    'Accept': 'application/json'
+                    , 'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    , 'Content-Type': 'application/json'
+                }
+                , body: JSON.stringify({
+                    condition: condition
+                    , notes: notes
                 })
             });
 
@@ -338,10 +361,10 @@
             if (response.ok) {
                 handleAjaxResponse({
                     toast: {
-                        message: data.message || 'Loan returned successfully',
-                        type: 'success'
-                    },
-                    reload: true
+                        message: data.message || 'Loan returned successfully'
+                        , type: 'success'
+                    }
+                    , reload: true
                 });
             } else {
                 throw new Error(data.message || 'Failed to return loan');
@@ -395,6 +418,7 @@
             showToast(error.message || 'Failed to load loan details', 'error');
         }
     }
+
 </script>
 
 @stack('scripts')

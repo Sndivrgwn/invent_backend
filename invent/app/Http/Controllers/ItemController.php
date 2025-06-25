@@ -11,6 +11,7 @@ use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 
 
 class ItemController extends Controller
@@ -45,34 +46,54 @@ class ItemController extends Controller
     }
 
     public function getAllItems(Request $request)
-{
-    $query = Item::with(['category', 'location']);
+    {
+        $sortBy = $request->input('sortBy', 'name'); // default
+        $sortDir = $request->input('sortDir', 'asc');
 
-    if ($request->has('search-navbar') && $request->filled('search-navbar')) {
-        $search = $request->input('search-navbar');
+        $query = Item::select('items.*')
+            ->join('locations', 'items.location_id', '=', 'locations.id')
+            ->with(['category', 'location']);
 
-        $query->where(function ($q) use ($search) {
-            $q->where('name', 'like', "%{$search}%") // PRODUCT
-              ->orWhere('code', 'like', "%{$search}%") // SERIAL NUMBER
-              ->orWhere('brand', 'like', "%{$search}%") // BRAND
-              ->orWhereHas('category', function ($q) use ($search) {
-                  $q->where('name', 'like', "%{$search}%"); // CATEGORY
-              })
-              ->orWhereHas('location', function ($q) use ($search) {  
-                  $q->where('description', 'like', "%{$search}%"); // LOCATION
-              })
-              ->orWhere('type', 'like', "%{$search}%") // TYPE
-              ->orWhere('condition', 'like', "%{$search}%") // CONDITIONAL
-              ->orWhere('status', 'like', "%{$search}%"); // STATUS
-        });
+        // Filtering
+        if ($request->has('search-navbar') && $request->filled('search-navbar')) {
+            $search = $request->input('search-navbar');
+
+            $query->where(function ($q) use ($search) {
+                $q->where('items.name', 'like', "%{$search}%")
+                    ->orWhere('items.code', 'like', "%{$search}%")
+                    ->orWhere('items.brand', 'like', "%{$search}%")
+                    ->orWhereHas('category', function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%");
+                    })
+                    ->orWhere('locations.name', 'like', "%{$search}%")
+                    ->orWhere('items.type', 'like', "%{$search}%")
+                    ->orWhere('items.condition', 'like', "%{$search}%")
+                    ->orWhere('items.status', 'like', "%{$search}%");
+            });
+        }
+
+        // Sort
+        $allowedSorts = ['name', 'code', 'type', 'condition', 'status', 'rack'];
+        if (in_array($sortBy, $allowedSorts)) {
+            if ($sortBy === 'rack') {
+                $query->orderBy('locations.name', $sortDir);
+            } else {
+                $query->orderBy("items.$sortBy", $sortDir);
+            }
+        }
+
+        $items = $query->paginate(20)->appends([
+            'search-navbar' => $request->input('search-navbar'),
+            'sortBy' => $sortBy,
+            'sortDir' => $sortDir,
+        ]);
+
+        $locations = Location::all();
+        $categories = Category::all();
+
+        return view('pages.products', compact('items', 'locations', 'categories', 'sortBy', 'sortDir'));
     }
 
-    $items = $query->paginate(20);
-    $locations = Location::all();
-    $categories = Category::all();
-
-    return view('pages.products', compact('items', 'locations','categories'));
-}
 
 
     public function filter(Request $request)
@@ -164,7 +185,7 @@ class ItemController extends Controller
         }
 
         return response()->json([
-        'data' => $items
+            'data' => $items
         ]);
     }
 
@@ -172,66 +193,65 @@ class ItemController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, string $id)
-{
-    try {
-        $item = Item::find($id);
-        if (!$item) {
+    {
+        try {
+            $item = Item::find($id);
+            if (!$item) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Item not found'
+                ], 404);
+            }
+
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'code' => 'required|string|unique:items,code,' . $id,
+                'brand' => 'required|string',
+                'type' => 'required|string',
+                'condition' => 'required|string',
+                'status' => 'required|in:READY,NOT READY',
+                'category_id' => 'required|exists:categories,id',
+                'location_id' => 'required|exists:locations,id',
+                'description' => 'nullable|string',
+                'image' => 'nullable|image|max:2048',
+            ]);
+
+            // Handle image upload
+            if ($request->hasFile('image')) {
+                // Delete old image if it exists and isn't the default
+                if ($item->image && $item->image !== 'default.png' && Storage::disk('public')->exists($item->image)) {
+                    Storage::disk('public')->delete($item->image);
+                }
+
+                // Store new image
+                $path = $request->file('image')->store('items', 'public');
+                $validated['image'] = $path;
+            } else {
+                // Keep the existing image if no new image is uploaded
+                $validated['image'] = $item->image;
+            }
+
+            $item->update($validated);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Item updated successfully',
+                'data' => $item
+            ]);
+        } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Item not found'
-            ], 404);
+                'message' => 'Validation failed',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Server error',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'code' => 'required|string|unique:items,code,' . $id,
-            'brand' => 'required|string',
-            'type' => 'required|string',
-            'condition' => 'required|string',
-            'status' => 'required|in:READY,NOT READY',
-            'category_id' => 'required|exists:categories,id',
-            'location_id' => 'required|exists:locations,id',
-            'description' => 'nullable|string',
-            'image' => 'nullable|image|max:2048',
-        ]);
-
-        // Handle image upload
-        if ($request->hasFile('image')) {
-            // Delete old image if it exists and isn't the default
-            if ($item->image && $item->image !== 'default.png' && Storage::disk('public')->exists($item->image)) {
-                Storage::disk('public')->delete($item->image);
-            }
-            
-            // Store new image
-            $path = $request->file('image')->store('items', 'public');
-            $validated['image'] = $path;
-        } else {
-            // Keep the existing image if no new image is uploaded
-            $validated['image'] = $item->image;
-        }
-
-        $item->update($validated);
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Item updated successfully',
-            'data' => $item
-        ]);
-
-    } catch (ValidationException $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Validation failed',
-            'errors' => $e->errors()
-        ], 422);
-    } catch (\Exception $e) {
-        return response()->json([
-            'success' => false,
-            'message' => 'Server error',
-            'error' => $e->getMessage()
-        ], 500);
     }
-}
 
     /**
      * Remove the specified resource from storage.

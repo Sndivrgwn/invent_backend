@@ -97,14 +97,30 @@
                     </dialog>
                 </div>
                 <!-- table -->
+                @php
+                function sortLink($field, $currentSortBy, $currentSortDir, $isIncoming = true) {
+                $newDir = ($currentSortBy === $field && $currentSortDir === 'asc') ? 'desc' : 'asc';
+                return request()->fullUrlWithQuery([
+                $isIncoming ? 'sortByIncoming' : 'sortByOutgoing' => $field,
+                $isIncoming ? 'sortDirIncoming' : 'sortDirOutgoing' => $newDir,
+                ]);
+                }
+                @endphp
+
                 <div class="overflow-x-auto">
                     <table class="table">
                         <thead>
                             <tr>
-                                <th class="text-center font-semibold">BORROWER NAME</th>
+                                <th class="text-center font-semibold">
+                                    <a href="{{ sortLink('loaner_name', $sortByIncoming, $sortDirIncoming) }}">BORROWER NAME</a>
+                                </th>
                                 <th class="text-center font-semibold">PRODUCT</th>
-                                <th class="text-center font-semibold">BORROW DATE</th>
-                                <th class="text-center font-semibold">DUE DATE</th>
+                                <th class="text-center font-semibold">
+                                    <a href="{{ sortLink('loan_date', $sortByIncoming, $sortDirIncoming) }}">BORROW DATE</a>
+                                </th>
+                                <th class="text-center font-semibold">
+                                    <a href="{{ sortLink('return_date', $sortByIncoming, $sortDirIncoming) }}">DUE DATE</a>
+                                </th>
                                 <th class="text-center font-semibold">STATUS</th>
                                 <th class="text-center font-semibold">ACTIONS</th>
                             </tr>
@@ -124,87 +140,7 @@
                                     <i class="fa-solid fa-file-pdf fa-lg text-red-600 cursor-pointer" title="Lihat PDF" onclick="window.open('{{ route('loan.print.pdf', ['id' => \Illuminate\Support\Facades\Crypt::encryptString($loan->id)]) }}', '_blank')"></i>
                                     <i class="fa-regular fa-eye fa-lg cursor-pointer" onclick="showLoanDetails({{ $loan->id }})"></i>
                                 </td>
-                                {{-- tampilan edit --}}
-                                <dialog id="itemDetailsDialog" class="modal">
-                                    <div class="modal-box w-11/12 max-w-5xl">
-                                        <button onclick="document.getElementById('itemDetailsDialog').close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-                                        <div id="itemDetailsContent"></div>
-                                    </div>
-                                </dialog>
-                                <dialog id="viewProduct" class="modal">
-                                    <div class="modal-box w-11/12 max-w-5xl">
-                                        <form method="dialog" id="viewForm">
-                                            <!-- Image will be dynamically updated -->
 
-                                            <!-- Loan details will be inserted here by JavaScript -->
-
-                                            <!-- Tombol close -->
-                                            <button type="button" onclick="document.getElementById('viewProduct').close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-                                        </form>
-                                    </div>
-                                </dialog>
-                                {{-- tampilan edit --}}
-
-                                {{-- tampilan preview --}}
-                                <dialog id="viewProductIncome" class="modal">
-                                    <div class="modal-box">
-                                        <form method="dialog" id="viewForm">
-                                            <!-- Gambar atas -->
-
-                                            <!-- Tombol close -->
-                                            <button type="button" onclick="document.getElementById('viewProductIncome').close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-
-                                            <h1 class="font-semibold text-2xl mb-4">Product Details</h1>
-
-                                            <div class="flex gap-5 justify-between text-gray-600">
-                                                <div class="w-[50%]">
-                                                    <h1 class="font-medium">PRODUCT</h1>
-                                                    <p>Access Point</p>
-                                                </div>
-                                                <div class="w-[50%]">
-                                                    <h1 class="font-medium">RACK</h1>
-                                                    <p>Rack 1</p>
-                                                </div>
-                                            </div>
-
-                                            <div class="flex gap-5 justify-between text-gray-600 mt-3">
-                                                <div class="w-[50%]">
-                                                    <h1 class="font-medium">BRAND</h1>
-                                                    <p>TP-Link</p>
-                                                </div>
-                                                <div class="w-[50%]">
-                                                    <h1 class="font-medium">CONDITION</h1>
-                                                    <p>Good</p>
-                                                </div>
-                                            </div>
-
-                                            <div class="flex gap-5 justify-between text-gray-600 mt-3">
-                                                <div class="w-[50%]">
-                                                    <h1 class="font-medium">TYPE</h1>
-                                                    <p>TL-WR840N</p>
-                                                </div>
-                                                <div class="w-[50%]">
-                                                    <h1 class="font-medium">STATUS</h1>
-                                                    <p>Ready</p>
-                                                </div>
-                                            </div>
-
-                                            <div class="w-full mt-3">
-                                                <h1 class="font-medium text-gray-600">SERIAL NUMBER</h1>
-                                                <p>A1B2C3D4E5F6G7H</p>
-                                            </div>
-
-                                            <div class="w-full mt-3">
-                                                <h1 class="font-medium text-gray-600">DESCRIPTION</h1>
-                                                <p class="text-gray-600">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vel enim eget lacus fermentum suscipit ut non ex.</p>
-                                            </div>
-
-                                            <div class="w-full flex justify-end items-end gap-4 mt-4">
-                                                <button type="button" onclick="document.getElementById('viewProductIncome').close()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Close</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </dialog>
                                 {{-- tampilan preview --}}
                             </tr>
                             @empty
@@ -216,6 +152,87 @@
 
                     </table>
                 </div>
+                {{-- tampilan edit --}}
+                <dialog id="itemDetailsDialog" class="modal">
+                    <div class="modal-box w-11/12 max-w-5xl">
+                        <button onclick="document.getElementById('itemDetailsDialog').close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                        <div id="itemDetailsContent"></div>
+                    </div>
+                </dialog>
+                <dialog id="viewProduct" class="modal">
+                    <div class="modal-box w-11/12 max-w-5xl">
+                        <form method="dialog" id="viewForm">
+                            <!-- Image will be dynamically updated -->
+
+                            <!-- Loan details will be inserted here by JavaScript -->
+
+                            <!-- Tombol close -->
+                            <button type="button" onclick="document.getElementById('viewProduct').close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                        </form>
+                    </div>
+                </dialog>
+                {{-- tampilan edit --}}
+
+                {{-- tampilan preview --}}
+                <dialog id="viewProductIncome" class="modal">
+                    <div class="modal-box">
+                        <form method="dialog" id="viewForm">
+                            <!-- Gambar atas -->
+
+                            <!-- Tombol close -->
+                            <button type="button" onclick="document.getElementById('viewProductIncome').close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+
+                            <h1 class="font-semibold text-2xl mb-4">Product Details</h1>
+
+                            <div class="flex gap-5 justify-between text-gray-600">
+                                <div class="w-[50%]">
+                                    <h1 class="font-medium">PRODUCT</h1>
+                                    <p>Access Point</p>
+                                </div>
+                                <div class="w-[50%]">
+                                    <h1 class="font-medium">RACK</h1>
+                                    <p>Rack 1</p>
+                                </div>
+                            </div>
+
+                            <div class="flex gap-5 justify-between text-gray-600 mt-3">
+                                <div class="w-[50%]">
+                                    <h1 class="font-medium">BRAND</h1>
+                                    <p>TP-Link</p>
+                                </div>
+                                <div class="w-[50%]">
+                                    <h1 class="font-medium">CONDITION</h1>
+                                    <p>Good</p>
+                                </div>
+                            </div>
+
+                            <div class="flex gap-5 justify-between text-gray-600 mt-3">
+                                <div class="w-[50%]">
+                                    <h1 class="font-medium">TYPE</h1>
+                                    <p>TL-WR840N</p>
+                                </div>
+                                <div class="w-[50%]">
+                                    <h1 class="font-medium">STATUS</h1>
+                                    <p>Ready</p>
+                                </div>
+                            </div>
+
+                            <div class="w-full mt-3">
+                                <h1 class="font-medium text-gray-600">SERIAL NUMBER</h1>
+                                <p>A1B2C3D4E5F6G7H</p>
+                            </div>
+
+                            <div class="w-full mt-3">
+                                <h1 class="font-medium text-gray-600">DESCRIPTION</h1>
+                                <p class="text-gray-600">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Vivamus vel enim eget lacus fermentum suscipit ut non ex.</p>
+                            </div>
+
+                            <div class="w-full flex justify-end items-end gap-4 mt-4">
+                                <button type="button" onclick="document.getElementById('viewProductIncome').close()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Close</button>
+                            </div>
+                        </form>
+                    </div>
+                </dialog>
                 <div class="flex justify-end mb-4 mt-4">
                     <div class="join">
                         {{-- Previous Page Link --}}
@@ -270,10 +287,16 @@
                     <table class="table">
                         <thead>
                             <tr>
-                                <th class="text-center font-semibold">NAME</th>
+                                <th class="text-center font-semibold">
+                                    <a href="{{ sortLink('loaner_name', $sortByOutgoing, $sortDirOutgoing, false) }}">NAME</a>
+                                </th>
                                 <th class="text-center font-semibold">PRODUCT</th>
-                                <th class="text-center font-semibold">BORROW DATE</th>
-                                <th class="text-center font-semibold">DUE DATE</th>
+                                <th class="text-center font-semibold">
+                                    <a href="{{ sortLink('loan_date', $sortByOutgoing, $sortDirOutgoing, false) }}">BORROW DATE</a>
+                                </th>
+                                <th class="text-center font-semibold">
+                                    <a href="{{ sortLink('return_date', $sortByOutgoing, $sortDirOutgoing, false) }}">DUE DATE</a>
+                                </th>
                                 <th class="text-center font-semibold">STATUS</th>
                                 <th class="text-center font-semibold">ACTIONS</th>
                             </tr>
@@ -305,130 +328,7 @@
                                 </td>
                                 {{-- tampilan delete --}}
 
-                                <dialog id="itemDetailsDialogtwo" class="modal">
-                                    <div class="modal-box w-11/12 max-w-5xl">
-                                        <button onclick="document.getElementById('itemDetailsDialogtwo').close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-                                        <div id="itemDetailsContenttwo"></div>
-                                    </div>
-                                </dialog>
-                                <dialog id="viewProduct" class="modal">
-                                    <div class="modal-box w-11/12 max-w-5xl">
-                                        <form method="dialog" id="viewForm">
-                                            <!-- Image will be dynamically updated -->
 
-                                            <!-- Loan details will be inserted here by JavaScript -->
-
-                                            <!-- Tombol close -->
-                                            <button type="button" onclick="document.getElementById('viewProduct').close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-
-
-                                        </form>
-                                    </div>
-                                </dialog>
-                                {{-- tampilan edit --}}
-
-                                {{-- tampilan preview --}}
-
-                                <dialog id="confirmDeleteDialog" class="modal">
-                                    <div class="modal-box">
-                                        <form method="dialog">
-                                            <!-- Close Button -->
-                                            <button type="button" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onclick="closeDeleteDialog()">✕</button>
-                                            <!-- Konten -->
-                                            <h1 class="text-xl font-bold text-center mb-4">Delete Item?</h1>
-                                            <p class="text-center text-gray-600">Are you sure you want to delete this item? This action cannot be undone.</p>
-                                            <!-- Tombol -->
-                                            <div class="flex justify-end gap-3 mt-6">
-                                                <button type="button" onclick="closeDeleteDialog()" class="bg-gray-300 text-gray-800 rounded-lg px-4 py-2 hover:bg-gray-400">Cancel</button>
-                                                <button type="button" onclick="confirmDelete()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-red-600">Yes, Delete</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </dialog>
-
-                                {{-- tampilan edit --}}
-                                <dialog id="editProductOutgoing" class="modal">
-                                    <div class="modal-box">
-                                        <form method="dialog" id="editForm">
-                                            <input type="hidden" id="edit_loan_id" name="loan_id">
-                                            <button id="cancel" type="button" onclick="closeEditModal()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-                                            <h1 class="font-semibold text-2xl mb-4">Edit Product</h1>
-
-                                            <div class="flex gap-5 justify-between text-gray-600">
-                                                <div class="w-[100%]">
-                                                    <h1 class="font-medium">BORROWER NAME</h1>
-                                                    <input type="text" id="edit_borrower_name" class="input w-full" placeholder="Insert Borrower Name">
-                                                </div>
-
-                                            </div>
-
-                                            <div class="flex gap-5 justify-between text-gray-600">
-                                                <div class="w-[100%]">
-                                                    <h1 class="font-medium">RETURN DATE</h1>
-                                                    <input type="date" id="edit_return_date" class="input w-full" placeholder="Insert return date">
-                                                </div>
-
-                                            </div>
-
-
-                                            <div class="w-full mt-3">
-                                                <h1 class="font-medium text-gray-600">DESCRIPTION</h1>
-                                                <textarea id="edit_description" class="textarea w-full text-gray-600" placeholder="Description"></textarea>
-                                            </div>
-
-                                            <div class="w-full flex justify-end items-end gap-4 mt-4">
-                                                <button type="button" onclick="closeEditModal()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Cancel</button>
-                                                <button type="submit" class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Edit</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </dialog>
-                                {{-- tampilan edit --}}
-                                <!-- Return Product Dialog -->
-                                <dialog id="returnProduct" class="modal">
-                                    <div class="modal-box max-w-sm sm:max-w-xl">
-                                        <form method="dialog" id="returnForm">
-
-                                            <button type="button" onclick="document.getElementById('returnProduct').close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-
-                                            <h1 class="font-semibold text-2xl mb-2">Product Details</h1>
-                                            <h2 class="font-semibold text-xl text-blue-600 mb-4" id="modalLocationName">-</h2>
-
-                                            <div class="w-full mt-4">
-                                                <h1 class="font-medium text-gray-600 mb-2">CONDITION</h1>
-                                                <select id="returnCondition" class="select select-bordered w-full">
-                                                    <option value="GOOD">GOOD</option>
-                                                    <option value="NOT GOOD">NOT GOOD</option>
-                                                </select>
-                                            </div>
-                                            <div class="w-full mt-4">
-                                                <h1 class="font-medium text-gray-600 mb-2">NOTES</h1>
-                                                <textarea id="returnNotes" class="textarea textarea-bordered w-full" placeholder="Any additional notes..."></textarea>
-                                            </div>
-
-                                            <div class="w-full mt-4">
-                                                <h1 class="font-medium text-gray-600 mb-2">ITEMS (Preview)</h1>
-                                                <ul id="modalItemList" class="list-disc pl-5 space-y-1 text-gray-700 text-sm max-h-40 overflow-y-auto">
-                                                </ul>
-
-                                                <button id="viewAllBtn" class="text-sm text-blue-600 mt-2 hover:underline hidden" onclick="openAllItemsModal()">
-                                                    Lihat Semua Item →
-                                                </button>
-                                            </div>
-
-                                            <div class="w-full mt-4">
-                                                <h1 class="font-medium text-gray-600 mb-2">CATEGORIES</h1>
-                                                <div id="modalCategoryList" class="flex flex-wrap gap-2">
-                                                </div>
-                                            </div>
-
-                                            <div class="w-full flex justify-end items-end gap-4 mt-6">
-                                                <button type="button" onclick="document.getElementById('returnProduct').close()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Close</button>
-                                                <button type="button" class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer" id="confirmReturnButton">Return Product</button>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </dialog>
 
                                 {{-- tampilan preview --}}
 
@@ -444,7 +344,130 @@
 
                     </table>
                 </div>
+                <dialog id="itemDetailsDialogtwo" class="modal">
+                    <div class="modal-box w-11/12 max-w-5xl">
+                        <button onclick="document.getElementById('itemDetailsDialogtwo').close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                        <div id="itemDetailsContenttwo"></div>
+                    </div>
+                </dialog>
+                <dialog id="viewProduct" class="modal">
+                    <div class="modal-box w-11/12 max-w-5xl">
+                        <form method="dialog" id="viewForm">
+                            <!-- Image will be dynamically updated -->
 
+                            <!-- Loan details will be inserted here by JavaScript -->
+
+                            <!-- Tombol close -->
+                            <button type="button" onclick="document.getElementById('viewProduct').close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+
+
+                        </form>
+                    </div>
+                </dialog>
+                {{-- tampilan edit --}}
+
+                {{-- tampilan preview --}}
+
+                <dialog id="confirmDeleteDialog" class="modal">
+                    <div class="modal-box">
+                        <form method="dialog">
+                            <!-- Close Button -->
+                            <button type="button" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onclick="closeDeleteDialog()">✕</button>
+                            <!-- Konten -->
+                            <h1 class="text-xl font-bold text-center mb-4">Delete Item?</h1>
+                            <p class="text-center text-gray-600">Are you sure you want to delete this item? This action cannot be undone.</p>
+                            <!-- Tombol -->
+                            <div class="flex justify-end gap-3 mt-6">
+                                <button type="button" onclick="closeDeleteDialog()" class="bg-gray-300 text-gray-800 rounded-lg px-4 py-2 hover:bg-gray-400">Cancel</button>
+                                <button type="button" onclick="confirmDelete()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-red-600">Yes, Delete</button>
+                            </div>
+                        </form>
+                    </div>
+                </dialog>
+
+                {{-- tampilan edit --}}
+                <dialog id="editProductOutgoing" class="modal">
+                    <div class="modal-box">
+                        <form method="dialog" id="editForm">
+                            <input type="hidden" id="edit_loan_id" name="loan_id">
+                            <button id="cancel" type="button" onclick="closeEditModal()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                            <h1 class="font-semibold text-2xl mb-4">Edit Product</h1>
+
+                            <div class="flex gap-5 justify-between text-gray-600">
+                                <div class="w-[100%]">
+                                    <h1 class="font-medium">BORROWER NAME</h1>
+                                    <input type="text" id="edit_borrower_name" class="input w-full" placeholder="Insert Borrower Name">
+                                </div>
+
+                            </div>
+
+                            <div class="flex gap-5 justify-between text-gray-600">
+                                <div class="w-[100%]">
+                                    <h1 class="font-medium">RETURN DATE</h1>
+                                    <input type="date" id="edit_return_date" class="input w-full" placeholder="Insert return date">
+                                </div>
+
+                            </div>
+
+
+                            <div class="w-full mt-3">
+                                <h1 class="font-medium text-gray-600">DESCRIPTION</h1>
+                                <textarea id="edit_description" class="textarea w-full text-gray-600" placeholder="Description"></textarea>
+                            </div>
+
+                            <div class="w-full flex justify-end items-end gap-4 mt-4">
+                                <button type="button" onclick="closeEditModal()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Cancel</button>
+                                <button type="submit" class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Edit</button>
+                            </div>
+                        </form>
+                    </div>
+                </dialog>
+                {{-- tampilan edit --}}
+                <!-- Return Product Dialog -->
+                <dialog id="returnProduct" class="modal">
+                    <div class="modal-box max-w-sm sm:max-w-xl">
+                        <form method="dialog" id="returnForm">
+
+                            <button type="button" onclick="document.getElementById('returnProduct').close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+
+                            <h1 class="font-semibold text-2xl mb-2">Product Details</h1>
+                            <h2 class="font-semibold text-xl text-blue-600 mb-4" id="modalLocationName">-</h2>
+
+                            <div class="w-full mt-4">
+                                <h1 class="font-medium text-gray-600 mb-2">CONDITION</h1>
+                                <select id="returnCondition" class="select select-bordered w-full">
+                                    <option value="GOOD">GOOD</option>
+                                    <option value="NOT GOOD">NOT GOOD</option>
+                                </select>
+                            </div>
+                            <div class="w-full mt-4">
+                                <h1 class="font-medium text-gray-600 mb-2">NOTES</h1>
+                                <textarea id="returnNotes" class="textarea textarea-bordered w-full" placeholder="Any additional notes..."></textarea>
+                            </div>
+
+                            <div class="w-full mt-4">
+                                <h1 class="font-medium text-gray-600 mb-2">ITEMS (Preview)</h1>
+                                <ul id="modalItemList" class="list-disc pl-5 space-y-1 text-gray-700 text-sm max-h-40 overflow-y-auto">
+                                </ul>
+
+                                <button id="viewAllBtn" class="text-sm text-blue-600 mt-2 hover:underline hidden" onclick="openAllItemsModal()">
+                                    Lihat Semua Item →
+                                </button>
+                            </div>
+
+                            <div class="w-full mt-4">
+                                <h1 class="font-medium text-gray-600 mb-2">CATEGORIES</h1>
+                                <div id="modalCategoryList" class="flex flex-wrap gap-2">
+                                </div>
+                            </div>
+
+                            <div class="w-full flex justify-end items-end gap-4 mt-6">
+                                <button type="button" onclick="document.getElementById('returnProduct').close()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Close</button>
+                                <button type="button" class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer" id="confirmReturnButton">Return Product</button>
+                            </div>
+                        </form>
+                    </div>
+                </dialog>
                 <div class="flex justify-end mb-4 mt-4">
                     <div class="join">
                         {{-- Previous Page Link --}}

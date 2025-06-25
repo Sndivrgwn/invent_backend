@@ -36,8 +36,7 @@
                         <p class="text-2xl font-semibold">{{ $totalCategories }}</p>
                         <p class="text-sm text-gray-400 mt-1">Recorded inventory categories or types.</p>
                     </div>
-                    <div
-                        class="bg-green-500 bg-opacity-25 text-white p-4 rounded-full flex items-center justify-center">
+                    <div class="bg-green-500 bg-opacity-25 text-white p-4 rounded-full flex items-center justify-center">
                         <i class="fa fa-boxes bg-green-500" style="display: flex; justify-content: center;"></i>
                     </div>
                 </div>
@@ -48,8 +47,7 @@
                         <p class="text-2xl font-semibold">{{ $totalLoanedItems }}</p>
                         <p class="text-sm text-gray-400 mt-1">Items currently on loaned.</p>
                     </div>
-                    <div
-                        class="bg-yellow-500 bg-opacity-25 text-white p-4 rounded-full flex items-center justify-center">
+                    <div class="bg-yellow-500 bg-opacity-25 text-white p-4 rounded-full flex items-center justify-center">
                         <i class="fa fa-handshake bg-yellow-500" style="display: flex; justify-content: center;"></i>
                     </div>
                 </div>
@@ -64,30 +62,24 @@
                         <!-- Search -->
                         <div class="relative w-full md:block">
                             <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                                <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none"
-                                    viewBox="0 0 20 20">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                        stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                                <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
                                 </svg>
                                 <span class="sr-only">Search icon</span>
                             </div>
                             <form method="GET" action="{{ route('dashboard') }}" class="relative w-full md:block">
                                 <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                                    <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                                        fill="none" viewBox="0 0 20 20">
-                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"
-                                            stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
+                                    <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
                                     </svg>
                                     <span class="sr-only">Search icon</span>
                                 </div>
-                                <input type="text" name="search" value="{{ request('search') }}"
-                                    class="block w-full p-2 ps-10 text-sm border border-gray-400 rounded-lg"
-                                    placeholder="Search...">
+                                <input type="text" name="search" value="{{ request('search') }}" class="block w-full p-2 ps-10 text-sm border border-gray-400 rounded-lg" placeholder="Search...">
                             </form>
 
                         </div>
 
-                        
+
 
                         <!-- Export Button -->
 
@@ -100,12 +92,32 @@
                     <table class="table w-full">
                         <thead class="text-gray-500 text-sm font-semibold border-b">
                             <tr>
-                                <th>DATE</th>
-                                <th>BORROWER NAME</th>
+                                <th>
+                                    <a href="{{ route('dashboard', ['sortBy' => 'loan_date', 'sortDir' => $sortBy === 'loan_date' && $sortDir === 'asc' ? 'desc' : 'asc', 'search' => $search]) }}">
+                                        DATE
+                                        @if ($sortBy === 'loan_date')
+                                        {{ $sortDir === 'asc' ? '↑' : '↓' }}
+                                        @endif
+                                    </a>
+                                </th>
+
+                                <th>
+                                    <a href="{{ route('dashboard', ['sortBy' => 'loaner_name', 'sortDir' => $sortBy === 'loaner_name' && $sortDir === 'asc' ? 'desc' : 'asc', 'search' => $search]) }}">
+                                        BORROWER NAME
+                                        @if ($sortBy === 'loaner_name')
+                                        {{ $sortDir === 'asc' ? '↑' : '↓' }}
+                                        @endif
+                                    </a>
+                                </th>
+
                                 <th>SERIAL NUMBER</th>
                                 <th>PRODUCT</th>
                                 <th>CONDITION</th>
-                                <th>STATUS</th>
+
+                                <th>
+                                    STATUS
+                                </th>
+
                             </tr>
                         </thead>
                         <tbody class="text-sm">
@@ -129,14 +141,14 @@
 
                                 {{-- Tampilkan action hanya di baris pertama --}}
                                 @if ($index === 0)
-                           
+
                                 @endif
                             </tr>
                             @endforeach
                             @empty
-                                <tr>
-                                    <td colspan="8" class="text-center text-gray-500">No Loan Recently</td>
-                                </tr>
+                            <tr>
+                                <td colspan="8" class="text-center text-gray-500">No Loan Recently</td>
+                            </tr>
                             @endforelse
                         </tbody>
 
@@ -155,8 +167,7 @@
 
                         {{-- Pagination Elements --}}
                         @foreach ($loans->getUrlRange(1, $loans->lastPage()) as $page => $url)
-                        <a href="{{ $url }}"
-                            class="join-item btn {{ $loans->currentPage() == $page ? 'btn-primary' : '' }}">
+                        <a href="{{ $url }}" class="join-item btn {{ $loans->currentPage() == $page ? 'btn-primary' : '' }}">
                             {{ $page }}
                         </a>
                         @endforeach
@@ -192,10 +203,10 @@
         if (!deleteTargetId) return;
 
         const res = await fetch(`/api/items/${deleteTargetId}`, {
-            method: 'DELETE',
-            headers: {
-                'Accept': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            method: 'DELETE'
+            , headers: {
+                'Accept': 'application/json'
+                , 'X-CSRF-TOKEN': '{{ csrf_token() }}'
             }
         });
 
@@ -216,24 +227,24 @@
         document.getElementById("confirmDeleteDialog").close();
         deleteTargetId = null;
     }
-// edit product
+    // edit product
     function closeEditModal() {
         document.getElementById('editProduct').close();
     }
 
-    document.getElementById("editForm").addEventListener("submit", function (e) {
+    document.getElementById("editForm").addEventListener("submit", function(e) {
         e.preventDefault();
 
         const payload = {
-            product: document.getElementById("edit_product").value,
-            rack: document.getElementById("edit_rack").value,
-            brand: document.getElementById("edit_brand").value,
-            condition: document.getElementById("edit_condition").value,
-            type: document.getElementById("edit_type").value,
-            status: document.getElementById("edit_status").value,
-            serial: document.getElementById("edit_serial").value,
-            description: document.getElementById("edit_description").value,
-        };
+            product: document.getElementById("edit_product").value
+            , rack: document.getElementById("edit_rack").value
+            , brand: document.getElementById("edit_brand").value
+            , condition: document.getElementById("edit_condition").value
+            , type: document.getElementById("edit_type").value
+            , status: document.getElementById("edit_status").value
+            , serial: document.getElementById("edit_serial").value
+            , description: document.getElementById("edit_description").value
+        , };
 
         console.log("Edit payload:", payload);
         alert("Simulasi update berhasil. Kirim ke API sesuai kebutuhan.");
@@ -241,6 +252,7 @@
         document.getElementById("editForm").reset();
         closeEditModal();
     });
+
 </script>
 
 @stack('scripts')

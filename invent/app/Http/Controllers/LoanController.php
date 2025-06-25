@@ -20,48 +20,81 @@ class LoanController extends Controller
      * Display a listing of the resource.
      */
     public function index(Request $request)
-    {
-        try {
-            $search = $request->input('search-navbar');
+{
+    try {
+        $search = $request->input('search-navbar');
 
-            $incomingLoans = Loan::with('items')
-                ->where('status', 'RETURNED')
-                ->when($search, function ($query) use ($search) {
-                    $query->where(function ($q) use ($search) {
-                        $q->where('loaner_name', 'like', "%{$search}%")
-                            ->orWhere('loan_date', 'like', "%{$search}%")
-                            ->orWhere('return_date', 'like', "%{$search}%")
-                            ->orWhereHas('items', function ($itemQuery) use ($search) {
-                                $itemQuery->where('name', 'like', "%{$search}%");
-                            });
-                    });
-                })
-                ->orderBy('loan_date', 'desc')
-                ->paginate(20);
+        $sortByIncoming = $request->input('sortByIncoming', 'loan_date');
+        $sortDirIncoming = $request->input('sortDirIncoming', 'desc');
 
-            $outgoingLoans = Loan::with('items')
-                ->where('status', '!=', 'RETURNED')
-                ->when($search, function ($query) use ($search) {
-                    $query->where(function ($q) use ($search) {
-                        $q->where('loaner_name', 'like', "%{$search}%")
-                            ->orWhere('loan_date', 'like', "%{$search}%")
-                            ->orWhere('return_date', 'like', "%{$search}%")
-                            ->orWhere('status', 'like', "%{$search}%")
-                            ->orWhereHas('items', function ($itemQuery) use ($search) {
-                                $itemQuery->where('name', 'like', "%{$search}%");
-                            });
-                    });
-                })
-                ->orderBy('loan_date', 'desc')
-                ->paginate(20);
+        $sortByOutgoing = $request->input('sortByOutgoing', 'loan_date');
+        $sortDirOutgoing = $request->input('sortDirOutgoing', 'desc');
 
-            return view('pages.loan', compact('incomingLoans', 'outgoingLoans'));
+        $allowedSorts = ['loaner_name', 'loan_date', 'return_date', 'status'];
 
-        } catch (\Exception $e) {
-            Log::error('Error fetching loans: ' . $e->getMessage());
-            return redirect()->back()->with('toast_error', 'Failed to load loan data. Please try again.');
+        $incomingLoans = Loan::with('items')
+            ->where('status', 'RETURNED')
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('loaner_name', 'like', "%{$search}%")
+                        ->orWhere('loan_date', 'like', "%{$search}%")
+                        ->orWhere('return_date', 'like', "%{$search}%")
+                        ->orWhereHas('items', function ($itemQuery) use ($search) {
+                            $itemQuery->where('name', 'like', "%{$search}%");
+                        });
+                });
+            });
+
+        if (in_array($sortByIncoming, $allowedSorts)) {
+            $incomingLoans->orderBy($sortByIncoming, $sortDirIncoming);
         }
+
+        $incomingLoans = $incomingLoans->paginate(20)->appends([
+            'search-navbar' => $search,
+            'sortByIncoming' => $sortByIncoming,
+            'sortDirIncoming' => $sortDirIncoming,
+            'sortByOutgoing' => $sortByOutgoing,
+            'sortDirOutgoing' => $sortDirOutgoing,
+        ]);
+
+        $outgoingLoans = Loan::with('items')
+            ->where('status', '!=', 'RETURNED')
+            ->when($search, function ($query) use ($search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('loaner_name', 'like', "%{$search}%")
+                        ->orWhere('loan_date', 'like', "%{$search}%")
+                        ->orWhere('return_date', 'like', "%{$search}%")
+                        ->orWhere('status', 'like', "%{$search}%")
+                        ->orWhereHas('items', function ($itemQuery) use ($search) {
+                            $itemQuery->where('name', 'like', "%{$search}%");
+                        });
+                });
+            });
+
+        if (in_array($sortByOutgoing, $allowedSorts)) {
+            $outgoingLoans->orderBy($sortByOutgoing, $sortDirOutgoing);
+        }
+
+        $outgoingLoans = $outgoingLoans->paginate(20)->appends([
+            'search-navbar' => $search,
+            'sortByIncoming' => $sortByIncoming,
+            'sortDirIncoming' => $sortDirIncoming,
+            'sortByOutgoing' => $sortByOutgoing,
+            'sortDirOutgoing' => $sortDirOutgoing,
+        ]);
+
+        return view('pages.loan', compact(
+            'incomingLoans', 'outgoingLoans',
+            'sortByIncoming', 'sortDirIncoming',
+            'sortByOutgoing', 'sortDirOutgoing',
+        ));
+
+    } catch (\Exception $e) {
+        Log::error('Error fetching loans: ' . $e->getMessage());
+        return redirect()->back()->with('toast_error', 'Failed to load loan data. Please try again.');
     }
+}
+
 
     /**
      * Store a newly created resource in storage.

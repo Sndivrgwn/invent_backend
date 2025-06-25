@@ -13,33 +13,47 @@ use Illuminate\Support\Facades\Log;
 class ManageLoanController extends Controller
 {
     public function index()
-    {
-        try {
-            $search = request('search-navbar');
-            
-            $myloans = auth()->user()->loans()
-                ->where('status', 'borrowed')
-                ->when($search, function($query) use ($search) {
-                    $query->where(function($q) use ($search) {
-                        $q->where('code_loans', 'like', '%'.$search.'%')
-                          ->orWhere('loaner_name', 'like', '%'.$search.'%')
-                          ->orWhereHas('items', function($itemQuery) use ($search) {
-                              $itemQuery->where('code', 'like', '%'.$search.'%')
-                                        ->orWhere('name', 'like', '%'.$search.'%');
-                          });
-                    });
-                })
-                ->with('items')
-                ->orderBy('created_at', 'desc')
-                ->paginate(20);
+{
+    try {
+        $search = request('search-navbar');
+        $sortBy = request('sortBy', 'loan_date');
+        $sortDir = request('sortDir', 'desc');
+        $allowedSorts = ['loan_date', 'code_loans', 'loaner_name', 'return_date'];
 
-            return view('pages.manageLoan', compact('myloans'));
+        $myloans = auth()->user()->loans()
+            ->where('status', 'borrowed')
+            ->when($search, function($query) use ($search) {
+                $query->where(function($q) use ($search) {
+                    $q->where('code_loans', 'like', '%'.$search.'%')
+                      ->orWhere('loaner_name', 'like', '%'.$search.'%')
+                      ->orWhereHas('items', function($itemQuery) use ($search) {
+                          $itemQuery->where('code', 'like', '%'.$search.'%')
+                                    ->orWhere('name', 'like', '%'.$search.'%');
+                      });
+                });
+            })
+            ->with('items');
 
-        } catch (\Exception $e) {
-            Log::error("Failed to fetch loans: " . $e->getMessage());
-            return redirect()->back()->with('toast_error', 'Failed to load loans data. Please try again.');
+        if (in_array($sortBy, $allowedSorts)) {
+            $myloans = $myloans->orderBy($sortBy, $sortDir);
+        } else {
+            $myloans = $myloans->orderBy('loan_date', 'desc');
         }
+
+        $myloans = $myloans->paginate(20)->appends([
+            'search-navbar' => $search,
+            'sortBy' => $sortBy,
+            'sortDir' => $sortDir,
+        ]);
+
+        return view('pages.manageLoan', compact('myloans', 'sortBy', 'sortDir'));
+
+    } catch (\Exception $e) {
+        Log::error("Failed to fetch loans: " . $e->getMessage());
+        return redirect()->back()->with('toast_error', 'Failed to load loans data. Please try again.');
     }
+}
+
 
     public function show($id): JsonResponse
     {

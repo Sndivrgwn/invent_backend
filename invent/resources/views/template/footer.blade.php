@@ -1,4 +1,5 @@
     <!-- script tailwind -->
+    <script src="//unpkg.com/alpinejs" defer></script>
     <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
     <script>

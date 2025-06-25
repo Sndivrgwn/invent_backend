@@ -47,24 +47,28 @@
                         <span class="hidden sm:inline">Filter</span> <i class="fa fa-filter sm:ml-2" style="display: flex; justify-content: center; align-items: center;"></i>
                     </button>
                 </div>
-
+                
                 <!-- Date Filter Section -->
                 <div class="flex flex-col sm:flex-row items-start sm:items-center gap-2 sm:gap-4 p-2 sm:p-4 w-full sm:w-auto">
                     <!-- Date Range Filter -->
                     <form method="GET" action="{{ route('history') }}" class="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full">
-                        <div class="flex flex-row gap-2 sm:gap-3 flex-grow w-full">
-                            <!-- Changed to flex-row for all screens -->
+                        <div class="flex flex-row gap-2 sm:gap-3 flex-grow w-full"> <!-- Changed to flex-row for all screens -->
                             <div class="flex flex-col w-full sm:w-auto">
                                 <label for="start_date" class="text-xs sm:text-sm font-medium mb-1">From</label>
-                                <input type="date" id="start_date" name="start_date" value="{{ request('start_date') ?? \Carbon\Carbon::today()->format('Y-m-d') }}" class="input input-bordered input-sm sm:input-md w-full" placeholder="Select start date" />
+                                <input type="date" id="start_date" name="start_date" 
+                                    value="{{ request('start_date') ?? \Carbon\Carbon::today()->format('Y-m-d') }}" 
+                                    class="input input-bordered input-sm sm:input-md w-full"
+                                    placeholder="Select start date" />
                             </div>
                             <div class="flex flex-col w-full sm:w-auto">
                                 <label for="end_date" class="text-xs sm:text-sm font-medium mb-1">To</label>
-                                <input type="date" id="end_date" name="end_date" value="{{ request('end_date') ?? \Carbon\Carbon::today()->format('Y-m-d') }}" class="input input-bordered input-sm sm:input-md w-full" placeholder="Select end date" />
+                                <input type="date" id="end_date" name="end_date" 
+                                    value="{{ request('end_date') ?? \Carbon\Carbon::today()->format('Y-m-d') }}" 
+                                    class="input input-bordered input-sm sm:input-md w-full"
+                                    placeholder="Select end date" />
                             </div>
                         </div>
-                        <div class="flex gap-2 self-end mt-2 sm:mt-0">
-                            <!-- Added mt-2 for mobile spacing -->
+                        <div class="flex gap-2 self-end mt-2 sm:mt-0"> <!-- Added mt-2 for mobile spacing -->
                             <button type="submit" class="btn btn-primary btn-sm sm:btn-md">Apply</button>
                             <a href="{{ route('history') }}" class="btn btn-secondary btn-sm sm:btn-md">Reset</a>
                         </div>
@@ -88,7 +92,7 @@
                             <select name="brand" class="select select-bordered w-full max-w-xs">
                                 <option value="" selected>All Brands</option>
                                 @foreach($allItems->pluck('brand')->filter()->unique() as $brand)
-                                <option value="{{ $brand }}" {{ request('brand') == $brand ? 'selected' : '' }}>{{ $brand }}</option>
+                                    <option value="{{ $brand }}" {{ request('brand') == $brand ? 'selected' : '' }}>{{ $brand }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -99,7 +103,7 @@
                             <select name="category" class="select select-bordered w-full max-w-xs">
                                 <option value="" selected>All Categories</option>
                                 @foreach($allItems->pluck('category.name')->filter()->unique() as $category)
-                                <option value="{{ $category }}" {{ request('category') == $category ? 'selected' : '' }}>{{ $category }}</option>
+                                    <option value="{{ $category }}" {{ request('category') == $category ? 'selected' : '' }}>{{ $category }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -110,7 +114,7 @@
                             <select name="type" class="select select-bordered w-full max-w-xs">
                                 <option value="" selected>All Types</option>
                                 @foreach($allItems->pluck('type')->filter()->unique() as $type)
-                                <option value="{{ $type }}" {{ request('type') == $type ? 'selected' : '' }}>{{ $type }}</option>
+                                    <option value="{{ $type }}" {{ request('type') == $type ? 'selected' : '' }}>{{ $type }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -121,7 +125,7 @@
                             <select name="location" class="select select-bordered w-full max-w-xs">
                                 <option value="" selected>All Locations</option>
                                 @foreach($locations->pluck('description')->unique() as $loc)
-                                <option value="{{ $loc }}" {{ request('location') == $loc ? 'selected' : '' }}>{{ $loc }}</option>
+                                    <option value="{{ $loc }}" {{ request('location') == $loc ? 'selected' : '' }}>{{ $loc }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -160,7 +164,7 @@
                             <th>RETURNED AT</th>
                             <th>DUE DATE</th>
                             <th>LOAN CODE</th>
-                            <th>BORROWER NAME</th>
+                            <th>NAME</th>
                             <th>SERIAL NUMBER</th>
                             <th>PRODUCT</th>
                             <th>STATUS</th>
@@ -169,32 +173,12 @@
                     </thead>
                     <tbody id="itemTableBody" class="text-sm">
                         @forelse($loans as $loan)
-                        @if ($loan->items->isEmpty())
-                        <tr class="hover">
-                            <td>{{ $loan->loan_date }}</td>
-                            <td>{{ $loan->return?->return_date }}</td>
-                            <td>{{ $loan->return_date }}</td>
-                            <td>{{ $loan->code_loans }}</td>
-                            <td>{{ $loan->loaner_name }}</td>
-                            <td colspan="2" class="italic text-gray-400">Tidak ada item</td>
-                            <td><span class="badge badge-warning text-xs">{{ $loan->status }}</span></td>
-                            <td class="whitespace-nowrap">
-                                <div class="flex justify-center items-center gap-2">
-                                    @can('adminFunction')
-                                    <i class="fa fa-trash fa-lg cursor-pointer !leading-none mt-1" onclick="deleteItem({{ $loan->id }})"></i>
-                                    @endcan
-                                    <i class="fa-solid fa-file-pdf fa-lg text-red-600 cursor-pointer !leading-none" title="Lihat PDF" onclick="window.open('{{ route('loan.print.pdf', ['id' => \Illuminate\Support\Facades\Crypt::encryptString($loan->id)]) }}', '_blank')"></i>
-                                    <i class="fa-regular fa-eye fa-lg cursor-pointer" onclick="showLoanDetails({{ $loan->id }})"></i>
-                                </div>
-                            </td>
-                        </tr>
-                        @else
                         @foreach ($loan->items as $index => $item)
                         <tr class="hover">
                             @if ($index === 0)
                             <td rowspan="{{ count($loan->items) }}">{{ $loan->loan_date }}</td>
                             @endif
-                            <td>{{ $loan->return?->return_date }}</td>
+                            <td>{{ $loan->return?->return_date}}</td>
                             <td>{{ $loan->return_date }}</td>
                             <td>{{ $loan->code_loans }}</td>
                             <td>{{ $loan->loaner_name }}</td>
@@ -207,15 +191,17 @@
                                     @can('adminFunction')
                                     <i class="fa fa-trash fa-lg cursor-pointer !leading-none mt-1" onclick="deleteItem({{ $loan->id }})"></i>
                                     @endcan
-                                    <i class="fa-solid fa-file-pdf fa-lg text-red-600 cursor-pointer !leading-none" title="Lihat PDF" onclick="window.open('{{ route('loan.print.pdf', ['id' => \Illuminate\Support\Facades\Crypt::encryptString($loan->id)]) }}', '_blank')"></i>
-                                    <i class="fa-regular fa-eye fa-lg cursor-pointer" onclick="showLoanDetails({{ $loan->id }})"></i>
+                                    <i class="fa-solid fa-file-pdf fa-lg text-red-600 cursor-pointer !leading-none"
+                                    title="Lihat PDF"
+                                    onclick="window.open('{{ route('loan.print.pdf', ['id' => \Illuminate\Support\Facades\Crypt::encryptString($loan->id)]) }}', '_blank')"></i>
+                                    <i class="fa-regular fa-eye fa-lg cursor-pointer" onclick="showLoanDetails({{ $loan->id }})"></i> 
                                 </div>
                             </td>
+
+                            {{-- tampilan preview --}}
                             @endif
                         </tr>
                         @endforeach
-                        @endif
-
                         @empty
                         <tr>
                             <td colspan="8" class="text-center text-gray-500">No history found</td>
@@ -280,11 +266,11 @@
 </script>
 
 <script>
-    function resetFilter(name) {
+     function resetFilter(name) {
         document.querySelectorAll(`input[name="${name}"]`).forEach(r => r.checked = false);
     }
 
-
+    
 
     async function showLoanDetails(loanId) {
         try {
@@ -542,71 +528,45 @@
                 }
 
                 data.forEach(loan => {
-                    if (loan.items.length === 0) {
-        const row = document.createElement('tr');
-        row.classList.add('hover');
-        row.innerHTML = `
-            <td>${loan.loan_date}</td>
-            <td>${loan.return?.return_date || '-'}</td>
-            <td>${loan.return_date}</td>
-            <td>${loan.code_loans}</td>
-            <td>${loan.loaner_name}</td>
-            <td colspan="2" class="italic text-gray-400">Tidak ada item</td>
-            <td><span class="badge badge-warning text-xs">${loan.status}</span></td>
-            <td class="text-center whitespace-nowrap">
-                <div class="flex justify-center items-center gap-2">
-                    ${loan.can_delete ? `
-                    <i class="fa fa-trash fa-lg cursor-pointer !leading-none mt-1" onclick="deleteItem(${loan.id})"></i>
-                    ` : ''}
-                    <i class="fa-solid fa-file-pdf fa-lg text-red-600 cursor-pointer !leading-none"
-                    title="Lihat PDF"
-                    onclick="window.open('/loan/${loan.encrypted_id}/pdf', '_blank')"></i>
-                    <i class="fa-regular fa-eye fa-lg cursor-pointer" onclick="showLoanDetails(${loan.id})"></i> 
-                </div>
-            </td>
-        `;
-        tbody.appendChild(row);
-    } else {
-        loan.items.forEach((item, index) => {
-            const row = document.createElement('tr');
-            row.classList.add('hover');
+                    loan.items.forEach((item, index) => {
+                        const row = document.createElement('tr');
+                        row.classList.add('hover');
 
-            let html = "";
+                        let html = "";
 
-            if (index === 0) {
-                html += `<td rowspan="${loan.items.length}">${loan.loan_date}</td>`;
-            }
+                        if (index === 0) {
+                            html += `<td rowspan="${loan.items.length}">${loan.loan_date}</td>`;
+                        }
 
-            html += `
-                <td>${loan.return?.return_date || '-'}</td>
-                <td>${loan.return_date}</td>
-                <td>${loan.code_loans}</td>
-                <td>${loan.loaner_name}</td>
-                <td class="font-semibold">${item.code}</td>
-                <td>${item.name}</td>
-                <td><span class="badge badge-warning text-xs">${loan.status}</span></td>
-            `;
+                        html += `
+    <td>${loan.return?.return_date || '-'}</td>
+    <td>${loan.return_date}</td>
+    <td>${loan.code_loans}</td>
+    <td>${loan.loaner_name}</td>
+    <td class="font-semibold">${item.code}</td>
+    <td>${item.name}</td>
+    <td><span class="badge badge-warning text-xs">${loan.status}</span></td>
+`;
 
-            if (index === 0) {
+                        if (index === 0) {
                 html += `
                     <td class="text-center whitespace-nowrap" rowspan="${loan.items.length}">
                         <div class="flex justify-center items-center gap-2">
-                            ${loan.can_delete ? `
-                            <i class="fa fa-trash fa-lg cursor-pointer !leading-none mt-1" onclick="deleteItem(${loan.id})"></i>
-                            ` : ''}
-                            <i class="fa-solid fa-file-pdf fa-lg text-red-600 cursor-pointer !leading-none"
-                            title="Lihat PDF"
-                            onclick="window.open('/loan/${loan.encrypted_id}/pdf', '_blank')"></i>
-                            <i class="fa-regular fa-eye fa-lg cursor-pointer" onclick="showLoanDetails(${loan.id})"></i> 
-                        </div>
+                        @can('adminFunction')
+                        <i class="fa fa-trash fa-lg cursor-pointer !leading-none mt-1" onclick="deleteItem(${loan.id})"></i>
+                        @endcan
+                        <i class="fa-solid fa-file-pdf fa-lg text-red-600 cursor-pointer !leading-none"
+                        title="Lihat PDF"
+                        onclick="window.open('/loan/${loan.encrypted_id}/pdf', '_blank')"></i>
+                        <i class="fa-regular fa-eye fa-lg cursor-pointer" onclick="showLoanDetails(${loan.id})"></i> 
+                    </div>
                     </td>
                 `;
             }
 
-            row.innerHTML = html;
-            tbody.appendChild(row);
-        });
-    }
+                        row.innerHTML = html;
+                        tbody.appendChild(row);
+                    });
                 });
             })
             .catch(error => {
@@ -627,10 +587,10 @@
         if (!deleteTargetId) return;
 
         const res = await fetch(`/api/history/${deleteTargetId}`, {
-            method: 'DELETE'
-            , headers: {
-                'Accept': 'application/json'
-                , 'X-CSRF-TOKEN': '{{ csrf_token() }}'
+            method: 'DELETE',
+            headers: {
+                'Accept': 'application/json',
+                'X-CSRF-TOKEN': '{{ csrf_token() }}'
             }
         });
 
@@ -651,7 +611,6 @@
         document.getElementById("confirmDeleteDialog").close();
         deleteTargetId = null;
     }
-
 </script>
 
 @stack('scripts')

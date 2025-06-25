@@ -12,6 +12,8 @@ class DashboardController extends Controller
     public function index(Request $request)
 {
     $search = $request->input('search');
+    $sortBy = $request->input('sortBy', 'loan_date'); // default sort
+    $sortDir = $request->input('sortDir', 'asc');     // default ascending
 
     $items = Item::all();
     $totalItems = $items->count();
@@ -19,59 +21,59 @@ class DashboardController extends Controller
     $categories = Category::all();
     $totalCategories = $categories->count();
 
-    $loans = Loan::query();
+    $loans = Loan::with('items');
 
     if ($search) {
-        $loans->where('code_loans', 'like', "%{$search}%")
-            ->orWhere('loaner_name', 'like', "%{$search}%")
-            ->orWhere('status', 'like', "%{$search}%")
-            ->orWhere('loan_date', 'like', "%{$search}%")
-            ->orWhere('return_date', 'like', "%{$search}%")
-            ->orWhereHas('items', function ($query) use ($search) {
-                $query->where('name', 'like', "%{$search}%")
-                    ->orWhere('type', 'like', "%{$search}%")
-                    ->orWhere('code', 'like', "%{$search}%")
-                    ->orWhereHas('category', function ($query) use ($search) {
-                        $query->where('name', 'like', "%{$search}%");
-                    });
-            })
-            ->orWhere('description', 'like', "%{$search}%");
+        $loans->where(function ($query) use ($search) {
+            $query->where('code_loans', 'like', "%{$search}%")
+                ->orWhere('loaner_name', 'like', "%{$search}%")
+                ->orWhere('status', 'like', "%{$search}%")
+                ->orWhere('loan_date', 'like', "%{$search}%")
+                ->orWhere('return_date', 'like', "%{$search}%")
+                ->orWhereHas('items', function ($query) use ($search) {
+                    $query->where('name', 'like', "%{$search}%")
+                        ->orWhere('type', 'like', "%{$search}%")
+                        ->orWhere('code', 'like', "%{$search}%")
+                        ->orWhereHas('category', function ($query) use ($search) {
+                            $query->where('name', 'like', "%{$search}%");
+                        });
+                })
+                ->orWhere('description', 'like', "%{$search}%");
+        });
     }
 
-    $loans = $loans->paginate(20);
+    // Tambahkan sort
+    if (in_array($sortBy, ['loan_date', 'loaner_name'])) {
+        $loans->orderBy($sortBy, $sortDir);
+    }
+
+    $loans = $loans->paginate(20)->appends([
+        'search' => $search,
+        'sortBy' => $sortBy,
+        'sortDir' => $sortDir,
+    ]);
+
     $totalLoans = $loans->total();
 
-    // Menghitung total item yang sedang dipinjam
-    $totalLoanedItems = 0;
-    
-    // Cara 1: Jika Anda memiliki relasi many-to-many antara Loan dan Item
-    // Anda bisa menghitung jumlah item dari semua loan yang belum dikembalikan
-    $activeLoans = Loan::where('status', 'borrowed') // atau kondisi lain yang sesuai
+    $activeLoans = Loan::where('status', 'borrowed')
                      ->orWhereNull('return_date')
                      ->with('items')
                      ->get();
-    
-    foreach ($activeLoans as $loan) {
-        $totalLoanedItems += $loan->items->count();
-    }
-    
-    // Atau Cara 2: Jika Anda memiliki pivot table loan_item
-    // Anda bisa menghitung langsung dari pivot table
-    // $totalLoanedItems = DB::table('loan_item')
-    //     ->join('loans', 'loans.id', '=', 'loan_item.loan_id')
-    //     ->where('loans.status', 'Dipinjam') // atau kondisi lain
-    //     ->orWhereNull('loans.return_date')
-    //     ->count();
+
+    $totalLoanedItems = $activeLoans->sum(fn($loan) => $loan->items->count());
 
     return view('pages.dashboard', compact(
-        'totalItems', 
-        'totalCategories', 
-        'totalLoans', 
-        'loans', 
+        'totalItems',
+        'totalCategories',
+        'totalLoans',
+        'loans',
         'search',
-        'totalLoanedItems'
+        'totalLoanedItems',
+        'sortBy',
+        'sortDir'
     ));
 }
+
 
     public function search(Request $request)
     {
