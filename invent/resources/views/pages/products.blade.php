@@ -473,8 +473,14 @@
                 <div class="modal-box">
                     <form method="dialog" id="viewForm">
                         <div class="w-full mb-4">
-                            <img src="{{ asset('image/default.png') }}" id="view_image" alt="Preview" class="w-full h-[180px] object-cover rounded-lg">
+                            <img src="{{ asset('image/default.png') }}" id="view_image" alt="Preview" class="w-full h-[180px] object-cover rounded-lg cursor-pointer">
                         </div>
+                        <dialog id="imageZoomModal" class="modal">
+                            <div class="modal-box w-11/12 max-w-2xl p-0 flex justify-center items-center bg-transparent shadow-none">
+                                {{-- Image yang akan diperbesar --}}
+                                <img id="modalZoomImage" src="" alt="Zoomed Image" class="max-w-full max-h-[90vh] object-contain rounded-lg shadow-xl" />
+                            </div>
+                        </dialog>
 
                         <button type="button" onclick="document.getElementById('viewProduct').close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
                         <h1 class="font-semibold text-2xl mb-4">Product Details</h1>
@@ -892,6 +898,31 @@
     }
 </script>
 @endpush
+
+<script>
+    // image preview zoom
+document.addEventListener('DOMContentLoaded', function() {
+    const imagePreview = document.getElementById('view_image');
+    const imageZoomModal = document.getElementById('imageZoomModal');
+    const modalZoomImage = document.getElementById('modalZoomImage');
+
+    // Fungsi untuk menampilkan gambar diperbesar saat preview diklik
+    imagePreview.addEventListener('click', function() {
+        const currentImageSrc = imagePreview.src;
+        if (currentImageSrc && currentImageSrc !== "{{ asset('image/default.png') }}") { 
+            modalZoomImage.src = currentImageSrc;
+            imageZoomModal.showModal(); 
+        }
+    });
+
+    // Close diluar dialog
+    imageZoomModal.addEventListener('click', (event) => {
+        if (event.target === imageZoomModal) { 
+            imageZoomModal.close();
+        }
+    });
+});
+</script>
 
 @stack('scripts')
 @include('template.footer')

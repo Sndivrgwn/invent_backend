@@ -43,7 +43,7 @@
                         <div class="flex items-center gap-4">
                             <div class="avatar">
                                 <div class="w-24 rounded-lg bg-gray-200">
-                                    <img id="imagePreview" src="{{ asset('image/default.png') }}" alt="Preview" class="w-full h-full object-cover" />
+                                    <img id="imagePreview" src="{{ asset('image/default.png') }}" alt="Preview" class="w-full h-full object-cover cursor-pointer" />
                                 </div>
                             </div>
                             <input type="file" id="imageUpload" name="image" class="file-input file-input-bordered w-full max-w-xs" accept="image/*" />
@@ -110,8 +110,14 @@
                 <form method="dialog">
                     <!-- Product Image -->
                     <div class="w-full mb-4">
-                        <img id="viewLocationImage" alt="Location Image" class="w-full h-48 object-cover rounded-lg" />
+                        <img id="viewLocationImage" alt="Location Image" class="w-full h-48 object-cover rounded-lg cursor-pointer" />
                     </div>
+                    <dialog id="imageZoomModal" class="modal">
+                        <div class="modal-box w-11/12 max-w-2xl p-0 flex justify-center items-center bg-transparent shadow-none">
+                            {{-- Image yang akan diperbesar --}}
+                            <img id="modalZoomImage" src="" alt="Zoomed Image" class="max-w-full max-h-[90vh] object-contain rounded-lg shadow-xl" />
+                        </div>
+                    </dialog>
 
                     <!-- Close Button -->
                     <button type="button" onclick="document.getElementById('viewProduct').close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
@@ -451,6 +457,29 @@ function submitForm(form, url) {
         console.error('Error:', error);
     });
 }
+
+// image preview zoom
+document.addEventListener('DOMContentLoaded', function() {
+    const imagePreview = document.getElementById('viewLocationImage');
+    const imageZoomModal = document.getElementById('imageZoomModal');
+    const modalZoomImage = document.getElementById('modalZoomImage');
+
+    // Fungsi untuk menampilkan gambar diperbesar saat preview diklik
+    imagePreview.addEventListener('click', function() {
+        const currentImageSrc = imagePreview.src;
+        if (currentImageSrc && currentImageSrc !== "{{ asset('image/default.png') }}") { 
+            modalZoomImage.src = currentImageSrc;
+            imageZoomModal.showModal(); 
+        }
+    });
+
+    // Close diluat dialog
+    imageZoomModal.addEventListener('click', (event) => {
+        if (event.target === imageZoomModal) { 
+            imageZoomModal.close();
+        }
+    });
+});
 </script>
 
 @include('template.footer')
