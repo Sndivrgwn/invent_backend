@@ -737,8 +737,14 @@ function sortLinkUser($field, $currentSortBy, $currentSortDir) {
                 const isSelf = user.id === currentUserId;
                 const isSuperadmin = currentUserRoleId === 3;
                 const isAdmin = currentUserRoleId === 1;
-                const isUserFilter = roleFilter.value === 'user';
-                const mt2 = isUserFilter ? 'mt-5' : ''; 
+                let mtClass = '';
+                if (roleFilter.value === 'user') {
+                    mtClass = 'mt-6';
+                } else if (roleFilter.value === 'admin') {
+                    mtClass = 'mt-6'; // atau kosongkan: ''
+                } else {
+                    mtClass = 'mt-6';
+                }
 
                 // Kalau yang login bukan superadmin dan user target adalah superadmin, sembunyikan barisnya
                 if (!isSuperadmin && user.roles_id === 3) return;
@@ -749,16 +755,16 @@ function sortLinkUser($field, $currentSortBy, $currentSortDir) {
                 // Tambahkan tombol edit/hapus jika role login mengizinkan
                 if (isSuperadmin && !isSelf) {
                     actions = `
-                        <i class="fa fa-trash fa-lg cursor-pointer ${mt2}" onclick="deleteItem(${user.id})"></i>
-                        <i class="fa fa-pen-to-square fa-lg cursor-pointer ${mt2}" onclick="openEditModal(${user.id}, '${user.name}', '${user.email}', ${user.roles_id})"></i>
+                        <i class="fa fa-trash fa-lg cursor-pointer ${mtClass}" onclick="deleteItem(${user.id})"></i>
+                        <i class="fa fa-pen-to-square fa-lg cursor-pointer ${mtClass}" onclick="openEditModal(${user.id}, '${user.name}', '${user.email}', ${user.roles_id})"></i>
                         ${actions}
                     `;
                 }
 
                 if (isAdmin && user.roles_id === 2) {
                     actions = `
-                        <i class="fa fa-trash fa-lg cursor-pointer ${mt2}" onclick="deleteItem(${user.id})"></i>
-                        <i class="fa fa-pen-to-square fa-lg cursor-pointer ${mt2}" onclick="openEditModal(${user.id}, '${user.name}', '${user.email}', ${user.roles_id})"></i>
+                        <i class="fa fa-trash fa-lg cursor-pointer ${mtClass}" onclick="deleteItem(${user.id})"></i>
+                        <i class="fa fa-pen-to-square fa-lg cursor-pointer ${mtClass}" onclick="openEditModal(${user.id}, '${user.name}', '${user.email}', ${user.roles_id})"></i>
                         ${actions}
                     `;
                 }
