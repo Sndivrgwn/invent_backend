@@ -116,8 +116,9 @@
              <div class="bg-white p-4 rounded-lg shadow-md mx-12">
             <h3 class="font-semibold mb-3">Item Distribution in {{ $category->name }}</h3>
             <div class="h-48">
-                <canvas id="categoryChart{{ $category->id }}"></canvas>
+                <canvas id="categoryPieChart{{ $category->id }}"></canvas>
             </div>
+        </div>
         </div>
             <div class="overflow-x-auto">
                 <table class="table w-full bg-white rounded shadow-md">
@@ -354,61 +355,44 @@
         });
 
         @foreach($categories as $category)
-            @if($category->type_summaries->isNotEmpty())
-                const ctx{{ $category->id }} = document.getElementById('categoryChart{{ $category->id }}').getContext('2d');
-                new Chart(ctx{{ $category->id }}, {
-                    type: 'bar',
-                    data: {
-                        labels: {!! json_encode($category->type_summaries->pluck('type')) !!},
-                        datasets: [{
-                            label: 'Quantity',
-                            data: {!! json_encode($category->type_summaries->pluck('quantity')) !!},
-                            backgroundColor: '#36A2EB',
-                            borderColor: '#1e88e5',
-                            borderWidth: 1
+        @if($category->type_summaries->isNotEmpty())
+            const ctx{{ $category->id }} = document.getElementById('categoryPieChart{{ $category->id }}').getContext('2d');
+            new Chart(ctx{{ $category->id }}, {
+                type: 'pie',
+                data: {
+                    labels: {!! json_encode($category->type_summaries->pluck('type')) !!},
+                    datasets: [{
+                        data: {!! json_encode($category->type_summaries->pluck('quantity')) !!},
+                        backgroundColor: [
+                            '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', 
+                            '#9966FF', '#FF9F40', '#8AC24A', '#F06292'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'right',
                         },
-                        {
-                            label: 'Available',
-                            data: {!! json_encode($category->type_summaries->pluck('available')) !!},
-                            backgroundColor: '#4BC0C0',
-                            borderColor: '#26a69a',
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            y: {
-                                beginAtZero: true,
-                                title: {
-                                    display: true,
-                                    text: 'Number of Items'
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.raw || 0;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return `${label}: ${value} items (${percentage}%)`;
                                 }
-                            },
-                            x: {
-                                title: {
-                                    display: true,
-                                    text: 'Item Type'
-                                }
-                            }
-                        },
-                        plugins: {
-                            tooltip: {
-                                callbacks: {
-                                    label: function(context) {
-                                        return `${context.dataset.label}: ${context.raw} items`;
-                                    }
-                                }
-                            },
-                            legend: {
-                                position: 'top',
                             }
                         }
                     }
-                });
-            @endif
-        @endforeach
+                }
+            });
+        @endif
+    @endforeach
 
         // Inventory Status Chart (Doughnut)
         const statusCtx = document.getElementById('inventoryStatusChart').getContext('2d');
