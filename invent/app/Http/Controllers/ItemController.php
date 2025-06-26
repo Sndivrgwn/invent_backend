@@ -3,8 +3,16 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\Category;
 use App\Models\Item;
+use App\Models\Location;
+use Exception;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Validation\ValidationException;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
+
 
 class ItemController extends Controller
 {
@@ -16,24 +24,160 @@ class ItemController extends Controller
         return response()->json(Item::all(), 200);
     }
 
+    public function search(Request $request)
+    {
+        $keyword = $request->query('q');
+        $items = Item::where('code', 'LIKE', "%$keyword%")
+            ->orWhere('name', 'LIKE', "%$keyword%")
+            ->orWhere('brand', 'LIKE', "%$keyword%")
+            ->orWhere('type', 'LIKE', "%$keyword%")
+            ->orWhere('condition', 'LIKE', "%$keyword%")
+            ->limit(10)
+            ->get();
+
+        return response()->json($items);
+    }
+
+    public function getAll()
+    {
+        $items = Item::with(['category', 'location'])->get();
+
+        return $items;
+    }
+
+    public function getAllItems(Request $request)
+    {
+        $sortBy = $request->input('sortBy', 'name'); // default
+        $sortDir = $request->input('sortDir', 'asc');
+
+        $query = Item::select('items.*')
+            ->join('locations', 'items.location_id', '=', 'locations.id')
+            ->with(['category', 'location']);
+
+        // Filtering
+        if ($request->has('search-navbar') && $request->filled('search-navbar')) {
+            $search = $request->input('search-navbar');
+
+            $query->where(function ($q) use ($search) {
+                $q->where('items.name', 'like', "%{$search}%")
+                    ->orWhere('items.code', 'like', "%{$search}%")
+                    ->orWhere('items.brand', 'like', "%{$search}%")
+                    ->orWhereHas('category', function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%");
+                    })
+                    ->orWhere('locations.name', 'like', "%{$search}%")
+                    ->orWhere('items.type', 'like', "%{$search}%")
+                    ->orWhere('items.condition', 'like', "%{$search}%")
+                    ->orWhere('items.status', 'like', "%{$search}%");
+            });
+        }
+
+        // Sort
+        $allowedSorts = ['name', 'code', 'type', 'condition', 'status', 'rack'];
+        if (in_array($sortBy, $allowedSorts)) {
+            if ($sortBy === 'rack') {
+                $query->orderBy('locations.name', $sortDir);
+            } else {
+                $query->orderBy("items.$sortBy", $sortDir);
+            }
+        }
+
+        $items = $query->paginate(20)->appends([
+            'search-navbar' => $request->input('search-navbar'),
+            'sortBy' => $sortBy,
+            'sortDir' => $sortDir,
+        ]);
+
+        $locations = Location::all();
+        $categories = Category::all();
+
+        return view('pages.products', compact('items', 'locations', 'categories', 'sortBy', 'sortDir'));
+    }
+
+
+
+    public function filter(Request $request)
+    {
+        $items = Item::with('location')->when($request->brand, fn($q) => $q->where('brand', $request->brand))
+            ->when($request->category, fn($q) => $q->whereHas('category', fn($q) => $q->where('name', $request->category)))
+            ->when($request->location, fn($q) => $q->whereHas('location', fn($q) => $q->where('description', $request->location)))
+            ->when($request->type, fn($q) => $q->where('type', $request->type))
+            ->when($request->condition, fn($q) => $q->where('condition', $request->condition))
+            ->when($request->status, fn($q) => $q->where('status', $request->status))
+            ->get();
+
+        return response()->json($items);
+    }
+
+    /**
+     * Display the total number of items.
+     */
+    public function totalItems()
+    {
+        $all = Item::all();
+        $totalItems = $all->count();
+        return view('pages.dashboard', compact('totalItems'));
+    }
+
     /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'code' => 'required|string|unique:items',
-            'status' => 'required|string',
-            'category_id' => 'required|exists:categories,id' ,
-            'quantity' => 'required|integer|min:1',
-            'condition' => 'required|string',
-            'location_id' => 'required|exists:locations,id',
-            'description' => 'nullable|string',
-        ]);
+        try {
+            // Validasi input
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'code' => 'required|string|unique:items,code',
+                'brand' => 'required|string',
+                'type' => 'required|string',
+                'condition' => 'required|string',
+                'image' => 'nullable|image|max:2048',
+                'status' => 'required|in:READY,NOT READY',
+                'category_id' => 'required|exists:categories,id',
+                'location_id' => 'required|exists:locations,id',
+                'description' => 'nullable|string',
+            ]);
 
-        $items = Item::create($validated);
-        return response()->json(['message' => 'Item created successfully', 'data' => $items], 201);
+            if ($request->hasFile('image')) {
+                $path = $request->file('image')->store('items', 'public');
+            } else {
+                $path = 'default.png';
+            }
+
+            $validated['image'] = $path;
+            // Simpan item
+            $item = Item::create($validated);
+
+            return response()->json([
+                'message' => 'Item created successfully',
+                'data' => $item,
+            ], 201);
+        } catch (ValidationException $e) {
+            report($e); // atau Log::error($e)
+
+            // Tangkap error validasi
+            return response()->json([
+                'message' => 'Validation failed',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (QueryException $e) {
+            report($e); // atau Log::error($e)
+
+            // Tangkap error database
+            return response()->json([
+                'message' => 'Database error',
+                'error' => $e->getMessage()
+            ], 500);
+        } catch (Exception $e) {
+            report($e); // atau Log::error($e)
+
+            // Tangkap error umum lainnya
+            return response()->json([
+                'message' => 'Server error',
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
 
     /**
@@ -46,7 +190,9 @@ class ItemController extends Controller
             return response()->json(['message' => 'Item not found'], 404);
         }
 
-        return response()->json($items);
+        return response()->json([
+            'data' => $items
+        ]);
     }
 
     /**
@@ -54,24 +200,67 @@ class ItemController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $items = Item::find($id);
-        if (!$items) {
-            return response()->json(['message' => 'Item not found'], 404);
+        try {
+            $item = Item::find($id);
+            if (!$item) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Item not found'
+                ], 404);
+            }
+
+            $validated = $request->validate([
+                'name' => 'required|string|max:255',
+                'code' => 'required|string|unique:items,code,' . $id,
+                'brand' => 'required|string',
+                'type' => 'required|string',
+                'condition' => 'required|string',
+                'status' => 'required|in:READY,NOT READY',
+                'category_id' => 'required|exists:categories,id',
+                'location_id' => 'required|exists:locations,id',
+                'description' => 'nullable|string',
+                'image' => 'nullable|image|max:2048',
+            ]);
+
+            // Handle image upload
+            if ($request->hasFile('image')) {
+                // Delete old image if it exists and isn't the default
+                if ($item->image && $item->image !== 'default.png' && Storage::disk('public')->exists($item->image)) {
+                    Storage::disk('public')->delete($item->image);
+                }
+
+                // Store new image
+                $path = $request->file('image')->store('items', 'public');
+                $validated['image'] = $path;
+            } else {
+                // Keep the existing image if no new image is uploaded
+                $validated['image'] = $item->image;
+            }
+
+            $item->update($validated);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Item updated successfully',
+                'data' => $item
+            ]);
+        } catch (ValidationException $e) {
+            report($e); // atau Log::error($e)
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Validation failed',
+                'errors' => $e->errors()
+            ], 422);
+        } catch (\Exception $e) {
+            report($e); // atau Log::error($e)
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Server error',
+                'error' => $e->getMessage()
+            ], 500);
         }
-
-        $validated = $request->validate([
-            'name' => 'required|string|max:255',
-            'code' => 'required|string|unique:items,code,' . $id,
-            'status' => 'required|string',
-            'category_id' => 'required|exists:categories,id',
-            'quantity' => 'required|integer|min:1',
-            'condition' => 'required|string',
-            'location_id' => 'required|exists:locations,id',
-            'description' => 'nullable|string',
-        ]);
-
-        $items->update($validated);
-        return response()->json(['message' => 'Item updated successflly', 'data' => $items]);
     }
 
     /**

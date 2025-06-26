@@ -20,6 +20,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'avatar',
         'roles_id',
     ];
 
@@ -49,4 +50,38 @@ class User extends Authenticatable
     public function roles(){
         return $this->belongsTo(Roles::class);
     }
+
+    public function loans()
+{
+    return $this->hasMany(Loan::class);
+}
+
+// app/Models/User.php
+
+public function hasRole($roleName)
+{
+    // If $roleName is numeric, we're checking by ID
+    if (is_numeric($roleName)) {
+        return $this->role_id == $roleName;
+    }
+    
+    // Otherwise check by role name
+    return optional($this->role)->name === $roleName;
+}
+
+public function isAdmin()
+{
+    return $this->roles_id == 1;
+}
+
+public function isUser()
+{
+    return $this->roles_id == 2;
+}
+
+public function isSuperAdmin() 
+{
+    return $this->roles_id == 3;
+}
+
 }

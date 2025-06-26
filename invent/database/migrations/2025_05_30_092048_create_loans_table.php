@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('loans', function (Blueprint $table) {
             $table->id();
-            $table->integer('quantity');
             $table->string('code_loans')->unique();
             $table->date('loan_date');
             $table->date('return_date');
             $table->string('status');
+            $table->string('loaner_name');
+            $table->text('description')->nullable();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('item_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }

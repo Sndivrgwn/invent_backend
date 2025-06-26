@@ -6,9 +6,14 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "barryvdh/laravel-dompdf": "^3.1",
         "laravel/framework": "^11.0",
         "laravel/sanctum": "^4.0",
-        "laravel/tinker": "^2.9"
+        "laravel/tinker": "^2.9",
+        "maatwebsite/excel": "^3.1",
+        "phpoffice/phpspreadsheet": "^1.29",
+        "spatie/laravel-flare": "^1.1",
+        "vinkla/hashids": "^12.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
