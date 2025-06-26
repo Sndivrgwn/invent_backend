@@ -83,6 +83,8 @@ class UserManagementController extends Controller
             ]);
             
         } catch (\Exception $e) {
+            report($e); // atau Log::error($e)
+
             return redirect()->back()->with('toast', [
                 'type' => 'error',
                 'message' => 'Error creating user: ' . $e->getMessage()
@@ -118,6 +120,8 @@ class UserManagementController extends Controller
             ], 200);
             
         } catch (\Exception $e) {
+            report($e); // atau Log::error($e)
+
             return response()->json([
                 'toast' => [
                     'type' => 'error',
@@ -141,6 +145,8 @@ class UserManagementController extends Controller
             ], 200);
             
         } catch (\Exception $e) {
+            report($e); // atau Log::error($e)
+
             return response()->json([
                 'toast' => [
                     'type' => 'error',
@@ -168,6 +174,8 @@ class UserManagementController extends Controller
             ]);
             
         } catch (\Exception $e) {
+            report($e); // atau Log::error($e)
+
             return response()->json([
                 'toast' => [
                     'type' => 'error',
@@ -188,6 +196,8 @@ class UserManagementController extends Controller
             return response()->json($loans);
             
         } catch (\Exception $e) {
+            report($e); // atau Log::error($e)
+
             return response()->json([
                 'toast' => [
                     'type' => 'error',

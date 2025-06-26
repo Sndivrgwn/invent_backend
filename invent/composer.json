@@ -12,6 +12,7 @@
         "laravel/tinker": "^2.9",
         "maatwebsite/excel": "^3.1",
         "phpoffice/phpspreadsheet": "^1.29",
+        "spatie/laravel-flare": "^1.1",
         "vinkla/hashids": "^12.0"
     },
     "require-dev": {

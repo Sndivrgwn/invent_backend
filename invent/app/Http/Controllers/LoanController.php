@@ -90,6 +90,8 @@ class LoanController extends Controller
         ));
 
     } catch (\Exception $e) {
+        report($e); // atau Log::error($e)
+
         Log::error('Error fetching loans: ' . $e->getMessage());
         return redirect()->back()->with('toast_error', 'Failed to load loan data. Please try again.');
     }
@@ -149,6 +151,8 @@ class LoanController extends Controller
             'message' => 'Loan successfully created!'
         ], 201);
     } catch (\Exception $e) {
+        report($e); // atau Log::error($e)
+        Log::error('Loan creation failed: ' . $e->getMessage());
         DB::rollBack();
         return response()->json([
             'message' => $e->getMessage()
@@ -161,6 +165,8 @@ class LoanController extends Controller
         try {
             return Excel::download(new HistoryExport, 'loan_history_' . date('Ymd_His') . '.xlsx');
         } catch (\Exception $e) {
+            report($e); // atau Log::error($e)
+
             Log::error('Export failed: ' . $e->getMessage());
             return back()->with('toast_error', 'Failed to generate export. Please try again.');
         }
@@ -178,6 +184,8 @@ class LoanController extends Controller
         return $pdf->stream('loan_form_' . $loan->code_loans . '.pdf');
 
     } catch (\Exception $e) {
+        report($e); // atau Log::error($e)
+
         Log::error('Loan PDF stream failed: ' . $e->getMessage());
         return redirect()->back()->with('toast_error', 'Gagal menampilkan PDF');
     }
@@ -212,6 +220,8 @@ class LoanController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            report($e); // atau Log::error($e)
+
             Log::error('Search failed: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
@@ -234,6 +244,8 @@ class LoanController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            report($e); // atau Log::error($e)
+
             Log::error('Failed to fetch loan: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
@@ -310,6 +322,8 @@ class LoanController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            report($e); // atau Log::error($e)
+
             Log::error('Loan update failed: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
@@ -351,6 +365,8 @@ class LoanController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            report($e); // atau Log::error($e)
+
             DB::rollBack();
             Log::error('Loan deletion failed: ' . $e->getMessage());
             

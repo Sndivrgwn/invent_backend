@@ -49,6 +49,8 @@ class ManageLoanController extends Controller
         return view('pages.manageLoan', compact('myloans', 'sortBy', 'sortDir'));
 
     } catch (\Exception $e) {
+        report($e); // atau Log::error($e)
+
         Log::error("Failed to fetch loans: " . $e->getMessage());
         return redirect()->back()->with('toast_error', 'Failed to load loans data. Please try again.');
     }
@@ -71,6 +73,8 @@ class ManageLoanController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            report($e); // atau Log::error($e)
+
             Log::error("Failed to fetch loan {$id}: " . $e->getMessage());
             return response()->json([
                 'success' => false,
@@ -101,6 +105,8 @@ class ManageLoanController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            report($e); // atau Log::error($e)
+
             DB::rollBack();
             Log::error("Failed to delete loan {$id}: " . $e->getMessage());
             return response()->json([
@@ -146,6 +152,8 @@ class ManageLoanController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            report($e); // atau Log::error($e)
+
             DB::rollBack();
             Log::error("Failed to return loan {$id}: " . $e->getMessage());
             return response()->json([

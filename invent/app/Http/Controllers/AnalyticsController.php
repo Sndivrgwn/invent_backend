@@ -66,6 +66,8 @@ class AnalyticsController extends Controller
 
     } catch (Exception $e) {
         Log::error('Error in AnalyticsController@index: ' . $e->getMessage());
+        report($e); // atau Log::error($e)
+
         return redirect()->back()->with('toast', [
             'type' => 'error',
             'message' => 'Failed to load analytics data. Please try again.'
@@ -83,6 +85,8 @@ class AnalyticsController extends Controller
             return Excel::download(new CategoryExport, 'categories_report_' . now()->format('Ymd_His') . '.xlsx');
         } catch (Exception $e) {
             Log::error('Error in AnalyticsController@export: ' . $e->getMessage());
+            report($e); // atau Log::error($e)
+
             return redirect()->back()->with('error', 'Failed to generate export. Please try again.');
         }
     }
@@ -107,6 +111,8 @@ public function store(Request $request)
         ]);
 
     } catch (\Illuminate\Validation\ValidationException $e) {
+        report($e); // atau Log::error($e)
+        Log::error('Validation error in AnalyticsController@store: ' . $e->getMessage());
         return redirect()->back()
             ->withErrors($e->validator)
             ->withInput()
@@ -116,6 +122,8 @@ public function store(Request $request)
             ]);
     } catch (Exception $e) {
         Log::error('Error in AnalyticsController@store: ' . $e->getMessage());
+        report($e); // atau Log::error($e)
+
         return redirect()->back()->with('toast', [
             'type' => 'error',
             'message' => 'Failed to create category. Please try again.'
@@ -148,6 +156,7 @@ public function destroy(string $id)
 
     } catch (Exception $e) {
         Log::error('Error in AnalyticsController@destroy: ' . $e->getMessage());
+        report($e); // atau Log::error($e)
         return response()->json([
             'success' => false,
             'toast' => [

@@ -154,18 +154,24 @@ class ItemController extends Controller
                 'data' => $item,
             ], 201);
         } catch (ValidationException $e) {
+            report($e); // atau Log::error($e)
+
             // Tangkap error validasi
             return response()->json([
                 'message' => 'Validation failed',
                 'errors' => $e->errors()
             ], 422);
         } catch (QueryException $e) {
+            report($e); // atau Log::error($e)
+
             // Tangkap error database
             return response()->json([
                 'message' => 'Database error',
                 'error' => $e->getMessage()
             ], 500);
         } catch (Exception $e) {
+            report($e); // atau Log::error($e)
+
             // Tangkap error umum lainnya
             return response()->json([
                 'message' => 'Server error',
@@ -239,12 +245,16 @@ class ItemController extends Controller
                 'data' => $item
             ]);
         } catch (ValidationException $e) {
+            report($e); // atau Log::error($e)
+
             return response()->json([
                 'success' => false,
                 'message' => 'Validation failed',
                 'errors' => $e->errors()
             ], 422);
         } catch (\Exception $e) {
+            report($e); // atau Log::error($e)
+
             return response()->json([
                 'success' => false,
                 'message' => 'Server error',
