@@ -30,6 +30,24 @@
             </div>
         </div>
 
+        <!-- Tambahkan ini setelah bagian "Category Overview" -->
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+    <!-- Pie Chart for Category Distribution -->
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <h2 class="text-lg font-semibold mb-4">Category Distribution</h2>
+        <div class="h-64">
+            <canvas id="categoryPieChart"></canvas>
+        </div>
+    </div>
+    
+    <!-- Inventory Status Summary -->
+    <div class="bg-white p-6 rounded-lg shadow-md">
+        <h2 class="text-lg font-semibold mb-4">Inventory Status</h2>
+        <div class="h-64">
+            <canvas id="inventoryStatusChart"></canvas>
+        </div>
+    </div>
+</div>
         <div class="list bg-base-100 rounded-box shadow-md ">
 
             <div class="p-4 pb-2">
@@ -37,6 +55,7 @@
                     <div class="navbar-start">
             <p class="font-semibold text-xl ms-5">Category Overview</p>
         </div>
+
 
         <div class="navbar-end">
             @can('adminFunction')
@@ -48,6 +67,10 @@
                 </button>
             @endcan
         </div>
+
+        
+
+
                     <dialog id="newProduct" class="modal">
                         <div class="modal-box">
                             <form method="POST" id="itemForm" action="{{ route('analytics.store') }}">
@@ -90,6 +113,12 @@
         <div class="mb-6 flex flex-col gap-4">
             <h2 class="text-lg ms-12 font-bold mb-2">{{ $category->name }}</h2>
             <p class="ms-12 font-italic">{{ $category->description }}</p>
+             <div class="bg-white p-4 rounded-lg shadow-md mx-12">
+            <h3 class="font-semibold mb-3">Item Distribution in {{ $category->name }}</h3>
+            <div class="h-48">
+                <canvas id="categoryChart{{ $category->id }}"></canvas>
+            </div>
+        </div>
             <div class="overflow-x-auto">
                 <table class="table w-full bg-white rounded shadow-md">
                     <thead>
@@ -281,5 +310,140 @@
         </div>
     </div>
 </div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Data for Category Distribution Pie Chart
+        const categoryData = {
+            labels: {!! json_encode($categories->pluck('name')) !!},
+            datasets: [{
+                data: {!! json_encode($categories->pluck('items_count')) !!},
+                backgroundColor: [
+                    '#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', 
+                    '#9966FF', '#FF9F40', '#8AC24A', '#F06292'
+                ],
+                borderWidth: 1
+            }]
+        };
 
+        // Pie Chart Configuration
+        const pieCtx = document.getElementById('categoryPieChart').getContext('2d');
+        new Chart(pieCtx, {
+            type: 'pie',
+            data: categoryData,
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                const label = context.label || '';
+                                const value = context.raw || 0;
+                                const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                const percentage = Math.round((value / total) * 100);
+                                return `${label}: ${value} items (${percentage}%)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        @foreach($categories as $category)
+            @if($category->type_summaries->isNotEmpty())
+                const ctx{{ $category->id }} = document.getElementById('categoryChart{{ $category->id }}').getContext('2d');
+                new Chart(ctx{{ $category->id }}, {
+                    type: 'bar',
+                    data: {
+                        labels: {!! json_encode($category->type_summaries->pluck('type')) !!},
+                        datasets: [{
+                            label: 'Quantity',
+                            data: {!! json_encode($category->type_summaries->pluck('quantity')) !!},
+                            backgroundColor: '#36A2EB',
+                            borderColor: '#1e88e5',
+                            borderWidth: 1
+                        },
+                        {
+                            label: 'Available',
+                            data: {!! json_encode($category->type_summaries->pluck('available')) !!},
+                            backgroundColor: '#4BC0C0',
+                            borderColor: '#26a69a',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: {
+                                beginAtZero: true,
+                                title: {
+                                    display: true,
+                                    text: 'Number of Items'
+                                }
+                            },
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Item Type'
+                                }
+                            }
+                        },
+                        plugins: {
+                            tooltip: {
+                                callbacks: {
+                                    label: function(context) {
+                                        return `${context.dataset.label}: ${context.raw} items`;
+                                    }
+                                }
+                            },
+                            legend: {
+                                position: 'top',
+                            }
+                        }
+                    }
+                });
+            @endif
+        @endforeach
+
+        // Inventory Status Chart (Doughnut)
+        const statusCtx = document.getElementById('inventoryStatusChart').getContext('2d');
+        new Chart(statusCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Total Items', 'Available', 'Loaned', 'Low Stock'],
+                datasets: [{
+                    data: [
+                        {{ $categories->sum('items_count') }},
+                        {{ $categories->sum('available_count') }},
+                        {{ $categories->sum('loan_count') }},
+                        {{ $categories->filter(fn($cat) => $cat->low_stock === 'Yes')->sum('available_count') }}
+                    ],
+                    backgroundColor: ['#36A2EB', '#4BC0C0', '#FF6384', '#FFCE56'],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `${context.label}: ${context.raw} items`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
 @include('template.footer')
