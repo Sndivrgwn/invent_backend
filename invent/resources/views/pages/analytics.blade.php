@@ -399,13 +399,12 @@
         new Chart(statusCtx, {
             type: 'doughnut',
             data: {
-                labels: ['Total Items', 'Available', 'Loaned', 'Low Stock'],
+                labels: ['Total Items', 'Available', 'Loaned'],
                 datasets: [{
                     data: [
                         {{ $categories->sum('items_count') }},
                         {{ $categories->sum('available_count') }},
                         {{ $categories->sum('loan_count') }},
-                        {{ $categories->filter(fn($cat) => $cat->low_stock === 'Yes')->sum('available_count') }}
                     ],
                     backgroundColor: ['#36A2EB', '#4BC0C0', '#FF6384', '#FFCE56'],
                     borderWidth: 1
