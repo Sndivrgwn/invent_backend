@@ -108,8 +108,8 @@
                     </dialog>
                 </div>
             </div>
+            @forelse($categories as $category)
             <div class="flex flex-col gap-8 p-4">
-    @forelse($categories as $category)
         <div class="mb-6 flex flex-col gap-4">
             <h2 class="text-lg ms-12 font-bold mb-2">{{ $category->name }}</h2>
             <p class="ms-12 font-italic">{{ $category->description }}</p>
