@@ -26,7 +26,7 @@
                 <label class="tab border-0 px-6 pb-2 mx-0! sm:px-10! sm:pb-2! sm:mx-0!">
                     <input type="radio" name="my_tabs_4" />
                     <i class="fa-solid fa-circle-arrow-up mr-2 flex justify-center items-center"></i>
-                    Produk pengembalian
+                    Item pengembalian
                 </label>
                 <div class="bg-base-100" style="border-top: 1px solid lightgray;">
                     <div class="p-4 pb-2 flex flex-col md:flex-row items-center">
@@ -70,7 +70,7 @@
 
                                     <!-- SERIAL NUMBER dan PRODUCT tidak perlu disort karena dari items -->
                                     <th class="whitespace-nowrap">NOMOR SERIAL</th>
-                                    <th class="whitespace-nowrap">PRODUK</th>
+                                    <th class="whitespace-nowrap">ITEM</th>
                                     <th class="whitespace-nowrap">STATUS</th>
                                     <!-- STATUS tidak bisa di-sort -->
 
@@ -120,11 +120,11 @@
                         <div class="modal-box">
                             <form method="dialog">
                                 <button type="button" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onclick="document.getElementById('confirmDeleteDialog').close()">✕</button>
-                                <h1 class="text-xl font-bold text-center mb-4">Delete Item?</h1>
-                                <p class="text-center text-gray-600">Are you sure you want to delete this item? This action cannot be undone.</p>
+                                <h1 class="text-xl font-bold text-center mb-4">Hapus pinjaman?</h1>
+                                <p class="text-center text-gray-600">Yakin ingin menghapus pinjaman ini? Tindakan ini tidak dapat dibatalkan.</p>
                                 <div class="flex justify-end gap-3 mt-6">
-                                    <button type="button" onclick="document.getElementById('confirmDeleteDialog').close()" class="bg-gray-300 text-gray-800 rounded-lg px-4 py-2 hover:bg-gray-400">Cancel</button>
-                                    <button type="button" onclick="confirmDelete()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-red-600">Yes, Delete</button>
+                                    <button type="button" onclick="document.getElementById('confirmDeleteDialog').close()" class="bg-gray-300 text-gray-800 rounded-lg px-4 py-2 hover:bg-gray-400">Batal</button>
+                                    <button type="button" onclick="confirmDelete()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-red-600">Ya, Hapus</button>
                                 </div>
                             </form>
                         </div>
@@ -137,23 +137,23 @@
 
                                 <button type="button" onclick="document.getElementById('returnProduct').close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
 
-                                <h1 class="font-semibold text-2xl mb-2">Product Details</h1>
+                                <h1 class="font-semibold text-2xl mb-2">RINCIAN PINJAMAN</h1>
                                 <h2 class="font-semibold text-xl text-blue-600 mb-4" id="modalLocationName">-</h2>
 
                                 <div class="w-full mt-4">
-                                    <h1 class="font-medium text-gray-600 mb-2">CONDITION</h1>
+                                    <h1 class="font-medium text-gray-600 mb-2">KONDISI</h1>
                                     <select id="returnCondition" class="select select-bordered w-full">
-                                        <option value="GOOD">GOOD</option>
-                                        <option value="NOT GOOD">NOT GOOD</option>
+                                        <option value="GOOD">BAGUS</option>
+                                        <option value="NOT GOOD">KURANG BAGUS</option>
                                     </select>
                                 </div>
                                 <div class="w-full mt-4">
-                                    <h1 class="font-medium text-gray-600 mb-2">NOTES</h1>
-                                    <textarea id="returnNotes" class="textarea textarea-bordered w-full" placeholder="Any additional notes..."></textarea>
+                                    <h1 class="font-medium text-gray-600 mb-2">CATATAN</h1>
+                                    <textarea id="returnNotes" class="textarea textarea-bordered w-full" placeholder="Catatan Tambahan..."></textarea>
                                 </div>
 
                                 <div class="w-full mt-4">
-                                    <h1 class="font-medium text-gray-600 mb-2">ITEMS (Preview)</h1>
+                                    <h1 class="font-medium text-gray-600 mb-2">Item (Pratinjau)</h1>
                                     <ul id="modalItemList" class="list-disc pl-5 space-y-1 text-gray-700 text-sm max-h-40 overflow-y-auto">
                                     </ul>
 
@@ -163,14 +163,14 @@
                                 </div>
 
                                 <div class="w-full mt-4">
-                                    <h1 class="font-medium text-gray-600 mb-2">CATEGORIES</h1>
+                                    <h1 class="font-medium text-gray-600 mb-2">KATEGORI</h1>
                                     <div id="modalCategoryList" class="flex flex-wrap gap-2">
                                     </div>
                                 </div>
 
                                 <div class="w-full flex justify-end items-end gap-4 mt-6">
-                                    <button type="button" onclick="document.getElementById('returnProduct').close()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Close</button>
-                                    <button type="button" class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer" id="confirmReturnButton">Return Product</button>
+                                    <button type="button" onclick="document.getElementById('returnProduct').close()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Tutup</button>
+                                    <button type="button" class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer" id="confirmReturnButton">Kembalikan Item</button>
                                 </div>
                             </form>
                         </div>
@@ -183,24 +183,24 @@
 
                                 <button type="button" onclick="document.getElementById('viewProduct').close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
 
-                                <h1 class="font-semibold text-2xl mb-4" id="loanTitle">Loan Details</h1>
+                                <h1 class="font-semibold text-2xl mb-4" id="loanTitle">Rincian Pinjaman</h1>
 
                                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-x-5 gap-y-3 text-gray-600" id="loanDetailsGrid">
                                 </div>
 
                                 <div class="w-full mt-3">
-                                    <h1 class="font-medium text-gray-600">ITEMS</h1>
+                                    <h1 class="font-medium text-gray-600">ITEM</h1>
                                     <ul id="loanItemsList" class="list-disc pl-5 mt-2 space-y-1">
                                     </ul>
                                 </div>
 
                                 <div class="w-full mt-3">
-                                    <h1 class="font-medium text-gray-600">NOTES</h1>
+                                    <h1 class="font-medium text-gray-600">CATATAN</h1>
                                     <p id="loanNotes" class="text-gray-600">-</p>
                                 </div>
 
                                 <div class="w-full flex justify-end items-end gap-4 mt-4">
-                                    <button type="button" onclick="document.getElementById('viewProduct').close()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Close</button>
+                                    <button type="button" onclick="document.getElementById('viewProduct').close()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Tutup</button>
                                 </div>
                             </form>
                         </div>
@@ -395,9 +395,9 @@
             document.getElementById('loanTitle').textContent = `Loan #${loan.code_loans}`;
 
             const gridContent = `
-                <div><h1 class="font-medium">BORROWER</h1><p>${loan.loaner_name}</p></div>
-                <div><h1 class="font-medium">LOAN DATE</h1><p>${loan.loan_date}</p></div>
-                <div><h1 class="font-medium">DUE DATE</h1><p>${loan.return_date || '-'}</p></div>
+                <div><h1 class="font-medium">PEMINJAM</h1><p>${loan.loaner_name}</p></div>
+                <div><h1 class="font-medium">TANGGAL MEMINJAM</h1><p>${loan.loan_date}</p></div>
+                <div><h1 class="font-medium">TENGGAT PINJAMAN</h1><p>${loan.return_date || '-'}</p></div>
                 <div><h1 class="font-medium">STATUS</h1><p>${loan.status}</p></div>
             `;
             document.getElementById('loanDetailsGrid').innerHTML = gridContent;
@@ -406,16 +406,16 @@
             itemsList.innerHTML = '';
             loan.items.forEach(item => {
                 const li = document.createElement('li');
-                li.textContent = `${item.code} - ${item.name} (${item.category?.name || 'No category'})`;
+                li.textContent = `${item.code} - ${item.name} (${item.category?.name || 'Tidak Ada Kategori'})`;
                 itemsList.appendChild(li);
             });
 
-            document.getElementById('loanNotes').textContent = loan.notes || 'No additional notes';
+            document.getElementById('loanNotes').textContent = loan.notes || 'Tidak Ada Catatan Tambahan';
 
             modal.showModal();
         } catch (error) {
             console.error('Error:', error);
-            showToast(error.message || 'Failed to load loan details', 'error');
+            showToast(error.message || 'Gagal memuat detail pinjaman', 'error');
         }
     }
 

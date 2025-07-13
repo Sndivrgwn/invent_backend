@@ -175,7 +175,7 @@
                     <form method="dialog">
                         <button type="button" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onclick="closeDeleteDialog()">✕</button>
                         <h1 class="text-xl font-bold text-center mb-4">Hapus item?</h1>
-                        <p class="text-center text-gray-600">Apakah Anda yakin ingin menghapus item ini?Produk ini juga akan dihapus.Periksa sebelum Anda mengirimkan.</p>
+                        <p class="text-center text-gray-600">Apakah Anda yakin ingin menghapus kategori ini? Produk terkait juga akan dihapus. Periksa sebelum Anda menghapus.</p>
                         <div class="flex justify-end gap-3 mt-6">
                             <button type="button" onclick="closeDeleteDialog()" class="bg-gray-300 text-gray-800 rounded-lg px-4 py-2 hover:bg-gray-400 cursor-pointer">Batal</button>
                             <button type="button" onclick="confirmDelete()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-red-600 cursor-pointer">Ya, Hapus</button>

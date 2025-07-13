@@ -42,11 +42,11 @@
 
                 <div class="mb-4">
                     <label class="font-medium text-gray-600">DESKRIPSI (LOKASI)</label>
-                    <textarea id="loanDescription" class="textarea w-full text-gray-600" placeholder="Description"></textarea>
+                    <textarea id="loanDescription" class="textarea w-full text-gray-600" placeholder="Deskripsi"></textarea>
                 </div>
                 
                 <div class="mb-4">
-                    <label class="font-medium text-gray-600">TANGGAM PENGEMBALIAN</label>
+                    <label class="font-medium text-gray-600">TANGGAL PENGEMBALIAN</label>
                     <input type="date" id="returnDate" class="input w-full text-gray-600" placeholder="YYYY-MM-DD" required>
                 </div>
                 <button type="button" onclick="document.getElementById('newLoan').showModal()" class="btn btn-primary my-3">

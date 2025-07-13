@@ -122,22 +122,22 @@
                     <!-- Close Button -->
                     <button type="button" onclick="document.getElementById('viewProduct').close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
 
-                    <h1 class="font-semibold text-2xl mb-2">Location Details</h1>
+                    <h1 class="font-semibold text-2xl mb-2">Rincian Lokasi</h1>
                     <h2 id="modalLocationName" class="font-semibold text-xl text-primary mb-4"></h2>
 
                     <div class="w-full mt-3">
-                        <h1 class="font-medium text-gray-600">DESCRIPTION</h1>
+                        <h1 class="font-medium text-gray-600">DESKRIPSI</h1>
                         <p id="modalLocationDescription" class="text-gray-600"></p>
                     </div>
 
                     <div class="w-full mt-4">
-                        <h1 class="font-medium text-gray-600 mb-2">ITEMS (Preview)</h1>
+                        <h1 class="font-medium text-gray-600 mb-2">ITEM (Pratinjau)</h1>
                         <ul id="modalItemList" class="list-disc pl-5 space-y-1 text-gray-700 text-sm max-h-40 overflow-y-auto"></ul>
-                        <button id="viewAllBtn" class="text-sm text-primary mt-2 hover:underline hidden">View All Items →</button>
+                        <button id="viewAllBtn" class="text-sm text-primary mt-2 hover:underline hidden">Lihat Semua Item →</button>
                     </div>
 
                     <div class="w-full mt-4">
-                        <h1 class="font-medium text-gray-600 mb-2">CATEGORIES</h1>
+                        <h1 class="font-medium text-gray-600 mb-2">KATEGORI</h1>
                         <div id="modalCategoryList" class="flex flex-wrap gap-2"></div>
                     </div>
 
@@ -171,7 +171,7 @@
                 <form method="dialog">
                     <button type="button" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onclick="closeDeleteDialog()">✕</button>
                     <h1 class="text-xl font-bold text-center mb-4">Hapus lokasi?</h1>
-                    <p class="text-center text-gray-600">Apakah Anda yakin ingin menghapus lokasi ini?Semua item di lokasi ini juga akan dihapus.</p>
+                    <p class="text-center text-gray-600">Apakah Anda yakin ingin menghapus lokasi ini? Semua item di lokasi ini juga akan dihapus.</p>
                     <div class="flex justify-end gap-3 mt-6">
                         <button type="button" class="btn" onclick="closeDeleteDialog()">Batal</button>
                         <button type="button" class="btn btn-error" onclick="confirmDelete()">Hapus</button>

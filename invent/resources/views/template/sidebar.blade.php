@@ -33,7 +33,7 @@
                     <a href="/dashboard" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-100 active:bg-blue-200 transition-colors duration-200
     {{ request()->is('dashboard') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-700 hover:text-blue-700 active:text-blue-800' }}">
                         <i class="fa fa-home" style="display: flex; justify-content: center;"></i>
-                        <span class="sidebar-text">Dashboard</span>
+                        <span class="sidebar-text">Dasbor</span>
                     </a>
                 </li>
                 <li class="rounded-lg">
@@ -54,7 +54,7 @@
                     <a href="/loan" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-100 active:bg-blue-200 transition-colors duration-200
         {{ request()->is('loan') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-700 hover:text-blue-700 active:text-blue-800' }}">
                         <i class="fa fa-exchange" style="display: flex; justify-content: center;"></i>
-                        <span class="sidebar-text">Pinjam</span>
+                        <span class="sidebar-text">Pinjaman</span>
                     </a>
                 </li>
                 <li class="rounded-lg">
@@ -123,7 +123,7 @@
             <button
                 class="w-full bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 active:bg-red-800 transition-colors duration-200">
                 <i class="fa fa-sign-out"></i>
-                <span class="sidebar-text">logout</span>
+                <span class="sidebar-text">Keluar</span>
             </button>
         </form>
     </div>

@@ -446,7 +446,7 @@
                             </div>
 
                             <div class="w-full mt-4">
-                                <h1 class="font-medium text-gray-600 mb-2">ITEMS (Preview)</h1>
+                                <h1 class="font-medium text-gray-600 mb-2">ITEM (Pratinjau)</h1>
                                 <ul id="modalItemList" class="list-disc pl-5 space-y-1 text-gray-700 text-sm max-h-40 overflow-y-auto">
                                 </ul>
 

@@ -76,13 +76,13 @@
                                 </div>
                                 <div class="flex gap-5 justify-between text-gray-600 mb-3">
                                     <div class="w-[100%]">
-                                        <h1 class="font-medium">PASSWORD</h1>
+                                        <h1 class="font-medium">KATA SANDI</h1>
                                         <input type="password" name="password" placeholder="masukkan password" class="input" style="width: 100%;" />
                                     </div>
                                 </div>
                                 <div class="flex gap-5 justify-between text-gray-600 mb-3">
                                     <div class="w-[100%] mb-4">
-                                        <h1 class="font-medium">KONFIRMASI PASSWORD</h1>
+                                        <h1 class="font-medium">KONFIRMASI KATA SANDI</h1>
                                         <input type="password" name="password_confirmation" placeholder="konfirmasi password" class="input" style="width: 100%;" />
                                     </div>
                                 </div>
@@ -258,7 +258,7 @@ function sortLinkUser($field, $currentSortBy, $currentSortDir) {
                             <button type="button" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onclick="closeDeleteDialog()">✕</button>
                             <!-- Konten -->
                             <h1 class="text-xl font-bold text-center mb-4">Hapus item?</h1>
-                            <p class="text-center text-gray-600">Apakah Anda yakin ingin menghapus item ini?Produk ini juga akan dihapus.Periksa sebelum Anda mengirimkan.</p>
+                            <p class="text-center text-gray-600">Apakah Anda yakin ingin menghapus User ini? Aksi ini tidak dapat dibatalkan</p>
                             <!-- Tombol -->
                             <div class="flex justify-end gap-3 mt-6">
                                 <button type="button" onclick="closeDeleteDialog()" class="bg-gray-300 text-gray-800 rounded-lg px-4 py-2 hover:bg-gray-400 cursor-pointer">Batal</button>
@@ -312,13 +312,13 @@ function sortLinkUser($field, $currentSortBy, $currentSortDir) {
                             <!-- Add these password fields -->
                             <div class="flex gap-5 justify-between text-gray-600 mb-3">
                                 <div class="w-[100%]">
-                                    <h1 class="font-medium">PASSWORD BARU </h1>
+                                    <h1 class="font-medium">KATA SANDI BARU </h1>
                                     <input type="password" name="password" class="input" placeholder="Leave blank to keep current" style="width: 100%;">
                                 </div>
                             </div>
                             <div class="flex gap-5 justify-between text-gray-600 mb-3">
                                 <div class="w-[100%]">
-                                    <h1 class="font-medium">KONFIRMASI PASSWORD</h1>
+                                    <h1 class="font-medium">KONFIRMASI KATA SANDI</h1>
                                     <input type="password" name="password_confirmation" class="input" placeholder="Confirm new password" style="width: 100%;">
                                 </div>
                             </div>

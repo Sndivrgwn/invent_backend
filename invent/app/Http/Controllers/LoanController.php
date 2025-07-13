@@ -136,7 +136,7 @@ class LoanController extends Controller
             $itemModel = Item::findOrFail($item['item_id']);
 
             if ($itemModel->status === 'NOT READY') {
-                throw new \Exception("Item '{$itemModel->name}' (SN: {$itemModel->code}) is currently borrowed and cannot be loaned again.");
+                throw new \Exception("Item '{$itemModel->name}' (SN: {$itemModel->code}) Sedang Dipinjam Tidak Dapat Dipinjam Kembali");
             }
 
             $loan->items()->attach($item['item_id'], [

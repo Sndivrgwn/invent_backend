@@ -28,13 +28,13 @@
                 <span class="text-red-500 text-sm">{{ $message }}</span>
                 @enderror
 
-                <label for="password" class="block text-sm text-gray-700">Password</label>
+                <label for="password" class="block text-sm text-gray-700">Kata Sandi</label>
                     <div class="relative mt-1"> 
                         <input class="block w-full pr-10 py-2 border-0 border-b-2 border-gray-400 focus:outline-none focus:ring-0 focus:border-blue-500 @error('password') border-red-500 @enderror sm:text-sm" 
                                 name="password" 
                                 id="password" 
                                 type="password"
-                                placeholder='Masukkan password' 
+                                placeholder='Masukkan Kata Sandi' 
                                 required />
                         
                         <span class="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer" onclick="togglePasswordVisibility()">
@@ -52,19 +52,19 @@
                 <fieldset class='fieldset bg-transparent border-none rounded-box flex w-64 border p-4'>
                     <label class='label text-[#000000] text-[14px] cursor-pointer flex items-center'>
                         <input type="checkbox" class='checkbox mr-2' name="remember" id="remember" />
-                        Ingat 
+                        Ingat Saya
                     </label>
                 </fieldset>
 
                 <button class="bg-[#2563EB] text-white py-2 rounded-md hover:bg-blue-700 transition duration-300" 
                         type="submit">
-                    Login
+                    Masuk
                 </button>
 
                 @if (Route::has('password.request'))
                 <div class="text-center mt-2">
                     <a href="{{ route('password.request') }}" class="text-[#2563EB] text-sm hover:underline">
-                        Lupa Password?
+                        Lupa Kata Sandi?
                     </a>
                 </div>
                 @endif

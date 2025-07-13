@@ -16,7 +16,7 @@
         </div>
 
         <div class="flex flex-col gap-6 pt-6">
-            <h1 class="text-2xl font-semibold">Dashboard</h1>
+            <h1 class="text-2xl font-semibold">Dasbor</h1>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <!-- Total Products -->
                 <div class="bg-white p-4 rounded-lg shadow flex items-center justify-between">
