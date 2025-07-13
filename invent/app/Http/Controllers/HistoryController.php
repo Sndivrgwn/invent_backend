@@ -102,6 +102,8 @@ class HistoryController extends Controller
                 'data' => $loan
             ]);
         } catch (\Exception $e) {
+            report($e); // atau Log::error($e)
+
             Log::error("Failed to fetch loan {$id}: " . $e->getMessage());
             return response()->json([
                 'success' => false,
@@ -130,6 +132,8 @@ class HistoryController extends Controller
                 'message' => 'Pinjaman berhasil dihapus'
             ]);
         } catch (\Exception $e) {
+            report($e); // atau Log::error($e)
+
             Log::error("Failed to delete loan {$id}: " . $e->getMessage());
             return response()->json([
                 'success' => false,

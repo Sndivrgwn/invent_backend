@@ -70,6 +70,8 @@ class LocationController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            report($e); // atau Log::error($e)
+
             return response()->json([
                 'success' => false,
                 'toast' => [
@@ -122,6 +124,8 @@ class LocationController extends Controller
             ], 200);
 
         } catch (\Exception $e) {
+            report($e); // atau Log::error($e)
+
             return response()->json([
                 'toast' => [
                     'message' => 'Gagal mengambil lokasi: ' . $e->getMessage(),
@@ -177,6 +181,8 @@ class LocationController extends Controller
             ]);
 
         } catch (\Exception $e) {
+            report($e); // atau Log::error($e)
+
             return response()->json([
                 'success' => false,
                 'toast' => [
@@ -214,6 +220,8 @@ class LocationController extends Controller
             ], 200);
 
         } catch (\Exception $e) {
+            report($e); // atau Log::error($e)
+
             return response()->json([
                 'toast' => [
                     'message' => 'Failed to delete location: ' . $e->getMessage(),

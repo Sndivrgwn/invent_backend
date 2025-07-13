@@ -42,11 +42,15 @@ class LoginController extends Controller
             ], 200);
 
         } catch (ValidationException $e) {
+            report($e); // atau Log::error($e)
+
             return response()->json([
                 'message' => 'Data yang dimasukkan tidak valid',
                 'errors' => $e->errors(),
             ], 422);
         } catch (\Exception $e) {
+            report($e); // atau Log::error($e)
+            // Log the exception for debugging
             return response()->json([
                 'message' => 'gagal Login',
                 'error' => $e->getMessage(),
@@ -97,6 +101,8 @@ class LoginController extends Controller
         return redirect()->intended('dashboard');
 
     } catch (ValidationException $e) {
+        report($e); // atau Log::error($e)
+
         return redirect()->back()
             ->withErrors($e->errors())
             ->withInput()

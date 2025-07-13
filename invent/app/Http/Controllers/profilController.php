@@ -22,6 +22,8 @@ class ProfilController extends Controller
             return view('pages.profil', compact('user', 'totalLoans', 'totalReturns'));
             
         } catch (\Exception $e) {
+            report($e); // atau Log::error($e)
+
             Log::error('Profile index error: ' . $e->getMessage());
             return redirect()->back()->with('error', 'Gagal memuat data profil');
         }
@@ -49,6 +51,8 @@ public function updateName(Request $request)
         ]);
         
     } catch (\Exception $e) {
+        report($e); // atau Log::error($e)
+
         Log::error('Name update error: ' . $e->getMessage());
         return redirect()->back()->with('toast', [
             'type' => 'error',
@@ -87,6 +91,8 @@ public function updateEmail(Request $request)
         ]);
         
     } catch (\Exception $e) {
+        report($e); // atau Log::error($e)
+
         Log::error('Email update error: ' . $e->getMessage());
         return redirect()->back()->with('toast', [
             'type' => 'error',
@@ -134,6 +140,8 @@ public function updateAvatar(Request $request)
         ]);
         
     } catch (\Exception $e) {
+        report($e); // atau Log::error($e)
+
         Log::error('Avatar upload error: ' . $e->getMessage());
         return redirect()->back()->with('toast', [
             'type' => 'error',

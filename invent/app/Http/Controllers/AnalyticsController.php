@@ -66,6 +66,8 @@ class AnalyticsController extends Controller
 
     } catch (Exception $e) {
         Log::error('Error in AnalyticsController@index: ' . $e->getMessage());
+        report($e); // atau Log::error($e)
+
         return redirect()->back()->with('toast', [
             'type' => 'error',
             'message' => 'Gagal memuat data analitik.Tolong coba lagi.'
@@ -83,7 +85,9 @@ class AnalyticsController extends Controller
             return Excel::download(new CategoryExport, 'categories_report_' . now()->format('Ymd_His') . '.xlsx');
         } catch (Exception $e) {
             Log::error('Error in AnalyticsController@export: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Gagal menghasilkan ekspor.Tolong coba lagi.');
+            report($e); // atau Log::error($e)
+
+            return redirect()->back()->with('error', 'Failed to generate export. Please try again.');
         }
     }
 
@@ -107,6 +111,8 @@ public function store(Request $request)
         ]);
 
     } catch (\Illuminate\Validation\ValidationException $e) {
+        report($e); // atau Log::error($e)
+        Log::error('Validation error in AnalyticsController@store: ' . $e->getMessage());
         return redirect()->back()
             ->withErrors($e->validator)
             ->withInput()
@@ -116,6 +122,8 @@ public function store(Request $request)
             ]);
     } catch (Exception $e) {
         Log::error('Error in AnalyticsController@store: ' . $e->getMessage());
+        report($e); // atau Log::error($e)
+
         return redirect()->back()->with('toast', [
             'type' => 'error',
             'message' => 'Gagal membuat kategori.Tolong coba lagi.'
@@ -148,6 +156,7 @@ public function destroy(string $id)
 
     } catch (Exception $e) {
         Log::error('Error in AnalyticsController@destroy: ' . $e->getMessage());
+        report($e); // atau Log::error($e)
         return response()->json([
             'success' => false,
             'toast' => [
