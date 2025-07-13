@@ -87,7 +87,7 @@ class AnalyticsController extends Controller
             Log::error('Error in AnalyticsController@export: ' . $e->getMessage());
             report($e); // atau Log::error($e)
 
-            return redirect()->back()->with('error', 'Failed to generate export. Please try again.');
+            return redirect()->back()->with('error', 'Gagal menghasilkan ekspor.Tolong coba lagi.');
         }
     }
 
