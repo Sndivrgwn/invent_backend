@@ -34,7 +34,7 @@
 <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
     <!-- Pie Chart for Category Distribution -->
     <div class="bg-white p-6 rounded-lg shadow-md">
-        <h2 class="text-lg font-semibold mb-4">Category Distribution</h2>
+        <h2 class="text-lg font-semibold mb-4">Distribusi kategori</h2>
         <div class="h-64">
             <canvas id="categoryPieChart"></canvas>
         </div>
@@ -42,7 +42,7 @@
     
     <!-- Inventory Status Summary -->
     <div class="bg-white p-6 rounded-lg shadow-md">
-        <h2 class="text-lg font-semibold mb-4">Inventory Status</h2>
+        <h2 class="text-lg font-semibold mb-4">Status inventaris</h2>
         <div class="h-64">
             <canvas id="inventoryStatusChart"></canvas>
         </div>
@@ -399,7 +399,7 @@
         new Chart(statusCtx, {
             type: 'doughnut',
             data: {
-                labels: ['Total Items', 'Available', 'Loaned'],
+                labels: ['Jumlah Item', 'Tersedia', 'Dipinjamkan'],
                 datasets: [{
                     data: [
                         {{ $categories->sum('items_count') }},
