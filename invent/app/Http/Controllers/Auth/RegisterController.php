@@ -23,12 +23,12 @@ class RegisterController extends Controller
 
         if ($user) {
             return response()->json([
-                'message' => 'Registration successful',
+                'message' => 'Pendaftaran berhasil',
                 'user' => $user,
             ], 201);
         } else {
             return response()->json([
-                'message' => 'Registration failed',
+                'message' => 'Pendaftaran gagal',
             ], 500);
         }
     }

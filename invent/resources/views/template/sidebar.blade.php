@@ -27,7 +27,7 @@
     <div class="space-y-6">
         <!-- MANAGEMENT -->
         <div>
-            <p class="text-gray-500 text-xs font-semibold uppercase mb-2 sidebar-text">Management</p>
+            <p class="text-gray-500 text-xs font-semibold uppercase mb-2 sidebar-text">Pengelolaan</p>
             <ul class="space-y-1">
                 <li class="rounded-lg">
                     <a href="/dashboard" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-100 active:bg-blue-200 transition-colors duration-200
@@ -40,28 +40,28 @@
                     <a href="/products" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-100 active:bg-blue-200 transition-colors duration-200
         {{ request()->is('products') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-700 hover:text-blue-700 active:text-blue-800' }}">
                         <i class="fa fa-cube" style="display: flex; justify-content: center;"></i>
-                        <span class="sidebar-text">Products</span>
+                        <span class="sidebar-text">Produk</span>
                     </a>
                 </li>
                 <li class="rounded-lg">
                     <a href="/inventory" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-100 active:bg-blue-200 transition-colors duration-200
         {{ request()->is('inventory') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-700 hover:text-blue-700 active:text-blue-800' }}">
                         <i class="fa fa-archive" style="display: flex; justify-content: center;"></i>
-                        <span class="sidebar-text">Inventory</span>
+                        <span class="sidebar-text">Inventaris</span>
                     </a>
                 </li>
                 <li class="rounded-lg">
                     <a href="/loan" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-100 active:bg-blue-200 transition-colors duration-200
         {{ request()->is('loan') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-700 hover:text-blue-700 active:text-blue-800' }}">
                         <i class="fa fa-exchange" style="display: flex; justify-content: center;"></i>
-                        <span class="sidebar-text">Loan</span>
+                        <span class="sidebar-text">Pinjam</span>
                     </a>
                 </li>
                 <li class="rounded-lg">
                     <a href="/manageLoan" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-100 active:bg-blue-200 transition-colors duration-200
         {{ request()->is('manageLoan') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-700 hover:text-blue-700 active:text-blue-800' }}">
                         <i class="fa fa-screwdriver-wrench" style="display: flex; justify-content: center;"></i>
-                        <span class="sidebar-text">Manage Loan</span>
+                        <span class="sidebar-text">Kelola Pinjaman</span>
                     </a>
                 </li>
             </ul>
@@ -69,20 +69,20 @@
 
         <!-- REPORTS -->
         <div>
-            <p class="text-gray-500 text-xs font-semibold uppercase mb-2 sidebar-text">Reports</p>
+            <p class="text-gray-500 text-xs font-semibold uppercase mb-2 sidebar-text">Laporan</p>
             <ul class="space-y-1">
                 <li class="rounded-lg">
                     <a href="/analytics" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-100 active:bg-blue-200 transition-colors duration-200
         {{ request()->is('analytics') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-700 hover:text-blue-700 active:text-blue-800' }}">
                         <i class="fa fa-line-chart" style="display: flex; justify-content: center;"></i>
-                        <span class="sidebar-text">Analytics</span>
+                        <span class="sidebar-text">Analitik</span>
                     </a>
                 </li>
                 <li class="rounded-lg">
                     <a href="/history" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-100 active:bg-blue-200 transition-colors duration-200
         {{ request()->is('history') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-700 hover:text-blue-700 active:text-blue-800' }}">
                         <i class="fa fa-history" style="display: flex; justify-content: center;"></i>
-                        <span class="sidebar-text">History</span>
+                        <span class="sidebar-text">Riwayat</span>
                     </a>
                 </li>
             </ul>
@@ -92,13 +92,13 @@
         <div>
             {{-- @can('isSuperAdmin') --}}
             @can('adminFunction')
-            <p class="text-gray-500 text-xs font-semibold uppercase mb-2 sidebar-text">Administration</p>
+            <p class="text-gray-500 text-xs font-semibold uppercase mb-2 sidebar-text">Administrasi</p>
             <ul class="space-y-1">
                 <li class="rounded-lg">
                     <a href="/users" class="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-blue-100 active:bg-blue-200 transition-colors duration-200
         {{ request()->is('users') ? 'bg-blue-100 text-blue-700 font-medium' : 'text-gray-700 hover:text-blue-700 active:text-blue-800' }}">
                         <i class="fa fa-users" style="display: flex; justify-content: center;"></i>
-                        <span class="sidebar-text">User Management</span>
+                        <span class="sidebar-text">Manajemen Pengguna</span>
                     </a>
                 </li>
                 @endcan
@@ -123,7 +123,7 @@
             <button
                 class="w-full bg-red-600 text-white py-2 rounded-lg hover:bg-red-700 active:bg-red-800 transition-colors duration-200">
                 <i class="fa fa-sign-out"></i>
-                <span class="sidebar-text">Logout</span>
+                <span class="sidebar-text">logout</span>
             </button>
         </form>
     </div>

@@ -68,7 +68,7 @@ class AnalyticsController extends Controller
         Log::error('Error in AnalyticsController@index: ' . $e->getMessage());
         return redirect()->back()->with('toast', [
             'type' => 'error',
-            'message' => 'Failed to load analytics data. Please try again.'
+            'message' => 'Gagal memuat data analitik.Tolong coba lagi.'
         ]);
     }
 }
@@ -83,7 +83,7 @@ class AnalyticsController extends Controller
             return Excel::download(new CategoryExport, 'categories_report_' . now()->format('Ymd_His') . '.xlsx');
         } catch (Exception $e) {
             Log::error('Error in AnalyticsController@export: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Failed to generate export. Please try again.');
+            return redirect()->back()->with('error', 'Gagal menghasilkan ekspor.Tolong coba lagi.');
         }
     }
 
@@ -103,7 +103,7 @@ public function store(Request $request)
 
         return redirect()->route('analytics')->with('toast', [
             'type' => 'success',
-            'message' => 'Category created successfully!'
+            'message' => 'Kategori berhasil dibuat!'
         ]);
 
     } catch (\Illuminate\Validation\ValidationException $e) {
@@ -112,13 +112,13 @@ public function store(Request $request)
             ->withInput()
             ->with('toast', [
                 'type' => 'error',
-                'message' => 'Validation failed. Please check your input.'
+                'message' => 'Validasi gagal.Silakan periksa masukan Anda.'
             ]);
     } catch (Exception $e) {
         Log::error('Error in AnalyticsController@store: ' . $e->getMessage());
         return redirect()->back()->with('toast', [
             'type' => 'error',
-            'message' => 'Failed to create category. Please try again.'
+            'message' => 'Gagal membuat kategori.Tolong coba lagi.'
         ]);
     }
 }
@@ -141,7 +141,7 @@ public function destroy(string $id)
             'success' => true,
             'toast' => [
                 'type' => 'success',
-                'message' => 'Category and all related items deleted successfully!'
+                'message' => 'Kategori dan semua item terkait berhasil dihapus!'
             ],
             'reload' => true
         ]);
@@ -152,7 +152,7 @@ public function destroy(string $id)
             'success' => false,
             'toast' => [
                 'type' => 'error',
-                'message' => 'Failed to delete category'
+                'message' => 'Gagal Menghapus Kategori'
             ]
         ], 500);
     }
@@ -176,7 +176,7 @@ public function destroy(string $id)
             'success' => true,
             'toast' => [
                 'type' => 'success',
-                'message' => 'Category updated successfully!'
+                'message' => 'Kategori berhasil diperbarui!'
             ],
             'reload' => true
         ]);
@@ -186,7 +186,7 @@ public function destroy(string $id)
             'success' => false,
             'toast' => [
                 'type' => 'error',
-                'message' => 'Validation failed: ' . implode(' ', $e->validator->errors()->all())
+                'message' => 'Validasi gagal: ' . implode(' ', $e->validator->errors()->all())
             ]
         ], 422);
         
@@ -196,7 +196,7 @@ public function destroy(string $id)
             'success' => false,
             'toast' => [
                 'type' => 'error',
-                'message' => 'Failed to update category'
+                'message' => 'Gagal memperbarui kategori'
             ]
         ], 500);
     }

@@ -31,7 +31,7 @@ class CategoryController extends Controller
         ]);
 
         $category = Category::create($validated);
-        return response()->json(['message' => 'Category created successfully', 'data' => $category], 201);
+        return response()->json(['message' => 'Kategori berhasil dibuat', 'data' => $category], 201);
     }
 
     /**
@@ -41,7 +41,7 @@ class CategoryController extends Controller
     {
         $category = Category::find($id);
         if (!$category) {
-            return response()->json(['message' => 'Category not found'], 404);
+            return response()->json(['message' => 'Kategori tidak ditemukan'], 404);
         }
 
         return response()->json($category, 200);
@@ -54,7 +54,7 @@ class CategoryController extends Controller
     {
         $category = Category::find($id);
         if (!$category) {
-            return response()->json(['message' => 'Category not found'], 404);
+            return response()->json(['message' => 'Kategori tidak ditemukan'], 404);
         }
 
         $validated = $request->validate([
@@ -63,7 +63,7 @@ class CategoryController extends Controller
         ]);
 
         $category->update($validated);
-        return response()->json(['message' => 'Category updated successfully', 'data' => $category], 200);
+        return response()->json(['message' => 'Kategori berhasil diperbarui', 'data' => $category], 200);
     }
 
     /**
@@ -73,10 +73,10 @@ class CategoryController extends Controller
     {
         $category = Category::find($id);
         if (!$category) {
-            return response()->json(['message' => 'Category not found'], 404);
+            return response()->json(['message' => 'Kategori tidak ditemukan'], 404);
         }
 
         $category->delete();
-        return response()->json(['message' => 'Category deleted successfully'], 200);
+        return response()->json(['message' => 'Kategori berhasil dihapus'], 200);
     }
 }

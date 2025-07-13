@@ -17,14 +17,14 @@
 
         <div class="navbar my-6">
             <div class="flex-1">
-                <h1 class="text-2xl font-semibold py-4">Inventory Analytics </h1>
+                <h1 class="text-2xl font-semibold py-4">Analisis Inventaris </h1>
             </div>
             <div class="flex-none">
                 {{-- new product --}}
                 <button class="bg-[#ffffff] rounded-lg py-2 px-4 mx-5 hover:bg-blue-400 cursor-pointer flex justify-center items-center">
                     <div class="gap-2 flex">
                         <i class="fa fa-download" style="display: flex; justify-content: center; align-items: center;"></i>
-                        <a href="{{ route('analytics.export') }}">Export Report</a>
+                        <a href="{{ route('analytics.export') }}">Ekspor Laporan</a>
                     </div>
                 </button>
             </div>
@@ -35,7 +35,7 @@
             <div class="p-4 pb-2">
                 <div class="navbar ">
                     <div class="navbar-start">
-            <p class="font-semibold text-xl ms-5">Category Overview</p>
+            <p class="font-semibold text-xl ms-5">Tinjauan Kategori</p>
         </div>
 
         <div class="navbar-end">
@@ -43,7 +43,7 @@
                 <button class="bg-[#2563EB] text-white rounded-lg p-2 px-5 w-full hover:bg-blue-400 cursor-pointer flex justify-center items-center gap-2 sm:w-[50%]" onclick="newProduct.showModal()">
                     <div class="flex">
                         <i class="fa fa-plus" style="display: flex; justify-content: center; align-items: center;"></i>
-                        <span>New Category</span>
+                        <span>Kategori baru</span>
                     </div>
                 </button>
             @endcan
@@ -53,24 +53,24 @@
                             <form method="POST" id="itemForm" action="{{ route('analytics.store') }}">
                                 @csrf
                                 <button id="cancel" type="button" onclick="document.getElementById('newProduct').close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-                                <h1 class="font-semibold text-2xl mb-4">New Category</h1>
+                                <h1 class="font-semibold text-2xl mb-4">Kategori baru</h1>
                                 <div class="flex gap-5 justify-between text-gray-600">
                                     <!-- Rack -->
                                     <div class="w-[50%]">
-                                        <h1 class="font-medium">Category Name</h1>
+                                        <h1 class="font-medium">Nama kategori</h1>
                                         <div class="mb-2">
-                                            <input type="text" name="name" class="input input-bordered w-full max-w-xs" placeholder="Enter Category name">
+                                            <input type="text" name="name" class="input input-bordered w-full max-w-xs" placeholder="Masukkan nama kategori">
                                         </div>
                                     </div>
                                     <!-- Location -->
                                     <div class="w-[50%]">
-                                        <h1 class="font-medium">Desciption</h1>
-                                        <input type="text" name="description" class="input input-bordered w-full max-w-xs" placeholder="Enter description">
+                                        <h1 class="font-medium">Deskripsi</h1>
+                                        <input type="text" name="description" class="input input-bordered w-full max-w-xs" placeholder="Masukkan deskripsi">
                                     </div>
                                 </div>
                                 <div class="w-full flex justify-end items-end gap-4">
-                                    <button id="cancelButton" type="button" onclick="document.getElementById('newProduct').close()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Cancel</button>
-                                    <button type="submit" class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Submit</button>
+                                    <button id="cancelButton" type="button" onclick="document.getElementById('newProduct').close()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Batal</button>
+                                    <button type="submit" class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Kirim</button>
                                 </div>
                             </form>
 
@@ -94,11 +94,11 @@
                 <table class="table w-full bg-white rounded shadow-md">
                     <thead>
                         <tr>
-                            <th class="text-center">TYPE</th>
-                            <th class="text-center">QUANTITY</th>
-                            <th class="text-center">AVAILABLE</th>
-                            <th class="text-center">LOANED</th>
-                            <th class="text-center">LOW STOCK</th>
+                            <th class="text-center">TIPE</th>
+                            <th class="text-center">JUMLAH</th>
+                            <th class="text-center">TERSEDIA</th>
+                            <th class="text-center">DIPINJAMKAN</th>
+                            <th class="text-center">STOK RENDAH</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -123,7 +123,7 @@
                                     <button type="button" class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer " onclick="openEditModal({{ $category->id }}, '{{ $category->name }}', '{{ $category->description }}')">
                                         edit
                                     </button>
-                                    <button type="button" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-red-800 cursor-pointer" onclick="deleteItem({{ $category->id }})">delete</button>
+                                    <button type="button" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-red-800 cursor-pointer" onclick="deleteItem({{ $category->id }})">hapus</button>
                                 </td>
                             </tr>
                         </tfoot>
@@ -133,7 +133,7 @@
         </div>
     @empty 
         <div class="w-full text-center text-gray-500 py-8">
-            <p>No Category found</p>
+            <p>Tidak ada kategori</p>
         </div>
     @endforelse
 </div>
@@ -144,11 +144,11 @@
                 <div class="modal-box">
                     <form method="dialog">
                         <button type="button" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onclick="closeDeleteDialog()">✕</button>
-                        <h1 class="text-xl font-bold text-center mb-4">Delete Item?</h1>
-                        <p class="text-center text-gray-600">Are you sure you want to delete this item? The product will also deleted. Check before you submit.</p>
+                        <h1 class="text-xl font-bold text-center mb-4">Hapus item?</h1>
+                        <p class="text-center text-gray-600">Apakah Anda yakin ingin menghapus item ini?Produk ini juga akan dihapus.Periksa sebelum Anda mengirimkan.</p>
                         <div class="flex justify-end gap-3 mt-6">
-                            <button type="button" onclick="closeDeleteDialog()" class="bg-gray-300 text-gray-800 rounded-lg px-4 py-2 hover:bg-gray-400 cursor-pointer">Cancel</button>
-                            <button type="button" onclick="confirmDelete()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-red-600 cursor-pointer">Yes, Delete</button>
+                            <button type="button" onclick="closeDeleteDialog()" class="bg-gray-300 text-gray-800 rounded-lg px-4 py-2 hover:bg-gray-400 cursor-pointer">Batal</button>
+                            <button type="button" onclick="confirmDelete()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-red-600 cursor-pointer">Ya, Hapus</button>
                         </div>
                     </form>
                 </div>
@@ -158,23 +158,23 @@
                 <div class="modal-box">
                     <form id="editForm" method="POST">
                         <button type="button" onclick="closeEditModal()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-                        <h1 class="font-semibold text-2xl mb-4">Edit Category</h1>
+                        <h1 class="font-semibold text-2xl mb-4">Edit kategori</h1>
                         <input type="hidden" id="edit_category_id" name="id">
 
                         <div class="flex gap-5 justify-between text-gray-600">
                             <div class="w-[50%]">
-                                <h1 class="font-medium">NAME</h1>
-                                <input type="text" id="edit_name" name="name" class="input w-full" placeholder="Category name">
+                                <h1 class="font-medium">NAMA</h1>
+                                <input type="text" id="edit_name" name="name" class="input w-full" placeholder="Nama kategori">
                             </div>
                             <div class="w-[50%]">
-                                <h1 class="font-medium">DESCRIPTION</h1>
-                                <input type="text" id="edit_description" name="description" class="input w-full" placeholder="Category description">
+                                <h1 class="font-medium">DESKRIPSI</h1>
+                                <input type="text" id="edit_description" name="description" class="input w-full" placeholder="Deskripsi kategori">
                             </div>
                         </div>
 
                         <div class="w-full flex justify-end items-end gap-4 mt-4">
-                            <button type="button" onclick="closeEditModal()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Cancel</button>
-                            <button type="submit" class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Save</button>
+                            <button type="button" onclick="closeEditModal()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Batal</button>
+                            <button type="submit" class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Simpan</button>
                         </div>
                     </form>
                 </div>
@@ -208,11 +208,11 @@
                 window.location.reload();
             }
         } else {
-            showToast(data.message || 'Failed to delete category', 'error');
+            showToast(data.message || 'Gagal Menghapus Kategori', 'error');
             console.error(data.message || res.statusText);
         }
     } catch (error) {
-        showToast('An error occurred while deleting the category', 'error');
+        showToast('Terjadi kesalahan saat menghapus kategori', 'error');
         console.error('Error:', error);
     } finally {
         deleteTargetId = null;
@@ -261,16 +261,16 @@
         const data = await response.json();
 
         if (response.ok) {
-            showToast('Category updated successfully', 'success');
+            showToast('Kategori berhasil diperbarui', 'success');
             closeEditModal();
             window.location.reload();
         } else {
-            const errorMsg = data.message || data.errors ? Object.values(data.errors).join('<br>') : 'Failed to update category';
+            const errorMsg = data.message || data.errors ? Object.values(data.errors).join('<br>') : 'Gagal memperbarui kategori';
             showToast(errorMsg, 'error');
             console.error('Error:', data.message || response.statusText);
         }
     } catch (error) {
-        showToast('An error occurred while updating the category', 'error');
+        showToast('Terjadi kesalahan saat memperbarui kategori', 'error');
         console.error('Error:', error);
     }
 });

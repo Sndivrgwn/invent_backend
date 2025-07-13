@@ -91,7 +91,7 @@ class LoanController extends Controller
 
     } catch (\Exception $e) {
         Log::error('Error fetching loans: ' . $e->getMessage());
-        return redirect()->back()->with('toast_error', 'Failed to load loan data. Please try again.');
+        return redirect()->back()->with('toast_error', 'Gagal memuat data pinjaman.Tolong coba lagi.');
     }
 }
 
@@ -146,7 +146,7 @@ class LoanController extends Controller
 
         DB::commit();
         return response()->json([
-            'message' => 'Loan successfully created!'
+            'message' => 'Pinjaman berhasil dibuat!'
         ], 201);
     } catch (\Exception $e) {
         DB::rollBack();
@@ -162,7 +162,7 @@ class LoanController extends Controller
             return Excel::download(new HistoryExport, 'loan_history_' . date('Ymd_His') . '.xlsx');
         } catch (\Exception $e) {
             Log::error('Export failed: ' . $e->getMessage());
-            return back()->with('toast_error', 'Failed to generate export. Please try again.');
+            return back()->with('toast_error', 'Gagal menghasilkan ekspor.Tolong coba lagi.');
         }
     }
 
@@ -192,7 +192,7 @@ class LoanController extends Controller
             if (empty($keyword) || strlen($keyword) < 2) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Search keyword must be at least 2 characters'
+                    'message' => 'Kata kunci pencarian harus minimal 2 karakter'
                 ], 400);
             }
 
@@ -215,7 +215,7 @@ class LoanController extends Controller
             Log::error('Search failed: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Search failed. Please try again.'
+                'message' => 'Pencarian gagal.Tolong coba lagi.'
             ], 500);
         }
     }
@@ -237,7 +237,7 @@ class LoanController extends Controller
             Log::error('Failed to fetch loan: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Loan not found'
+                'message' => 'Pinjaman tidak ditemukan'
             ], 404);
         }
     }
@@ -256,7 +256,7 @@ class LoanController extends Controller
             function ($attribute, $value, $fail) use ($request, $id) {
                 $loan = Loan::find($id);
                 if (!$loan) {
-                    $fail('Loan not found');
+                    $fail('Pinjaman tidak ditemukan');
                     return;
                 }
                 
@@ -264,11 +264,11 @@ class LoanController extends Controller
                 $maxDate = date('Y-m-d', strtotime($loan->loan_date . ' +14 days'));
                 
                 if ($value < $today) {
-                    $fail('Return date cannot be before today');
+                    $fail('Tanggal pengembalian tidak bisa sebelum hari ini');
                 }
                 
                 if ($value > $maxDate) {
-                    $fail('Return date cannot be more than 2 weeks from loan date');
+                    $fail('Tanggal pengembalian tidak bisa lebih dari 2 minggu dari tanggal pinjaman');
                 }
             }
         ],
@@ -278,7 +278,7 @@ class LoanController extends Controller
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Validation failed',
+                'message' => 'Validasi gagal',
                 'errors' => $validator->errors()
             ], 422);
         }
@@ -289,7 +289,7 @@ class LoanController extends Controller
             if ($loan->status === 'RETURNED') {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Cannot update a returned loan'
+                    'message' => 'Tidak dapat memperbarui pinjaman yang dikembalikan'
                 ], 403);
             }
 
@@ -305,7 +305,7 @@ class LoanController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Loan updated successfully!',
+                'message' => 'Pinjaman berhasil diperbarui!',
                 'data' => $loan
             ]);
 
@@ -313,7 +313,7 @@ class LoanController extends Controller
             Log::error('Loan update failed: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to update loan',
+                'message' => 'Gagal memperbarui pinjaman',
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -332,7 +332,7 @@ class LoanController extends Controller
             if ($loan->status === 'RETURNED') {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Cannot delete a returned loan'
+                    'message' => 'Tidak dapat menghapus pinjaman yang dikembalikan'
                 ], 403);
             }
 
@@ -347,7 +347,7 @@ class LoanController extends Controller
             
             return response()->json([
                 'success' => true,
-                'message' => 'Loan deleted successfully!'
+                'message' => 'Pinjaman berhasil dihapus!'
             ]);
 
         } catch (\Exception $e) {
@@ -356,7 +356,7 @@ class LoanController extends Controller
             
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to delete loan',
+                'message' => 'gagal Menghapus Pinjaman',
                 'error' => $e->getMessage()
             ], 500);
         }

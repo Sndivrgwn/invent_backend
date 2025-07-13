@@ -17,7 +17,7 @@
 
         <div class="navbar my-6">
             <div class="flex-1">
-                <h1 class="text-2xl font-semibold py-4">Manage Loans</h1>
+                <h1 class="text-2xl font-semibold py-4">Kelola Pinjaman</h1>
             </div>
         </div>
 
@@ -26,7 +26,7 @@
                 <label class="tab border-0 px-6 pb-2 mx-0! sm:px-10! sm:pb-2! sm:mx-0!">
                     <input type="radio" name="my_tabs_4" />
                     <i class="fa-solid fa-circle-arrow-up mr-2 flex justify-center items-center"></i>
-                    Return Product
+                    Produk pengembalian
                 </label>
                 <div class="bg-base-100" style="border-top: 1px solid lightgray;">
                     <div class="p-4 pb-2 flex flex-col md:flex-row items-center">
@@ -38,7 +38,7 @@
                                     </svg>
                                     <span class="sr-only">Search icon</span>
                                 </div>
-                                <input type="text" name="search-navbar" value="{{ request('search-navbar') }}" class="block w-full p-2 ps-10 text-sm border border-gray-400 rounded-lg" placeholder="Search...">
+                                <input type="text" name="search-navbar" value="{{ request('search-navbar') }}" class="block w-full p-2 ps-10 text-sm border border-gray-400 rounded-lg" placeholder="Cari...">
                             </form>
                         </div>
                     </div>
@@ -57,28 +57,28 @@
                             <thead class="text-gray-500 text-sm font-semibold border-b">
                                 <tr>
                                     <th><a href="{{ sortLinkMyLoan('loan_date', $sortBy, $sortDir) }}">
-                                            DATE {!! $sortBy === 'loan_date' ? ($sortDir === 'asc' ? '&uarr;' : '&darr;') : '' !!}
+                                            TANGGAL {!! $sortBy === 'loan_date' ? ($sortDir === 'asc' ? '&uarr;' : '&darr;') : '' !!}
                                         </a></th>
 
                                     <th><a href="{{ sortLinkMyLoan('code_loans', $sortBy, $sortDir) }}">
-                                            CODE {!! $sortBy === 'code_loans' ? ($sortDir === 'asc' ? '&uarr;' : '&darr;') : '' !!}
+                                            KODE {!! $sortBy === 'code_loans' ? ($sortDir === 'asc' ? '&uarr;' : '&darr;') : '' !!}
                                         </a></th>
 
                                     <th><a href="{{ sortLinkMyLoan('loaner_name', $sortBy, $sortDir) }}">
-                                            BORROWER NAME {!! $sortBy === 'loaner_name' ? ($sortDir === 'asc' ? '&uarr;' : '&darr;') : '' !!}
+                                            NAMA PEMINJAM {!! $sortBy === 'loaner_name' ? ($sortDir === 'asc' ? '&uarr;' : '&darr;') : '' !!}
                                         </a></th>
 
                                     <!-- SERIAL NUMBER dan PRODUCT tidak perlu disort karena dari items -->
-                                    <th class="whitespace-nowrap">SERIAL NUMBER</th>
-                                    <th class="whitespace-nowrap">PRODUCT</th>
+                                    <th class="whitespace-nowrap">NOMOR SERIAL</th>
+                                    <th class="whitespace-nowrap">PRODUK</th>
                                     <th class="whitespace-nowrap">STATUS</th>
                                     <!-- STATUS tidak bisa di-sort -->
 
                                     <th><a href="{{ sortLinkMyLoan('return_date', $sortBy, $sortDir) }}">
-                                            DUE DATE {!! $sortBy === 'return_date' ? ($sortDir === 'asc' ? '&uarr;' : '&darr;') : '' !!}
+                                            TENGGAT {!! $sortBy === 'return_date' ? ($sortDir === 'asc' ? '&uarr;' : '&darr;') : '' !!}
                                         </a></th>
 
-                                    <th class="text-center">ACTIONS</th>
+                                    <th class="text-center">TINDAKAN</th>
                                 </tr>
                             </thead>
                             <tbody id="itemTableBody" class="text-sm">
@@ -108,7 +108,7 @@
                                 @endforeach
                                 @empty
                                 <tr>
-                                    <td colspan="8" class="text-center text-gray-500">No Loan found</td>
+                                    <td colspan="8" class="text-center text-gray-500">Tidak ada pinjaman</td>
                                 </tr>
                                 @endforelse
                             </tbody>

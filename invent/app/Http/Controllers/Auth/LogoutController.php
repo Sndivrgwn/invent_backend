@@ -26,7 +26,7 @@ class LogoutController extends Controller
             // Redirect with success message
             return redirect()->route('login')->with('toast', [
                 'type' => 'success',
-                'message' => 'You have been logged out successfully.'
+                'message' => 'Anda telah berhasil logout.'
             ]);
 
         } catch (\Exception $e) {
@@ -34,7 +34,7 @@ class LogoutController extends Controller
             
             return redirect()->back()->with('toast', [
                 'type' => 'error',
-                'message' => 'Logout failed. Please try again.'
+                'message' => 'Logout gagal.Tolong coba lagi.'
             ]);
         }
     }

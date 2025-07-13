@@ -18,7 +18,7 @@
             <div class="navbar my-6">
 
                 <div class="flex-1">
-                    <h1 class="text-2xl font-semibold py-4">User Management</h1>
+                    <h1 class="text-2xl font-semibold py-4">Manajemen Pengguna</h1>
                 </div>
 
                 <div class="flex-none">
@@ -26,7 +26,7 @@
                     <button class="bg-[#2563EB] text-white rounded-lg py-2 px-4 mx-5 hover:bg-blue-400 cursor-pointer flex justify-center items-center" onclick="newProduct.showModal()">
                         <div class="gap-2 flex">
                             <i class="fa fa-plus" style="display: flex; justify-content: center; align-items: center;"></i>
-                            <span>New User</span>
+                            <span>Pengguna baru</span>
                         </div>
                     </button>
                     <dialog id="newProduct" class="modal">
@@ -36,19 +36,19 @@
                                 @csrf
                                 <input type="hidden" name="_method" value="POST">
                                 <button id="cancel" type="button" onclick="closeModal()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-                                <h1 class="font-semibold text-2xl mb-4">New Users</h1>
+                                <h1 class="font-semibold text-2xl mb-4">Pengguna baru</h1>
                                 <div class="flex gap-5 justify-between text-gray-600 mb-3">
                                     <!-- Product -->
                                     <div class="w-[100%]">
-                                        <h1 class="font-medium">NAME</h1>
-                                        <input type="text" name="name" placeholder="Type here" class="input" style="width: 100%;" />
+                                        <h1 class="font-medium">NAMA</h1>
+                                        <input type="text" name="name" placeholder="Ketik disini" class="input" style="width: 100%;" />
                                     </div>
                                 </div>
                                 <div class="flex gap-5 justify-between text-gray-600 mb-6">
                                     <!-- Brand -->
                                     <div class="w-[50%]">
                                         <h1 class="font-medium">EMAIL</h1>
-                                        <input type="email" name="email" placeholder="Type here" class="input" />
+                                        <input type="email" name="email" placeholder="Ketik disini" class="input" />
                                     </div>
 
                                     <!-- condition -->
@@ -59,7 +59,7 @@
                                                <!-- In new user modal -->
 <!-- Di bagian new user modal -->
 <select id="condition" name="roles_id" class="select select-bordered w-full">
-    <option value="" disabled selected>Select Role</option>
+    <option value="" disabled selected>Pilih Role</option>
     @auth
         @if(auth()->user()->roles_id == 3) <!-- Superadmin -->
             <option value="1">Admin</option>
@@ -77,13 +77,13 @@
                                 <div class="flex gap-5 justify-between text-gray-600 mb-3">
                                     <div class="w-[100%]">
                                         <h1 class="font-medium">PASSWORD</h1>
-                                        <input type="password" name="password" placeholder="insert password" class="input" style="width: 100%;" />
+                                        <input type="password" name="password" placeholder="masukkan password" class="input" style="width: 100%;" />
                                     </div>
                                 </div>
                                 <div class="flex gap-5 justify-between text-gray-600 mb-3">
                                     <div class="w-[100%] mb-4">
-                                        <h1 class="font-medium">CONFIRM PASSWORD</h1>
-                                        <input type="password" name="password_confirmation" placeholder="please confirm password" class="input" style="width: 100%;" />
+                                        <h1 class="font-medium">KONFIRMASI PASSWORD</h1>
+                                        <input type="password" name="password_confirmation" placeholder="konfirmasi password" class="input" style="width: 100%;" />
                                     </div>
                                 </div>
                                 {{-- <div class="flex gap-5  justify-between text-gray-600 mb-3">
@@ -92,8 +92,8 @@
 
                                     <!-- button -->
                                     <div class="w-full flex justify-end items-end gap-4">
-                                        <button id="cancelButton" type="button" onclick="closeModal()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Cancel</button>
-                                        <button type="submit" class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Submit</button>
+                                        <button id="cancelButton" type="button" onclick="closeModal()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Batal</button>
+                                        <button type="submit" class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Kirim</button>
                                     </div>
                             </form>
                         </div>
@@ -120,14 +120,14 @@
                                 </svg>
                                 <span class="sr-only">Search icon</span>
                             </div>
-                            <input type="text" id="searchInput" name="searchInput" class="block w-full p-2 ps-10 text-sm border border-gray-400 rounded-lg" placeholder="Search...">
+                            <input type="text" id="searchInput" name="searchInput" class="block w-full p-2 ps-10 text-sm border border-gray-400 rounded-lg" placeholder="Cari...">
                         </form>
 
                     </div>
 
                     <!-- filter -->
                     <button class="btn flex justify-center items-center bg-transparent me-2 mt-3 md:mt-0" onclick="filterUsers.showModal()">Filter Role <i class="fa fa-filter" style="display: flex; justify-content: center; align-items: center;"></i></button>
-                    <button class="btn flex justify-center items-center btn-secondary mt-3 md:mt-0" onclick="resetFilter()">Reset Filter</button>
+                    <button class="btn flex justify-center items-center btn-secondary mt-3 md:mt-0" onclick="resetFilter()">Hapus filter</button>
                     <dialog id="filterUsers" class="modal">
                         <div class="modal-box">
                             <!-- close button -->
@@ -138,7 +138,7 @@
                             <form id="filterForm">
                                 <!-- ROLE -->
                                 <select id="roleFilter" class="select select-bordered">
-                                    <option value="">All Roles</option>
+                                    <option value="">Semua Role</option>
                                     <option value="admin">Admin</option>
                                     <option value="user">User</option>
                                 </select>
@@ -170,7 +170,7 @@ function sortLinkUser($field, $currentSortBy, $currentSortDir) {
                             <tr>
                                 <th class="text-center font-semibold">
     <a href="{{ sortLinkUser('name', $sortBy, $sortDir) }}">
-        NAME {!! $sortBy === 'name' ? ($sortDir === 'asc' ? '&uarr;' : '&darr;') : '' !!}
+        NAMA {!! $sortBy === 'name' ? ($sortDir === 'asc' ? '&uarr;' : '&darr;') : '' !!}
     </a>
 </th>
 
@@ -184,11 +184,11 @@ function sortLinkUser($field, $currentSortBy, $currentSortDir) {
 
 <th class="text-center font-semibold">
     <a href="{{ sortLinkUser('last_active_at', $sortBy, $sortDir) }}">
-        LAST ACTIVE {!! $sortBy === 'last_active_at' ? ($sortDir === 'asc' ? '&uarr;' : '&darr;') : '' !!}
+        TERAKHIR AKTIF {!! $sortBy === 'last_active_at' ? ($sortDir === 'asc' ? '&uarr;' : '&darr;') : '' !!}
     </a>
 </th>
 
-<th class="text-center font-semibold">ACTION</th>
+<th class="text-center font-semibold">TINDAKAN</th>
 
                             </tr>
                         </thead>
@@ -227,14 +227,14 @@ function sortLinkUser($field, $currentSortBy, $currentSortDir) {
 
                 <dialog id="allLoansModal" class="modal">
     <div class="modal-box w-11/12 max-w-5xl">
-        <h3 class="font-bold text-lg">All Loan History</h3>
+        <h3 class="font-bold text-lg">Semua riwayat pinjaman</h3>
         <div class="overflow-x-auto">
             <table class="table">
                 <thead>
                     <tr>
                         <th>Item</th>
-                        <th>Loan Date</th>
-                        <th>Return Date</th>
+                        <th>Tanggal pinjaman</th>
+                        <th>Tanggal kembali</th>
                         <th>Status</th>
                     </tr>
                 </thead>
@@ -245,7 +245,7 @@ function sortLinkUser($field, $currentSortBy, $currentSortDir) {
         </div>
         <div class="modal-action">
             <form method="dialog">
-                <button class="btn">Close</button>
+                <button class="btn">Tutup</button>
             </form>
         </div>
     </div>
@@ -257,12 +257,12 @@ function sortLinkUser($field, $currentSortBy, $currentSortDir) {
                             <!-- Close Button -->
                             <button type="button" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onclick="closeDeleteDialog()">✕</button>
                             <!-- Konten -->
-                            <h1 class="text-xl font-bold text-center mb-4">Delete Item?</h1>
-                            <p class="text-center text-gray-600">Are you sure you want to delete this item? The product will also deleted. Check before you submit.</p>
+                            <h1 class="text-xl font-bold text-center mb-4">Hapus item?</h1>
+                            <p class="text-center text-gray-600">Apakah Anda yakin ingin menghapus item ini?Produk ini juga akan dihapus.Periksa sebelum Anda mengirimkan.</p>
                             <!-- Tombol -->
                             <div class="flex justify-end gap-3 mt-6">
-                                <button type="button" onclick="closeDeleteDialog()" class="bg-gray-300 text-gray-800 rounded-lg px-4 py-2 hover:bg-gray-400 cursor-pointer">Cancel</button>
-                                <button type="button" onclick="confirmDelete()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-red-600 cursor-pointer">Yes, Delete</button>
+                                <button type="button" onclick="closeDeleteDialog()" class="bg-gray-300 text-gray-800 rounded-lg px-4 py-2 hover:bg-gray-400 cursor-pointer">Batal</button>
+                                <button type="button" onclick="confirmDelete()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-red-600 cursor-pointer">Ya, Hapus</button>
                             </div>
                         </form>
                     </div>
@@ -277,7 +277,7 @@ function sortLinkUser($field, $currentSortBy, $currentSortDir) {
 
                             <div class="flex gap-5 justify-between text-gray-600 mb-3">
                                 <div class="w-full">
-                                    <h1 class="font-medium">NAME</h1>
+                                    <h1 class="font-medium">NAMA</h1>
                                     <input type="text" id="edit_name" name="name" class="input w-full" placeholder="User name">
                                 </div>
                             </div>
@@ -294,7 +294,7 @@ function sortLinkUser($field, $currentSortBy, $currentSortDir) {
                                     <h1 class="font-medium">ROLE</h1>
                                    <!-- Di bagian edit modal -->
 <select id="edit_role" name="roles_id" class="select select-bordered w-full">
-    <option value="" disabled selected>Select Role</option>
+    <option value="" disabled selected>Pilih Role</option>
     @auth
         @if(auth()->user()->roles_id == 3) <!-- Superadmin -->
             <option value="3">Superadmin</option>
@@ -312,13 +312,13 @@ function sortLinkUser($field, $currentSortBy, $currentSortDir) {
                             <!-- Add these password fields -->
                             <div class="flex gap-5 justify-between text-gray-600 mb-3">
                                 <div class="w-[100%]">
-                                    <h1 class="font-medium">NEW PASSWORD </h1>
+                                    <h1 class="font-medium">PASSWORD BARU </h1>
                                     <input type="password" name="password" class="input" placeholder="Leave blank to keep current" style="width: 100%;">
                                 </div>
                             </div>
                             <div class="flex gap-5 justify-between text-gray-600 mb-3">
                                 <div class="w-[100%]">
-                                    <h1 class="font-medium">CONFIRM NEW PASSWORD</h1>
+                                    <h1 class="font-medium">KONFIRMASI PASSWORD</h1>
                                     <input type="password" name="password_confirmation" class="input" placeholder="Confirm new password" style="width: 100%;">
                                 </div>
                             </div>
@@ -326,8 +326,8 @@ function sortLinkUser($field, $currentSortBy, $currentSortDir) {
                             </div> --}}
 
                             <div class="flex justify-end gap-4 mt-4">
-                                <button type="button" onclick="closeEditModal()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Cancel</button>
-                                <button type="submit" class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Save</button>
+                                <button type="button" onclick="closeEditModal()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Batal</button>
+                                <button type="submit" class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Simpan</button>
                             </div>
                         </form>
                     </div>
@@ -339,11 +339,11 @@ function sortLinkUser($field, $currentSortBy, $currentSortDir) {
                             <!-- Tombol close -->
                             <button type="button" onclick="document.getElementById('viewProduct').close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
 
-                            <h1 class="font-semibold text-2xl mb-4">User Details</h1>
+                            <h1 class="font-semibold text-2xl mb-4">Detail Pengguna</h1>
 
                             <div class="flex gap-5 justify-between text-gray-600">
                                 <div class="w-[50%]">
-                                    <h1 class="font-medium">Name</h1>
+                                    <h1 class="font-medium">Nama</h1>
                                     <p id="viewUserName"></p>
                                 </div>
                                 <div class="w-[50%]">
@@ -358,31 +358,31 @@ function sortLinkUser($field, $currentSortBy, $currentSortDir) {
                                     <p id="viewUserRole"></p>
                                 </div>
                                 <div class="w-[50%]">
-                                    <h1 class="font-medium">Last Active</h1>
+                                    <h1 class="font-medium">Terakhir Aktif</h1>
                                     <p id="viewUserLastActive"></p>
                                 </div>
                             </div>
 
                             <div class="flex gap-5 justify-between text-gray-600 mt-3">
                                 <div class="w-[50%]">
-                                    <h1 class="font-medium">Total Loans</h1>
+                                    <h1 class="font-medium">Total pinjaman</h1>
                                     <p id="viewUserTotalLoans"></p>
                                 </div>
                                 <div class="w-[50%]">
-                                    <h1 class="font-medium">Total Returns</h1>
+                                    <h1 class="font-medium">Total pengembalian</h1>
                                     <p id="viewUserTotalReturns"></p>
                                 </div>
                             </div>
 
                             <div class="mt-6">
-                                <h2 class="font-semibold text-xl mb-2">Loan History</h2>
+                                <h2 class="font-semibold text-xl mb-2">Riwayat pinjaman</h2>
                                 <div class="overflow-x-auto">
                                     <table class="table table-zebra">
                                         <thead>
                                             <tr>
                                                 <th>Item</th>
-                                                <th>Loan Date</th>
-                                                <th>Due Date</th>
+                                                <th>Tanggal pinjaman</th>
+                                                <th>Tenggat</th>
                                                 <th>Status</th>
                                             </tr>
                                         </thead>
@@ -394,7 +394,7 @@ function sortLinkUser($field, $currentSortBy, $currentSortDir) {
                             </div>
 
                             <div class="w-full flex justify-end items-end gap-4 mt-4">
-                                <button type="button" onclick="document.getElementById('viewProduct').close()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Close</button>
+                                <button type="button" onclick="document.getElementById('viewProduct').close()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Tutup</button>
                             </div>
                         </form>
                     </div>
@@ -428,7 +428,7 @@ function sortLinkUser($field, $currentSortBy, $currentSortDir) {
         
         @if(auth()->user()->roles_id == 1) // Jika admin
             if (data.roles_id == 3) { // Coba hapus superadmin
-                showToast('You are not authorized to delete superadmin', 'error');
+                showToast('Anda tidak berwenang untuk menghapus superadmin', 'error');
                 return;
             }
         @endif
@@ -436,7 +436,7 @@ function sortLinkUser($field, $currentSortBy, $currentSortDir) {
         deleteTargetId = id;
         document.getElementById("confirmDeleteDialog").showModal();
     } catch (error) {
-        showToast('Error checking user role', 'error');
+        showToast('Kesalahan Memeriksa Peran Pengguna', 'error');
         console.error(error);
     }
 }
@@ -459,7 +459,7 @@ function sortLinkUser($field, $currentSortBy, $currentSortDir) {
             handleAjaxResponse({
                 toast: {
                     type: 'success',
-                    message: 'User deleted successfully'
+                    message: 'Pengguna berhasil dihapus'
                 },
                 reload: true
             });
@@ -467,12 +467,12 @@ function sortLinkUser($field, $currentSortBy, $currentSortDir) {
             handleAjaxResponse({
                 toast: {
                     type: 'error',
-                    message: data.message || 'Failed to delete user'
+                    message: data.message || 'Gagal Menghapus Pengguna'
                 }
             });
         }
     } catch (error) {
-        showToast('An error occurred while deleting user', 'error');
+        showToast('Terjadi kesalahan saat menghapus pengguna', 'error');
         console.error(error);
     }
 
@@ -525,7 +525,7 @@ function sortLinkUser($field, $currentSortBy, $currentSortDir) {
             
             // Check if we got valid user data
             if (!data.user) {
-                throw new Error('Invalid user data received');
+                throw new Error('Data pengguna tidak valid diterima');
             }
             
             const user = data.user;
@@ -544,7 +544,7 @@ function sortLinkUser($field, $currentSortBy, $currentSortDir) {
             loanHistoryBody.innerHTML = '';
             
             if (loans.length === 0) {
-                loanHistoryBody.innerHTML = '<tr><td colspan="4" class="text-center">No loan history found</td></tr>';
+                loanHistoryBody.innerHTML = '<tr><td colspan="4" class="text-center">Tidak ada riwayat pinjaman</td></tr>';
             } else {
                 loans.forEach(loan => {
                     if (loan.items && loan.items.length > 0) {
@@ -593,7 +593,7 @@ function sortLinkUser($field, $currentSortBy, $currentSortDir) {
                     </td>
                 </tr>
             `;
-            showToast('Error loading user details', 'error');
+            showToast('Kesalahan Memuat Detail Pengguna', 'error');
             document.getElementById('viewProduct').showModal();
         }
     }
@@ -656,7 +656,7 @@ function sortLinkUser($field, $currentSortBy, $currentSortDir) {
                     </td>
                 </tr>
             `;
-            showToast('Error loading loan history', 'error');
+            showToast('Kesalahan memuat riwayat pinjaman', 'error');
         }
     }
 
@@ -684,7 +684,7 @@ function sortLinkUser($field, $currentSortBy, $currentSortDir) {
                 handleAjaxResponse({
                     toast: {
                         type: 'success',
-                        message: 'User updated successfully'
+                        message: 'Pengguna berhasil diperbarui'
                     },
                     reload: true
                 });
@@ -692,12 +692,12 @@ function sortLinkUser($field, $currentSortBy, $currentSortDir) {
                 handleAjaxResponse({
                     toast: {
                         type: 'error',
-                        message: data.message || 'Failed to update user'
+                        message: data.message || 'Gagal memperbarui pengguna'
                     }
                 });
             }
         } catch (error) {
-            showToast('An error occurred while updating user', 'error');
+            showToast('Terjadi kesalahan saat memperbarui pengguna', 'error');
             console.error(error);
         }
     });
@@ -787,12 +787,10 @@ function sortLinkUser($field, $currentSortBy, $currentSortDir) {
             tableBody.innerHTML = '<tr><td colspan="5" class="text-center">No users found</td></tr>';
         }
     } catch (error) {
-        showToast('Error fetching users', 'error');
+        showToast('Kesalahan mengambil pengguna', 'error');
         console.error(error);
     }
 }
-
-
 
         searchInput.addEventListener('input', fetchUsers);
         roleFilter.addEventListener('change', fetchUsers);

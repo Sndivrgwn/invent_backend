@@ -21,9 +21,9 @@
                 <!-- Total Products -->
                 <div class="bg-white p-4 rounded-lg shadow flex items-center justify-between">
                     <div>
-                        <h2 class="text-sm font-medium text-gray-400 mb-1">Total Products</h2>
+                        <h2 class="text-sm font-medium text-gray-400 mb-1">Jumlah Produk</h2>
                         <p class="text-2xl font-semibold">{{ $totalItems }}</p>
-                        <p class="text-sm text-gray-400 mt-1">Total number of products in the system.</p>
+                        <p class="text-sm text-gray-400 mt-1">Jumlah produk yang ada di sistem.</p>
                     </div>
                     <div class="bg-blue-500 bg-opacity-25 text-white p-4 rounded-full flex items-center justify-center">
                         <i class="fa fa-cube bg-blue-500" style="display: flex; justify-content: center;"></i>
@@ -32,9 +32,9 @@
                 <!-- Total Inventory -->
                 <div class="bg-white p-4 rounded-lg shadow flex items-center justify-between">
                     <div>
-                        <h2 class="text-sm font-medium text-gray-400 mb-1">Total Inventory</h2>
+                        <h2 class="text-sm font-medium text-gray-400 mb-1">jumlah Inventori</h2>
                         <p class="text-2xl font-semibold">{{ $totalCategories }}</p>
-                        <p class="text-sm text-gray-400 mt-1">Recorded inventory categories or types.</p>
+                        <p class="text-sm text-gray-400 mt-1">Kategori atau jenis inventaris yang direkam.</p>
                     </div>
                     <div class="bg-green-500 bg-opacity-25 text-white p-4 rounded-full flex items-center justify-center">
                         <i class="fa fa-boxes bg-green-500" style="display: flex; justify-content: center;"></i>
@@ -43,9 +43,9 @@
                 <!-- Total Loans -->
                 <div class="bg-white p-4 rounded-lg shadow flex items-center justify-between">
                     <div>
-                        <h2 class="text-sm font-medium text-gray-400 mb-1">Total Loans</h2>
+                        <h2 class="text-sm font-medium text-gray-400 mb-1">Total pinjaman</h2>
                         <p class="text-2xl font-semibold">{{ $totalLoanedItems }}</p>
-                        <p class="text-sm text-gray-400 mt-1">Items currently on loaned.</p>
+                        <p class="text-sm text-gray-400 mt-1">Item yang saat ini dipinjamkan.</p>
                     </div>
                     <div class="bg-yellow-500 bg-opacity-25 text-white p-4 rounded-full flex items-center justify-center">
                         <i class="fa fa-handshake bg-yellow-500" style="display: flex; justify-content: center;"></i>
@@ -55,7 +55,7 @@
             <div class="bg-white p-4 rounded-xl shadow-md">
                 <!-- Header -->
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 mb-4">
-                    <h2 class="text-lg font-semibold text-gray-700 w-full md:w-auto">Recent Loan</h2>
+                    <h2 class="text-lg font-semibold text-gray-700 w-full md:w-auto">Pinjaman terbaru</h2>
 
                     <!-- Controls -->
                     <div class="flex flex-col md:flex-row items-stretch md:items-center gap-2 w-full md:w-auto">
@@ -74,7 +74,7 @@
                                     </svg>
                                     <span class="sr-only">Search icon</span>
                                 </div>
-                                <input type="text" name="search" value="{{ request('search') }}" class="block w-full p-2 ps-10 text-sm border border-gray-400 rounded-lg" placeholder="Search...">
+                                <input type="text" name="search" value="{{ request('search') }}" class="block w-full p-2 ps-10 text-sm border border-gray-400 rounded-lg" placeholder="Cari...">
                             </form>
 
                         </div>
@@ -94,7 +94,7 @@
                             <tr>
                                 <th>
                                     <a href="{{ route('dashboard', ['sortBy' => 'loan_date', 'sortDir' => $sortBy === 'loan_date' && $sortDir === 'asc' ? 'desc' : 'asc', 'search' => $search]) }}">
-                                        DATE
+                                        Tanggal
                                         @if ($sortBy === 'loan_date')
                                         {{ $sortDir === 'asc' ? '↑' : '↓' }}
                                         @endif
@@ -103,16 +103,16 @@
 
                                 <th>
                                     <a href="{{ route('dashboard', ['sortBy' => 'loaner_name', 'sortDir' => $sortBy === 'loaner_name' && $sortDir === 'asc' ? 'desc' : 'asc', 'search' => $search]) }}">
-                                        BORROWER NAME
+                                        NAMA PEMINJAM
                                         @if ($sortBy === 'loaner_name')
                                         {{ $sortDir === 'asc' ? '↑' : '↓' }}
                                         @endif
                                     </a>
                                 </th>
 
-                                <th>SERIAL NUMBER</th>
-                                <th>PRODUCT</th>
-                                <th>CONDITION</th>
+                                <th>NOMOR SERIAL</th>
+                                <th>PRODUK</th>
+                                <th>KONDISI</th>
 
                                 <th>
                                     STATUS
@@ -147,7 +147,7 @@
                             @endforeach
                             @empty
                             <tr>
-                                <td colspan="8" class="text-center text-gray-500">No Loan Recently</td>
+                                <td colspan="8" class="text-center text-gray-500">Tidak ada pinjaman</td>
                             </tr>
                             @endforelse
                         </tbody>

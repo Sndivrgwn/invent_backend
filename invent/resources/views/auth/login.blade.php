@@ -20,7 +20,7 @@
                        name="email" 
                        type="email"
                        value="{{ old('email') }}" 
-                       placeholder='Enter your email' 
+                       placeholder='Masukkan email' 
                        required
                        autofocus />
                 
@@ -34,7 +34,7 @@
                                 name="password" 
                                 id="password" 
                                 type="password"
-                                placeholder='Enter your password' 
+                                placeholder='Masukkan password' 
                                 required />
                         
                         <span class="absolute inset-y-0 right-0 pr-3 flex items-center cursor-pointer" onclick="togglePasswordVisibility()">
@@ -52,7 +52,7 @@
                 <fieldset class='fieldset bg-transparent border-none rounded-box flex w-64 border p-4'>
                     <label class='label text-[#000000] text-[14px] cursor-pointer flex items-center'>
                         <input type="checkbox" class='checkbox mr-2' name="remember" id="remember" />
-                        Remember me
+                        Ingat 
                     </label>
                 </fieldset>
 
@@ -64,7 +64,7 @@
                 @if (Route::has('password.request'))
                 <div class="text-center mt-2">
                     <a href="{{ route('password.request') }}" class="text-[#2563EB] text-sm hover:underline">
-                        Forgot your password?
+                        Lupa Password?
                     </a>
                 </div>
                 @endif

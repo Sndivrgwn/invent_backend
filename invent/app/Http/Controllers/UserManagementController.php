@@ -70,7 +70,7 @@ class UserManagementController extends Controller
             if ((int)$validated['roles_id'] === 3) {
             return redirect()->back()->with('toast', [
                 'type' => 'error',
-                'message' => 'You are not allowed to create a SuperAdmin user.'
+                'message' => 'Anda tidak diizinkan membuat pengguna superadmin.'
             ])->withInput();
         }
 
@@ -79,13 +79,13 @@ class UserManagementController extends Controller
 
             return redirect()->route('users')->with('toast', [
                 'type' => 'success',
-                'message' => 'User created successfully'
+                'message' => 'Pengguna berhasil dibuat'
             ]);
             
         } catch (\Exception $e) {
             return redirect()->back()->with('toast', [
                 'type' => 'error',
-                'message' => 'Error creating user: ' . $e->getMessage()
+                'message' => 'Kesalahan Membuat Pengguna: ' . $e->getMessage()
             ])->withInput();
         }
     }
@@ -112,7 +112,7 @@ class UserManagementController extends Controller
             return response()->json([
                 'toast' => [
                     'type' => 'success',
-                    'message' => 'User updated successfully'
+                    'message' => 'Pengguna berhasil diperbarui'
                 ],
                 'data' => $user,
             ], 200);
@@ -121,7 +121,7 @@ class UserManagementController extends Controller
             return response()->json([
                 'toast' => [
                     'type' => 'error',
-                    'message' => 'Error updating user: ' . $e->getMessage()
+                    'message' => 'Kesalahan memperbarui pengguna: ' . $e->getMessage()
                 ]
             ], 500);
         }
@@ -136,7 +136,7 @@ class UserManagementController extends Controller
             return response()->json([
                 'toast' => [
                     'type' => 'success',
-                    'message' => 'User deleted successfully'
+                    'message' => 'Pengguna berhasil dihapus'
                 ]
             ], 200);
             
@@ -144,7 +144,7 @@ class UserManagementController extends Controller
             return response()->json([
                 'toast' => [
                     'type' => 'error',
-                    'message' => 'Error deleting user: ' . $e->getMessage()
+                    'message' => 'Kesalahan Menghapus Pengguna: ' . $e->getMessage()
                 ]
             ], 500);
         }
@@ -171,7 +171,7 @@ class UserManagementController extends Controller
             return response()->json([
                 'toast' => [
                     'type' => 'error',
-                    'message' => 'Error fetching user details: ' . $e->getMessage()
+                    'message' => 'Kesalahan mengambil detail pengguna: ' . $e->getMessage()
                 ]
             ], 500);
         }
@@ -191,7 +191,7 @@ class UserManagementController extends Controller
             return response()->json([
                 'toast' => [
                     'type' => 'error',
-                    'message' => 'Error fetching loans: ' . $e->getMessage()
+                    'message' => 'Kesalahan mengambil pinjaman: ' . $e->getMessage()
                 ]
             ], 500);
         }

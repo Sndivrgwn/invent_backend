@@ -50,7 +50,7 @@ class ManageLoanController extends Controller
 
     } catch (\Exception $e) {
         Log::error("Failed to fetch loans: " . $e->getMessage());
-        return redirect()->back()->with('toast_error', 'Failed to load loans data. Please try again.');
+        return redirect()->back()->with('toast_error', 'Gagal memuat data pinjaman.Tolong coba lagi.');
     }
 }
 
@@ -74,7 +74,7 @@ class ManageLoanController extends Controller
             Log::error("Failed to fetch loan {$id}: " . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Loan not found or cannot be loaded'
+                'message' => 'Pinjaman tidak ditemukan atau tidak dapat dimuat'
             ], 404);
         }
     }
@@ -97,7 +97,7 @@ class ManageLoanController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Loan deleted successfully'
+                'message' => 'Pinjaman berhasil dihapus'
             ]);
 
         } catch (\Exception $e) {
@@ -105,7 +105,7 @@ class ManageLoanController extends Controller
             Log::error("Failed to delete loan {$id}: " . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to delete loan. Please try again.'
+                'message' => 'Gagal menghapus pinjaman.Tolong coba lagi.'
             ], 500);
         }
     }
@@ -141,7 +141,7 @@ class ManageLoanController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Loan returned successfully',
+                'message' => 'Pinjaman berhasil kembali',
                 'return' => $return
             ]);
 
@@ -150,7 +150,7 @@ class ManageLoanController extends Controller
             Log::error("Failed to return loan {$id}: " . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to process return. Please try again.',
+                'message' => 'Gagal memproses pengembalian.Tolong coba lagi.',
                 'error' => config('app.debug') ? $e->getMessage() : null
             ], 500);
         }

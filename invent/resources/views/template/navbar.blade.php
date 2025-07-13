@@ -10,7 +10,7 @@
         <a href="newLoan" class="w-1/2 md:w-2/3 mx-3">
             <button class="bg-[#2563EB] text-white rounded-lg p-2 px-5 w-full hover:bg-blue-400 cursor-pointer flex justify-center items-center gap-2">
                 <i class="fa-regular fa-plus flex justify-center items-center"></i>
-                <span>New Loan</span>
+                <span>Pinjam baru</span>
             </button>
         </a>
 
@@ -23,8 +23,8 @@
             <ul tabindex="0" class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow">
                 <li>
                     <a href="/profil" class="justify-between">
-                        Profile
-                        <span class="badge">New</span>
+                        Profil
+                        <span class="badge">Baru</span>
                     </a>
                 </li>
             </ul>

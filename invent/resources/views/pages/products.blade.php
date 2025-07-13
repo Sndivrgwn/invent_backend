@@ -15,14 +15,14 @@
 
         <div class="navbar my-6">
             <div class="flex-1">
-                <h1 class="text-2xl font-semibold py-4">Products</h1>
+                <h1 class="text-2xl font-semibold py-4">Produk</h1>
             </div>
             <div class="flex-none">
                 @can('adminFunction')
                 <button class="bg-[#2563EB] text-white rounded-lg py-2 px-4 mx-5 hover:bg-blue-400 cursor-pointer flex justify-center items-center" onclick="newProduct.showModal()">
                     <div class="gap-2 flex">
                         <i class="fa fa-plus" style="display: flex; justify-content: center; align-items: center;"></i>
-                        <span>New Product</span>
+                        <span>Produk baru</span>
                     </div>
                 </button>
                 @endcan
@@ -32,11 +32,11 @@
                     <div class="modal-box">
                         <form method="POST" id="itemForm">
                             <button id="cancel" type="button" onclick="closeModal()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-                            <h1 class="font-semibold text-2xl mb-4">New Product</h1>
+                            <h1 class="font-semibold text-2xl mb-4">Produk baru</h1>
                             
                             {{-- image upload --}}
                             <div class="mb-4 text-gray-600">
-                                <h1 class="font-medium">IMAGE</h1>
+                                <h1 class="font-medium">GAMBAR</h1>
                                 <div class="flex items-center gap-4">
                                     <div class="avatar">
                                         <div class="w-24 rounded-lg bg-gray-200">
@@ -50,7 +50,7 @@
                             <div class="flex gap-5 justify-between text-gray-600">
                                 <!-- Product -->
                                 <div class="w-[50%]">
-                                    <h1 class="font-medium">PRODUCT</h1>
+                                    <h1 class="font-medium">PRODUK</h1>
                                     <div class="mb-2">
                                         <label class="input flex text-gray-600" style="width: 100%;">
                                             <input class="w-full" type="text" id="product" placeholder="product" />
@@ -59,10 +59,10 @@
                                 </div>
                                 <!-- rack -->
                                 <div class="w-[50%]">
-                                    <h1 class="font-medium">RACK</h1>
+                                    <h1 class="font-medium">RAK</h1>
                                     <label class="select">
                                         <select id="rack">
-                                            <option>Insert Rack</option>
+                                            <option>Pilih rak</option>
                                             @foreach ($locations as $location)
                                             <option value="{{ $location->id }}">{{ $location->name . ' | '. $location->description }}</option>
                                             @endforeach
@@ -74,7 +74,7 @@
                             <div class="flex gap-5 justify-between text-gray-600">
                                 <!-- Brand -->
                                 <div class="w-[50%]">
-                                    <h1 class="font-medium">BRAND</h1>
+                                    <h1 class="font-medium">MEREK</h1>
                                     <div class="mb-2">
                                         <label class="input flex text-gray-600" style="width: 100%;">
                                             <input class="w-full" type="text" id="brand" placeholder="brand" />
@@ -83,13 +83,13 @@
                                 </div>
                                 <!-- condition -->
                                 <div class="w-[50%]">
-                                    <h1 class="font-medium">CONDITION</h1>
+                                    <h1 class="font-medium">KONDISI</h1>
                                     <div>
                                         <label class="select">
                                             <select id="condition">
-                                                <option>Insert Condition</option>
-                                                <option value="GOOD">Good</option>
-                                                <option value="NOT GOOD">Not Good</option>
+                                                <option>Pilih Kondisi</option>
+                                                <option value="GOOD">GOOD</option>
+                                                <option value="NOT GOOD">NOT GOOD</option>
                                             </select>
                                         </label>
                                     </div>
@@ -99,7 +99,7 @@
                             <div class="flex gap-5 justify-between text-gray-600">
                                 <!-- Type -->
                                 <div class="w-[50%]">
-                                    <h1 class="font-medium">TYPE</h1>
+                                    <h1 class="font-medium">TIPE</h1>
                                     <div class="mb-2">
                                         <label class="input flex text-gray-600" style="width: 100%;">
                                             <input class="w-full" type="text" id="type" placeholder="type" />
@@ -108,11 +108,11 @@
                                 </div>
                                 <!-- category -->
                                 <div class="w-[50%]">
-                                    <h1 class="font-medium">CATEGORY</h1>
+                                    <h1 class="font-medium">KATEGORI</h1>
                                     <div>
                                         <label class="select">
                                             <select id="category_select" name="category_id" class="input w-full">
-                                                <option value="">Select Category</option>
+                                                <option value="">Pilih Kategori</option>
                                                 @foreach($categories as $category) 
                                                     <option value="{{ $category->id }}">{{ $category->name }}</option>
                                                 @endforeach
@@ -125,7 +125,7 @@
                             <!-- SN -->
                             <div class="flex w-full mb-2">
                                 <div class="w-full">
-                                    <h1 class="font-medium text-gray-600">SERIAL NUMBER</h1>
+                                    <h1 class="font-medium text-gray-600">NOMOR SERIAL</h1>
                                     <label class="input flex text-gray-600" style="width: 100%;">
                                         <input class="w-full" type="text" id="serialNumber" placeholder="Serial Number" />
                                     </label>
@@ -134,14 +134,14 @@
 
                             <!-- Description -->
                             <div class="mb-4">
-                                <h1 class="font-medium text-gray-600">DESCRIPTION</h1>
+                                <h1 class="font-medium text-gray-600">DESKRIPSI</h1>
                                 <textarea id="description" class="textarea text-gray-600" placeholder="Description" style="width: 100%;"></textarea>
                             </div>
 
                             <!-- buttons -->
                             <div class="w-full flex justify-end items-end gap-4">
-                                <button id="cancelButton" type="button" onclick="closeModal()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Cancel</button>
-                                <button class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Submit</button>
+                                <button id="cancelButton" type="button" onclick="closeModal()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Batal</button>
+                                <button class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Kirim</button>
                             </div>
                         </form>
                     </div>
@@ -159,12 +159,12 @@
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
                             </svg>
                         </div>
-                        <input type="text" name="search-navbar" value="{{ request('search-navbar') }}" class="block w-full p-2 ps-10 text-sm border border-gray-400 rounded-lg" placeholder="Search...">
+                        <input type="text" name="search-navbar" value="{{ request('search-navbar') }}" class="block w-full p-2 ps-10 text-sm border border-gray-400 rounded-lg" placeholder="Cari...">
                     </form>
                 </div>
 
                 <!-- filter -->
-                <button class="btn flex justify-center items-center bg-transparent" onclick="filterProduct.showModal()">All Categories <i class="fa fa-filter" style="display: flex; justify-content: center; align-items: center;"></i></button>
+                <button class="btn flex justify-center items-center bg-transparent" onclick="filterProduct.showModal()">Kategori <i class="fa fa-filter" style="display: flex; justify-content: center; align-items: center;"></i></button>
                 <dialog id="filterProduct" class="modal">
     <div class="modal-box">
         <form method="dialog">
@@ -173,9 +173,9 @@
 
         <form id="filterForm">
             <div class="mb-4">
-                <h1 class="text-lg font-semibold mb-2">Brand</h1>
+                <h1 class="text-lg font-semibold mb-2">Merek</h1>
                 <select name="brand" class="select select-bordered w-full max-w-xs">
-                    <option value="" selected>All Brands</option> {{-- Opsi default untuk reset/tidak memilih filter --}}
+                    <option value="" selected>semua Merek</option> {{-- Opsi default untuk reset/tidak memilih filter --}}
                     @foreach($items->pluck('brand')->unique() as $brand)
                         <option value="{{ $brand }}" {{ request('brand') == $brand ? 'selected' : '' }}>{{ $brand }}</option>
                     @endforeach
@@ -183,9 +183,9 @@
             </div>
 
             <div class="mb-4">
-                <h1 class="text-lg font-semibold mb-2">Category</h1>
+                <h1 class="text-lg font-semibold mb-2">Kategori</h1>
                 <select name="category" class="select select-bordered w-full max-w-xs">
-                    <option value="" selected>All Categories</option> {{-- Opsi default untuk reset/tidak memilih filter --}}
+                    <option value="" selected>semua Kategori</option> {{-- Opsi default untuk reset/tidak memilih filter --}}
                     @foreach($items->pluck('category.name')->unique() as $category)
                         <option value="{{ $category }}" {{ request('category') == $category ? 'selected' : '' }}>{{ $category }}</option>
                     @endforeach
@@ -193,9 +193,9 @@
             </div>
 
             <div class="mb-4">
-                <h1 class="text-lg font-semibold mb-2">Type</h1>
+                <h1 class="text-lg font-semibold mb-2">Tipe</h1>
                 <select name="type" class="select select-bordered w-full max-w-xs">
-                    <option value="" selected>All Types</option> {{-- Opsi default untuk reset/tidak memilih filter --}}
+                    <option value="" selected>Semua Tipe</option> {{-- Opsi default untuk reset/tidak memilih filter --}}
                     @foreach($items->pluck('type')->unique() as $type)
                         <option value="{{ $type }}" {{ request('type') == $type ? 'selected' : '' }}>{{ $type }}</option>
                     @endforeach
@@ -203,9 +203,9 @@
             </div>
 
             <div class="mb-4">
-                <h1 class="text-lg font-semibold mb-2">Location</h1>
+                <h1 class="text-lg font-semibold mb-2">Lokasi</h1>
                 <select name="location" class="select select-bordered w-full max-w-xs">
-                    <option value="" selected>All Locations</option> {{-- Opsi default untuk reset/tidak memilih filter --}}
+                    <option value="" selected>semua Lokasi</option> {{-- Opsi default untuk reset/tidak memilih filter --}}
                     @foreach($locations->pluck('description')->unique() as $location)
                         <option value="{{ $location }}" {{ request('location') == $location ? 'selected' : '' }}>{{ $location }}</option>
                     @endforeach
@@ -213,7 +213,7 @@
             </div>
             
             <div class="mb-4">
-                <h1 class="text-lg font-semibold mb-2">Condition</h1>
+                <h1 class="text-lg font-semibold mb-2">Kondisi</h1>
                 <div class="flex flex-wrap gap-1">
                     <input class="btn btn-square" type="reset" value="×" onclick="resetFilter('condition')" />
                     <input class="btn" type="radio" name="condition" value="GOOD" aria-label="GOOD" {{ request('condition') == 'GOOD' ? 'checked' : '' }} />
@@ -230,7 +230,7 @@
                 </div>
             </div>
 
-            <button type="button" class="btn btn-primary mt-4" onclick="applyFilter()">Apply</button>
+            <button type="button" class="btn btn-primary mt-4" onclick="applyFilter()">Terapkan</button>
         </form>
     </div>
 </dialog>
@@ -243,31 +243,31 @@
                         <tr>
                             <thead>
     <tr>
-        <th class="text-center font-semibold">PHOTO</th>
+        <th class="text-center font-semibold">FOTO</th>
         <th class="text-center font-semibold">
             <a href="{{ route('products', ['sortBy' => 'name', 'sortDir' => ($sortBy === 'name' && $sortDir === 'asc') ? 'desc' : 'asc', 'search-navbar' => request('search-navbar')]) }}">
-                PRODUCT
+                PRODUK
                 @if($sortBy === 'name') {{ $sortDir === 'asc' ? '↑' : '↓' }} @endif
             </a>
         </th>
         <th class="text-center font-semibold">
-            RACK {{-- atau tambahkan logic sorting location.name jika mau --}}
+            RAK {{-- atau tambahkan logic sorting location.name jika mau --}}
         </th>
         <th class="text-center font-semibold">
             <a href="{{ route('products', ['sortBy' => 'code', 'sortDir' => ($sortBy === 'code' && $sortDir === 'asc') ? 'desc' : 'asc', 'search-navbar' => request('search-navbar')]) }}">
-                SERIAL NUMBER
+                NOMOR SERIAL
                 @if($sortBy === 'code') {{ $sortDir === 'asc' ? '↑' : '↓' }} @endif
             </a>
         </th>
         <th class="text-center font-semibold">
             <a href="{{ route('products', ['sortBy' => 'type', 'sortDir' => ($sortBy === 'type' && $sortDir === 'asc') ? 'desc' : 'asc', 'search-navbar' => request('search-navbar')]) }}">
-                TYPE
+                TIPE
                 @if($sortBy === 'type') {{ $sortDir === 'asc' ? '↑' : '↓' }} @endif
             </a>
         </th>
         <th class="text-center font-semibold">
             <a href="{{ route('products', ['sortBy' => 'condition', 'sortDir' => ($sortBy === 'condition' && $sortDir === 'asc') ? 'desc' : 'asc', 'search-navbar' => request('search-navbar')]) }}">
-                CONDITIONAL
+                KONDISI
                 @if($sortBy === 'condition') {{ $sortDir === 'asc' ? '↑' : '↓' }} @endif
             </a>
         </th>
@@ -277,7 +277,7 @@
                 @if($sortBy === 'status') {{ $sortDir === 'asc' ? '↑' : '↓' }} @endif
             </a>
         </th>
-        <th class="text-center font-semibold">ACTION</th>
+        <th class="text-center font-semibold">TINDAKAN</th>
     </tr>
 </thead>
 
@@ -324,7 +324,7 @@
                         </tr>
                         @empty
                                 <tr>
-                                    <td colspan="8" class="text-center text-gray-500">No Product found</td>
+                                    <td colspan="8" class="text-center text-gray-500">Tidak ada Produk</td>
                                 </tr>
                         @endforelse
                     </tbody>
@@ -336,11 +336,11 @@
                 <div class="modal-box">
                     <form method="dialog">
                         <button type="button" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onclick="closeDeleteDialog()">✕</button>
-                        <h1 class="text-xl font-bold text-center mb-4">Delete Item?</h1>
-                        <p class="text-center text-gray-600">Are you sure you want to delete this item? This action cannot be undone.</p>
+                        <h1 class="text-xl font-bold text-center mb-4">Hapus item?</h1>
+                        <p class="text-center text-gray-600">Apakah Anda yakin ingin menghapus item ini?Tindakan ini tidak bisa dibatalkan.</p>
                         <div class="flex justify-end gap-3 mt-6">
-                            <button type="button" onclick="closeDeleteDialog()" class="bg-gray-300 text-gray-800 rounded-lg px-4 py-2 hover:bg-gray-400">Cancel</button>
-                            <button type="button" onclick="confirmDelete()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-red-600">Yes, Delete</button>
+                            <button type="button" onclick="closeDeleteDialog()" class="bg-gray-300 text-gray-800 rounded-lg px-4 py-2 hover:bg-gray-400">Batal</button>
+                            <button type="button" onclick="confirmDelete()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-red-600">Ya, Hapus</button>
                         </div>
                     </form>
                 </div>
@@ -352,7 +352,7 @@
                     <form method="dialog">
                         <button type="button" onclick="closeEditModal()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
                     </form>
-                    <h1 class="font-semibold text-2xl mb-4">Edit Product</h1>
+                    <h1 class="font-semibold text-2xl mb-4">Edit Produk</h1>
                     
                     <div class="mb-4 text-gray-600">
                         <h1 class="font-medium">IMAGE</h1>
@@ -368,7 +368,7 @@
 
                     <div class="flex gap-5 justify-between text-gray-600">
                         <div class="w-[50%]">
-                            <h1 class="font-medium">PRODUCT</h1>
+                            <h1 class="font-medium">PRODUK</h1>
                             <div class="mb-2">
                                 <label class="input flex text-gray-600" style="width: 100%;">
                                     <input class="w-full" type="text" id="edit_product" placeholder="product" />
@@ -376,10 +376,10 @@
                             </div>
                         </div>
                         <div class="w-[50%]">
-                            <h1 class="font-medium">RACK</h1>
+                            <h1 class="font-medium">RAK</h1>
                             <label class="select">
                                 <select id="edit_rack">
-                                    <option>Insert Rack</option>
+                                    <option>Pilih Rak</option>
                                     @foreach ($locations as $location)
                                     <option value="{{ $location->id }}">{{ $location->name . ' | '. $location->description }}</option>
                                     @endforeach
@@ -390,7 +390,7 @@
                     
                     <div class="flex gap-5 justify-between text-gray-600">
                         <div class="w-[50%]">
-                            <h1 class="font-medium">BRAND</h1>
+                            <h1 class="font-medium">MEREK</h1>
                             <div class="mb-2">
                                 <label class="input flex text-gray-600" style="width: 100%;">
                                     <input class="w-full" type="text" id="edit_brand" placeholder="brand" />
@@ -398,13 +398,13 @@
                             </div>
                         </div>
                         <div class="w-[50%]">
-                            <h1 class="font-medium">CONDITION</h1>
+                            <h1 class="font-medium">KONDISI</h1>
                             <div>
                                 <label class="select">
                                     <select id="edit_condition">
-                                        <option>Insert Condition</option>
-                                        <option value="GOOD">Good</option>
-                                        <option value="NOT GOOD">Not Good</option>
+                                        <option>Pilih Kondisi</option>
+                                        <option value="GOOD">GOOD</option>
+                                        <option value="NOT GOOD">NOT GOOD</option>
                                     </select>
                                 </label>
                             </div>
@@ -413,7 +413,7 @@
                     
                     <div class="flex gap-5 justify-between text-gray-600">
                         <div class="w-[50%]">
-                            <h1 class="font-medium">TYPE</h1>
+                            <h1 class="font-medium">Tipe</h1>
                             <div class="mb-2">
                                 <label class="input flex text-gray-600" style="width: 100%;">
                                     <input class="w-full" type="text" id="edit_type" placeholder="type" />
@@ -425,8 +425,8 @@
                             <div>
                                 <label class="select">
                                     <select id="edit_status">
-                                        <option value="READY">READY</option>
-                                        <option value="NOT READY">NOT READY</option>
+                                        <option value="READY">SIAP DIGUNAKAN</option>
+                                        <option value="NOT READY">BELUM SIAP </option>
                                     </select>
                                 </label>
                             </div>
@@ -434,11 +434,11 @@
                     </div>
                     
                     <div class="w-[50%]">
-                        <h1 class="font-medium">CATEGORY</h1>
+                        <h1 class="font-medium">Kategori</h1>
                         <div>
                             <label class="select">
                                 <select id="edit_category" class="input w-full">
-                                    <option value="">Select Category</option>
+                                    <option value="">Pilih Kategori</option>
                                     @foreach($categories as $category) 
                                         <option value="{{ $category->id }}">{{ $category->name }}</option>
                                     @endforeach
@@ -449,7 +449,7 @@
 
                     <div class="flex w-full mb-2">
                         <div class="w-full">
-                            <h1 class="font-medium text-gray-600">SERIAL NUMBER</h1>
+                            <h1 class="font-medium text-gray-600">NOMOR SERIAL</h1>
                             <label class="input flex text-gray-600" style="width: 100%;">
                                 <input class="w-full" type="text" id="edit_serialNumber" placeholder="Serial Number" />
                             </label>
@@ -457,13 +457,13 @@
                     </div>
 
                     <div class="mb-4">
-                        <h1 class="font-medium text-gray-600">DESCRIPTION</h1>
+                        <h1 class="font-medium text-gray-600">DESKRIPSI</h1>
                         <textarea id="edit_description" class="textarea text-gray-600" placeholder="Description" style="width: 100%;"></textarea>
                     </div>
 
                     <div class="w-full flex justify-end items-end gap-4">
-                        <button type="button" onclick="closeEditModal()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Cancel</button>
-                        <button type="button" onclick="submitEditForm()" class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Update</button>
+                        <button type="button" onclick="closeEditModal()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Batal</button>
+                        <button type="button" onclick="submitEditForm()" class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Perbarui</button>
                     </div>
                 </div>
             </dialog>
@@ -483,33 +483,33 @@
                         </dialog>
 
                         <button type="button" onclick="document.getElementById('viewProduct').close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-                        <h1 class="font-semibold text-2xl mb-4">Product Details</h1>
+                        <h1 class="font-semibold text-2xl mb-4">Detail Produk</h1>
 
                         <div class="flex gap-5 justify-between text-gray-600">
                             <div class="w-[50%]">
-                                <h1 class="font-medium">PRODUCT</h1>
+                                <h1 class="font-medium">PRODUK</h1>
                                 <p id="view_product">-</p>
                             </div>
                             <div class="w-[50%]">
-                                <h1 class="font-medium">RACK</h1>
+                                <h1 class="font-medium">RAK</h1>
                                 <p id="view_rack">-</p>
                             </div>
                         </div>
 
                         <div class="flex gap-5 justify-between text-gray-600 mt-3">
                             <div class="w-[50%]">
-                                <h1 class="font-medium">BRAND</h1>
+                                <h1 class="font-medium">MEREK</h1>
                                 <p id="view_brand">-</p>
                             </div>
                             <div class="w-[50%]">
-                                <h1 class="font-medium">CONDITION</h1>
+                                <h1 class="font-medium">KONDISI</h1>
                                 <p id="view_condition">-</p>
                             </div>
                         </div>
 
                         <div class="flex gap-5 justify-between text-gray-600 mt-3">
                             <div class="w-[50%]">
-                                <h1 class="font-medium">TYPE</h1>
+                                <h1 class="font-medium">TIPE</h1>
                                 <p id="view_type">-</p>
                             </div>
                             <div class="w-[50%]">
@@ -520,17 +520,17 @@
 
                         <div class="flex gap-5 justify-between text-gray-600 mt-3">
                             <div class="w-[50%]">
-                                <h1 class="font-medium">CATEGORY</h1>
+                                <h1 class="font-medium">KATEGORI</h1>
                                 <p id="view_category">-</p>
                             </div>
                             <div class="w-[50%]">
-                                <h1 class="font-medium">SERIAL NUMBER</h1>
+                                <h1 class="font-medium">NOMOR SERIAL</h1>
                                 <p id="view_serial">-</p>
                             </div>
                         </div>
 
                         <div class="w-full mt-3">
-                            <h1 class="font-medium text-gray-600">DESCRIPTION</h1>
+                            <h1 class="font-medium text-gray-600">DESKRIPSI</h1>
                             <p id="view_description" class="text-gray-600">-</p>
                         </div>
 
@@ -647,9 +647,9 @@
         .then(res => res.json())
         .then(data => {
             if (data.errors) {
-                showToast("Please fill in all fields correctly", "error");
+                showToast("Harap isi semua bidang dengan benar", "error");
             } else {
-                showToast("Item created successfully", "success");
+                showToast("Item berhasil dibuat", "success");
                 document.getElementById("itemForm").reset();
                 document.getElementById("imagePreview").src = "{{ asset('image/default.png') }}";
                 document.getElementById("newProduct").close();
@@ -691,7 +691,7 @@
     })
     .catch(error => {
         console.error("Failed to fetch product:", error);
-        showToast("Failed to load product data", "error");
+        showToast("Gagal memuat data produk", "error");
     });
 }
 
@@ -762,13 +762,13 @@
         return response.json();
     })
     .then(data => {
-        showToast("Item updated successfully", "success");
+        showToast("Item berhasil diperbarui", "success");
         closeEditModal();
         window.location.reload();
     })
     .catch(error => {
         console.error("Error updating item:", error);
-        showToast(error.errors ? Object.values(error.errors).join(', ') : "Failed to update item", "error");
+        showToast(error.errors ? Object.values(error.errors).join(', ') : "Gagal memperbarui item", "error");
     });
 }
 
@@ -790,15 +790,15 @@
         })
         .then(res => {
             if (res.ok) {
-                showToast("Item deleted successfully", "success");
+                showToast("Item berhasil dihapus", "success");
                 window.location.reload();
             } else {
-                throw new Error("Delete failed");
+                throw new Error("Hapus gagal");
             }
         })
         .catch(error => {
             console.error(error);
-            showToast("Item not deleted", "error");
+            showToast("Item tidak dihapus", "error");
         });
 
         closeDeleteDialog();

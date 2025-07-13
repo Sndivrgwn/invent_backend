@@ -150,25 +150,25 @@ class ItemController extends Controller
             $item = Item::create($validated);
 
             return response()->json([
-                'message' => 'Item created successfully',
+                'message' => 'Item berhasil dibuat',
                 'data' => $item,
             ], 201);
         } catch (ValidationException $e) {
             // Tangkap error validasi
             return response()->json([
-                'message' => 'Validation failed',
+                'message' => 'Validasi gagal',
                 'errors' => $e->errors()
             ], 422);
         } catch (QueryException $e) {
             // Tangkap error database
             return response()->json([
-                'message' => 'Database error',
+                'message' => 'Kesalahan database',
                 'error' => $e->getMessage()
             ], 500);
         } catch (Exception $e) {
             // Tangkap error umum lainnya
             return response()->json([
-                'message' => 'Server error',
+                'message' => 'Kesalahan server',
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -181,7 +181,7 @@ class ItemController extends Controller
     {
         $items = Item::with(['category', 'location'])->find($id);
         if (!$items) {
-            return response()->json(['message' => 'Item not found'], 404);
+            return response()->json(['message' => 'Item tidak ditemukan'], 404);
         }
 
         return response()->json([
@@ -199,7 +199,7 @@ class ItemController extends Controller
             if (!$item) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Item not found'
+                    'message' => 'Item tidak ditemukan'
                 ], 404);
             }
 
@@ -235,19 +235,19 @@ class ItemController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Item updated successfully',
+                'message' => 'Item berhasil diperbarui',
                 'data' => $item
             ]);
         } catch (ValidationException $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Validation failed',
+                'message' => 'Validasi gagal',
                 'errors' => $e->errors()
             ], 422);
         } catch (\Exception $e) {
             return response()->json([
                 'success' => false,
-                'message' => 'Server error',
+                'message' => 'Kesalahan server',
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -260,10 +260,10 @@ class ItemController extends Controller
     {
         $items = Item::find($id);
         if (!$items) {
-            return response()->json(['message' => 'Item not found'], 404);
+            return response()->json(['message' => 'Item tidak ditemukan'], 404);
         }
 
         $items->delete();
-        return response()->json(['message' => 'Item deleted successfully']);
+        return response()->json(['message' => 'Item berhasil dihapus']);
     }
 }

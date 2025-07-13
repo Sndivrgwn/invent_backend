@@ -64,7 +64,7 @@ class LocationController extends Controller
                 'success' => true,
                 'reload' => true, // This will trigger page reload
                 'toast' => [
-                    'message' => 'Location created successfully',
+                    'message' => 'Lokasi berhasil dibuat',
                     'type' => 'success'
                 ]
             ]);
@@ -73,7 +73,7 @@ class LocationController extends Controller
             return response()->json([
                 'success' => false,
                 'toast' => [
-                    'message' => 'Failed to create location: ' . $e->getMessage(),
+                    'message' => 'Gagal membuat lokasi: ' . $e->getMessage(),
                     'type' => 'error'
                 ]
             ], 500);
@@ -91,7 +91,7 @@ class LocationController extends Controller
             if (!$location) {
                 return response()->json([
                     'toast' => [
-                        'message' => 'Location not found',
+                        'message' => 'Lokasi tidak ditemukan',
                         'type' => 'error'
                     ]
                 ], 404);
@@ -116,7 +116,7 @@ class LocationController extends Controller
                 }),
                 'categories' => $uniqueCategories,
                 'toast' => [
-                    'message' => 'Location data retrieved successfully',
+                    'message' => 'Data lokasi berhasil diambil',
                     'type' => 'success'
                 ]
             ], 200);
@@ -124,7 +124,7 @@ class LocationController extends Controller
         } catch (\Exception $e) {
             return response()->json([
                 'toast' => [
-                    'message' => 'Failed to retrieve location: ' . $e->getMessage(),
+                    'message' => 'Gagal mengambil lokasi: ' . $e->getMessage(),
                     'type' => 'error'
                 ]
             ], 500);
@@ -142,7 +142,7 @@ class LocationController extends Controller
                 return response()->json([
                     'success' => false,
                     'toast' => [
-                        'message' => 'Location not found',
+                        'message' => 'Lokasi tidak ditemukan',
                         'type' => 'error'
                     ]
                 ], 404);
@@ -171,7 +171,7 @@ class LocationController extends Controller
                 'success' => true,
                 'reload' => true,
                 'toast' => [
-                    'message' => 'Location updated successfully',
+                    'message' => 'Lokasi berhasil diperbarui',
                     'type' => 'success'
                 ]
             ]);
@@ -180,7 +180,7 @@ class LocationController extends Controller
             return response()->json([
                 'success' => false,
                 'toast' => [
-                    'message' => 'Failed to update location: ' . $e->getMessage(),
+                    'message' => 'Gagal memperbarui lokasi: ' . $e->getMessage(),
                     'type' => 'error'
                 ]
             ], 500);
@@ -197,7 +197,7 @@ class LocationController extends Controller
             if (!$location) {
                 return response()->json([
                     'toast' => [
-                        'message' => 'Location not found',
+                        'message' => 'Lokasi tidak ditemukan',
                         'type' => 'error'
                     ]
                 ], 404);
@@ -206,9 +206,9 @@ class LocationController extends Controller
             $location->delete();
 
             return response()->json([
-                'message' => 'Location deleted successfully',
+                'message' => 'Lokasi berhasil dihapus',
                 'toast' => [
-                    'message' => 'Location deleted successfully',
+                    'message' => 'Lokasi berhasil dihapus',
                     'type' => 'success'
                 ]
             ], 200);
