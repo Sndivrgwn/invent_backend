@@ -38,10 +38,20 @@
                 <span class="text-red-500 text-sm mt-1">{{ $message }}</span>
                 @enderror
 
+                <div class="flex flex-col md:flex-row gap-3 mt-5">
+                        <button class="w-full md:w-1/2 bg-[#2563EB] text-white py-2 rounded-md hover:bg-blue-700 transition duration-300" type="submit">
+                            Masuk
+                        </button>
 
-                <button class="bg-[#2563EB] text-white py-2 rounded-md hover:bg-blue-700 transition duration-300" type="submit">
-                    Masuk
-                </button>
+                    </form>
+
+                    <form method="POST" action="{{ route('guest.login') }}" class="w-full md:w-1/2">
+                        @csrf
+                        <button type="submit" class="w-full bg-gray-500 text-white py-2 rounded-md hover:bg-gray-600 transition duration-300">
+                            Masuk sebagai Tamu
+                        </button>
+                    </form>
+                </div>
 
                 @if (Route::has('password.request'))
                 <div class="text-center mt-2">
@@ -52,13 +62,6 @@
                 @endif
             </form>
 
-            <fieldset class='fieldset bg-transparent border-none rounded-box flex w-64 border p-4'>
-                    <form method="POST" action="{{ route('guest.login') }}">
-                        @csrf
-                        <button type="submit" class="btn btn-secondary">Masuk sebagai Tamu</button>
-                    </form>
-
-                </fieldset>
 
             <div class="flex mt-3 justify-center text-[12px] text-[#64748B]">
                 <span>&copy; itcsmkn5bdg</span>
