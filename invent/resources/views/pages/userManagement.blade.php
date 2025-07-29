@@ -18,24 +18,43 @@
             <div class="navbar my-6">
 
                 <div class="flex-1">
-                    <h1 class="text-2xl font-semibold py-4">Manajemen Pengguna</h1>
+                    <h1 class="text-2xl font-semibold">Manajemen Pengguna</h1>
                 </div>
 
-                <div class="flex-none">
+                <div class="flex flex-wrap gap-3 items-center">
                     {{-- new product --}}
-                    <button class="bg-[#2563EB] text-white rounded-lg py-2 px-4 mx-5 hover:bg-blue-400 cursor-pointer flex justify-center items-center" onclick="newProduct.showModal()">
-                        <div class="gap-2 flex">
-                            <i class="fa fa-plus" style="display: flex; justify-content: center; align-items: center;"></i>
-                            <span>Pengguna baru</span>
-                        </div>
-                    </button>
-                    <form method="POST" action="{{ route('admin.guests.destroyAll') }}" onsubmit="return confirm('Yakin ingin menghapus semua akun tamu?')">
-    @csrf
-    @method('DELETE')
-    <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition">
-        Hapus Semua Guest
+                    <div class="relative inline-block text-left">
+    <!-- Trigger Button -->
+    <button onclick="toggleUserDropdown()"
+        class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-500 flex items-center gap-2">
+        <i class="fa fa-bars !flex"></i>
+        <span>Aksi Pengguna</span>
     </button>
-</form>
+
+    <!-- Dropdown Menu -->
+    <div id="userDropdownMenu"
+        class="hidden absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+        
+        <!-- Pengguna Baru -->
+        <button onclick="newProduct.showModal()"
+            class="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2 text-blue-600">
+            <i class="fa-regular fa-plus"></i>
+            <span>Pengguna Baru</span>
+        </button>
+
+        <!-- Hapus Semua Guest -->
+        <form method="POST" id="deleteGuestForm" action="{{ route('admin.guests.destroyAll') }}">
+            @csrf
+            @method('DELETE')
+            <button type="submit"
+                class="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2 text-red-600">
+                <i class="fa fa-trash !flex"></i>
+                Hapus Semua Guest
+            </button>
+        </form>
+    </div>
+</div>
+
                     <dialog id="newProduct" class="modal">
                         <div class="modal-box">
                             <!-- close button -->
@@ -64,21 +83,21 @@
                                         <div>
                                             <label class="select">
                                                <!-- In new user modal -->
-<!-- Di bagian new user modal -->
-<select id="condition" name="roles_id" class="select select-bordered w-full">
-    <option value="" disabled selected>Pilih Role</option>
-    @auth
-        @if(auth()->user()->roles_id == 3) <!-- Superadmin -->
-            <option value="1">Admin</option>
-            <option value="2">User</option>
-            <option value="4">Km</option>
-        @elseif(auth()->user()->roles_id == 1) <!-- Admin -->
-            <option value="1">Admin</option>
-            <option value="2">User</option>
-            <option value="4">Km</option>
-        @endif
-    @endauth
-</select>
+                                            <!-- Di bagian new user modal -->
+                                            <select id="condition" name="roles_id" class="select select-bordered w-full">
+                                                <option value="" disabled selected>Pilih Role</option>
+                                                @auth
+                                                    @if(auth()->user()->roles_id == 3) <!-- Superadmin -->
+                                                        <option value="1">Admin</option>
+                                                        <option value="2">User</option>
+                                                        <option value="4">Km</option>
+                                                    @elseif(auth()->user()->roles_id == 1) <!-- Admin -->
+                                                        <option value="1">Admin</option>
+                                                        <option value="2">User</option>
+                                                        <option value="4">Km</option>
+                                                    @endif
+                                                @endauth
+                                            </select>
                                             </label>
                                         </div>
                                     </div>
@@ -111,7 +130,7 @@
 
             </div>
 
-            <div class="list bg-base-100 rounded-box shadow-md">
+            <div class="list bg-base-100 rounded-box shadow-md mb-5">
 
                 <div class="p-4 pb-2 md:flex">
                     <!-- search -->
@@ -820,5 +839,49 @@ function sortLinkUser($field, $currentSortBy, $currentSortDir) {
         });
     });
 </script>
+
+{{-- confirm delete guest --}}
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.getElementById('deleteGuestForm').addEventListener('submit', function (e) {
+    e.preventDefault();
+    Swal.fire({
+        title: 'Yakin?',
+        text: "Semua akun tamu akan dihapus",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#d33',
+        cancelButtonColor: '#3085d6',
+        cancelButtonText: 'Batal',
+        confirmButtonText: 'Ya, hapus semua!'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            e.target.submit();
+        }
+    });
+});
+
+function closeModal() {
+    document.getElementById('newProduct').close();
+}
+// dropdown aksi 
+function toggleUserDropdown() {
+    const dropdown = document.getElementById('userDropdownMenu');
+    dropdown.classList.toggle('hidden');
+    dropdown.classList.toggle('block');
+}
+
+// Optional: auto close dropdown jika klik di luar area dropdown
+window.addEventListener('click', function(e) {
+    const btn = document.querySelector('[onclick="toggleUserDropdown()"]');
+    const menu = document.getElementById('userDropdownMenu');
+    if (!btn.contains(e.target) && !menu.contains(e.target)) {
+        menu.classList.add('hidden');
+        menu.classList.remove('block');
+    }
+});
+
+</script>
+
 
 @include('template.footer')

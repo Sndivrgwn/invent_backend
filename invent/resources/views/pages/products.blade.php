@@ -33,40 +33,51 @@
 
         <div class="navbar my-6">
             <div class="flex-1">
-                <h1 class="text-2xl font-semibold py-4">Produk</h1>
-            </div>
+            <h1 class="text-2xl font-semibold py-4">Produk</h1>
+        </div>
+
             <div class="flex-none">
                 @can('adminFunction')
-<div class="flex gap-3 items-center">
+                    <div class="flex flex-col lg:flex-row gap-3 items-stretch lg:items-center w-full">
 
-    <!-- Produk Baru -->
-    <button class="bg-blue-600 text-white rounded-lg px-4 py-2 hover:bg-blue-500 flex items-center gap-2" onclick="newProduct.showModal()">
-        <i class="fa fa-plus"></i>
-        <span>Produk Baru</span>
+                        <!-- Dropdown Button -->
+<div class="relative inline-block text-left">
+    <button id="dropdownBtn" onclick="toggleDropdown()"
+        class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-500 flex items-center gap-2">
+        <i class="fa fa-bars !flex"></i>
+        <span>Aksi Produk</span>
     </button>
 
-    <!-- Download Template -->
-    <a href="{{ route('products.template') }}" class="bg-white border border-blue-600 text-blue-600 rounded-lg px-4 py-2 hover:bg-blue-50 flex items-center gap-2">
-        <i class="fa fa-download"></i>
-        <span>Template</span>
-    </a>
-
-    <!-- Import Produk -->
-    <form action="{{ route('products.import') }}" method="POST" enctype="multipart/form-data" class="relative">
-        @csrf
-
-        <!-- Hidden File Input -->
-        <input id="importFile" type="file" name="file" accept=".csv" class="hidden" onchange="this.form.submit()" required />
-
-        <!-- Custom Import Button -->
-        <button type="button" onclick="document.getElementById('importFile').click()" class="bg-green-600 text-white rounded-lg px-4 py-2 hover:bg-green-500 flex items-center gap-2">
-            <i class="fa fa-upload"></i>
-            <span>Import Produk</span>
+    <!-- Dropdown Menu -->
+    <div id="dropdownMenu" class="hidden absolute right-0 mt-2 w-56 bg-white border border-gray-200 rounded-lg shadow-lg z-50">
+        <!-- Produk Baru -->
+        <button onclick="newProduct.showModal()" class="w-full text-left px-4 py-2 hover:bg-gray-100 flex items-center gap-2">
+            <i class="fa-regular fa-plus text-blue-600"></i>
+            <span>Produk Baru</span>
         </button>
-    </form>
 
+        <!-- Download Template -->
+        <a href="{{ route('products.template') }}"
+            class="block px-4 py-2 hover:bg-gray-100 text-left flex items-center gap-2 text-blue-600">
+            <i class="fa fa-download !flex"></i>
+            <span>Download Template</span>
+        </a>
+
+        <!-- Import Produk -->
+        <form action="{{ route('products.import') }}" method="POST" enctype="multipart/form-data" class="block">
+            @csrf
+            <input id="importFile" type="file" name="file" accept=".csv" class="hidden" onchange="this.form.submit()" required />
+            <button type="button" onclick="document.getElementById('importFile').click()"
+                class="w-full text-left px-4 py-3 hover:bg-gray-100 flex items-center gap-2 text-green-600">
+                <i class="fa fa-upload !flex"></i>
+                <span>Import Produk</span>
+            </button>
+        </form>
+    </div>
 </div>
-@endcan
+
+                    </div>
+                    @endcan
 
 
                 {{-- modal new product --}}
@@ -963,6 +974,24 @@
             }
         });
     });
+
+    // dropdown 3 button 
+function toggleDropdown() {
+    const dropdown = document.getElementById('dropdownMenu');
+    dropdown.classList.toggle('hidden');
+    dropdown.classList.toggle('block');
+}
+
+// Optional: Click outside to close dropdown
+window.addEventListener('click', function(e) {
+    const btn = document.getElementById('dropdownBtn');
+    const menu = document.getElementById('dropdownMenu');
+    if (!btn.contains(e.target) && !menu.contains(e.target)) {
+        menu.classList.add('hidden');
+        menu.classList.remove('block');
+    }
+});
+
 
 </script>
 
