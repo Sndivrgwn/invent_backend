@@ -106,13 +106,13 @@
                 </div>
                 
                 <div class="overflow-x-auto">
-                    <table class="w-full">
-                        <thead class="text-gray-500 text-sm font-semibold border-b">
+                    <table class="table w-full">
+                        <thead class="text-gray-500 text-sm font-semibold border-b w-full">
                             <tr>
-                                <th class="pb-2">Tanggal</th>
-                                <th class="pb-2">Peminjam</th>
-                                <th class="pb-2">Barang</th>
-                                <th class="pb-2">Status</th>
+                                <th class="pb-2 text-left">Tanggal</th>
+                                <th class="pb-2 text-left">Peminjam</th>
+                                <th class="pb-2 text-left">Barang</th>
+                                <th class="pb-2 text-left">Status</th>
                             </tr>
                         </thead>
                         <tbody class="text-sm">
