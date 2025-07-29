@@ -15,80 +15,74 @@ class CategoryExport implements FromCollection, WithHeadings, WithStyles, Should
     protected $boldRows = [];
 
     public function collection()
-{
-    $data = [];
-    $rowIndex = 2; // Baris pertama untuk heading
+    {
+        $data = [];
+        $rowIndex = 2; // Baris 1 untuk heading
 
-    $categories = Category::with(['items.loans'])->get();
+        $categories = Category::with(['items.loans'])->get();
 
-    foreach ($categories as $category) {
-        // Ambil hanya item unik per kategori
-        $uniqueItems = $category->items->unique('id');
+        // Helper untuk ubah 0 jadi "Tidak Ada"
+        $formatNumber = function ($value) {
+            return $value === 0 ? 'Tidak Ada' : $value;
+        };
 
-        $total = $uniqueItems->count();
+        foreach ($categories as $category) {
+            // Ambil item dengan kondisi GOOD
+            $goodItems = $category->items->filter(function ($item) {
+                return strtoupper($item->condition) === 'GOOD';
+            })->unique('id');
 
-        // Hitung hanya loan dengan status 'borrowed'
-        $loaned = $uniqueItems->reduce(function ($carry, $item) {
-            return $carry + $item->loans->where('status', 'borrowed')->count();
-        }, 0);
+            $total = $goodItems->count();
+            $loaned = $goodItems->sum(function ($item) {
+                return $item->loans->where('status', 'borrowed')->count();
+            });
+            $available = $total - $loaned;
 
-        $available = $total - $loaned;
-        $lowStock = $available < 3 ? 'Yes' : 'No';
-
-        // Tambah baris kategori (akan dibold dan diberi warna)
-        $data[] = [
-            'Category' => $category->name,
-            'Type' => '',
-            'Quantity' => $total,
-            'Loaned' => $loaned,
-            'Available' => $available,
-            'Low Stock' => $lowStock,
-        ];
-        $this->boldRows[] = $rowIndex++;
-        
-        // Tambah per type dari item unik
-        $types = $uniqueItems->groupBy('type')->map(function ($items) {
-            $qty = $items->count();
-            $loan = $items->reduce(function ($carry, $item) {
-                return $carry + $item->loans->where('status', 'borrowed')->count();
-            }, 0);
-            $avail = $qty - $loan;
-            $low = $avail < 3 ? 'Yes' : 'No';
-
-            return [
-                'type' => $items->first()->type,
-                'quantity' => $qty,
-                'loaned' => $loan,
-                'available' => $avail,
-                'low_stock' => $low,
-            ];
-        });
-
-        foreach ($types as $type) {
+            // Tambahkan baris kategori
             $data[] = [
-                'Category' => '',
-                'Type' => $type['type'],
-                'Quantity' => $type['quantity'],
-                'Loaned' => $type['loaned'],
-                'Available' => $type['available'],
-                'Low Stock' => $type['low_stock'],
+                'Category'  => $category->name,
+                'Type'      => '',
+                'Quantity'  => $formatNumber($total),
+                'Loaned'    => $formatNumber($loaned),
+                'Available' => $formatNumber($available),
             ];
-            $rowIndex++;
-        }
-    }
+            $this->boldRows[] = $rowIndex++;
 
-    return collect($data);
-}
+            // Ambil semua tipe dari semua item (apapun kondisinya)
+            $allTypes = $category->items->pluck('type')->unique();
+
+            foreach ($allTypes as $type) {
+                // Filter hanya item GOOD per tipe
+                $itemsOfType = $goodItems->where('type', $type);
+
+                $qty = $itemsOfType->count();
+                $loan = $itemsOfType->sum(function ($item) {
+                    return $item->loans->where('status', 'borrowed')->count();
+                });
+                $avail = $qty - $loan;
+
+                $data[] = [
+                    'Category'  => '',
+                    'Type'      => $type,
+                    'Quantity'  => $formatNumber($qty),
+                    'Loaned'    => $formatNumber($loan),
+                    'Available' => $formatNumber($avail),
+                ];
+                $rowIndex++;
+            }
+        }
+
+        return collect($data);
+    }
 
     public function headings(): array
     {
         return [
-            'Category',
-            'Type',
-            'Quantity',
-            'Loaned',
-            'Available',
-            'Low Stock',
+            'Kategori',
+            'Tipe',
+            'Tersedia',
+            'Dipinjamkan',
+            'Sisa Stok',
         ];
     }
 
@@ -105,7 +99,7 @@ class CategoryExport implements FromCollection, WithHeadings, WithStyles, Should
             ],
         ];
 
-        // Style untuk baris kategori
+        // Baris kategori bold dan abu-abu
         foreach ($this->boldRows as $row) {
             $styles[$row] = [
                 'font' => ['bold' => true],

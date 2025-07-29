@@ -129,10 +129,9 @@
                     <thead>
                         <tr>
                             <th class="text-center">TIPE</th>
-                            <th class="text-center">JUMLAH</th>
                             <th class="text-center">TERSEDIA</th>
                             <th class="text-center">DIPINJAMKAN</th>
-                            <th class="text-center">STOK RENDAH</th>
+                            <th class="text-center">SISA STOK</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -140,9 +139,8 @@
                         <tr>
                             <td class="text-center">{{ $type->type }}</td>
                             <td class="text-center">{{ $type->quantity }}</td>
-                            <td class="text-center">{{ $type->available }}</td>
                             <td class="text-center">{{ $type->loaned }}</td>
-                            <td class="text-center">{{ $type->low_stock }}</td>
+                            <td class="text-center">{{ $type->available }}</td>
                         </tr>
                         @endforeach
                         {{-- Jika Anda ingin @empty untuk $category->type_summaries,
