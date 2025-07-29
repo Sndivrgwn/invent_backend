@@ -18,13 +18,13 @@ class LocationController extends Controller
     {
         // Load all locations with counts and categories in single query
         $locations = Location::withCount('items')
-            ->with(['items.category' => function($query) {
+            ->with(['items.category' => function ($query) {
                 $query->select('id', 'name')->distinct();
             }])
             ->get();
 
         // Process data for view
-        $formattedData = $locations->map(function($location) {
+        $formattedData = $locations->map(function ($location) {
             return [
                 'location' => $location,
                 'total_items' => $location->items_count,
@@ -42,10 +42,17 @@ class LocationController extends Controller
     {
         try {
             $validated = $request->validate([
-                'name' => 'required|string|max:255',
+                'name' => 'required|string|max:255|unique:locations,name',
                 'description' => 'nullable|string',
                 'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            ], [
+                'name.required' => 'Nama lokasi wajib diisi.',
+                'name.unique' => 'Nama rak sudah digunakan, silakan pilih nama lain.',
+                'image.image' => 'File harus berupa gambar.',
+                'image.mimes' => 'Gambar harus berformat: jpeg, png, jpg, atau gif.',
+                'image.max' => 'Ukuran gambar maksimal 2MB.',
             ]);
+
 
             $location = new Location();
             $location->name = $validated['name'];
@@ -68,7 +75,6 @@ class LocationController extends Controller
                     'type' => 'success'
                 ]
             ]);
-
         } catch (\Exception $e) {
             report($e); // atau Log::error($e)
 
@@ -122,7 +128,6 @@ class LocationController extends Controller
                     'type' => 'success'
                 ]
             ], 200);
-
         } catch (\Exception $e) {
             report($e); // atau Log::error($e)
 
@@ -138,7 +143,7 @@ class LocationController extends Controller
     /**
      * Update the specified resource in storage.
      */
-     public function update(Request $request, string $id)
+    public function update(Request $request, string $id)
     {
         try {
             $location = Location::find($id);
@@ -179,7 +184,6 @@ class LocationController extends Controller
                     'type' => 'success'
                 ]
             ]);
-
         } catch (\Exception $e) {
             report($e); // atau Log::error($e)
 
@@ -218,7 +222,6 @@ class LocationController extends Controller
                     'type' => 'success'
                 ]
             ], 200);
-
         } catch (\Exception $e) {
             report($e); // atau Log::error($e)
 

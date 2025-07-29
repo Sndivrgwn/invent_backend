@@ -98,9 +98,12 @@ class AnalyticsController extends Controller
 public function store(Request $request)
 {
     try {
-        $validated = $request->validate([
+         $validated = $request->validate([
             'name' => 'required|string|max:255|unique:categories,name',
-            'description' => 'nullable|string|max:500',
+            'description' => 'nullable|string',
+        ], [
+            'name.required' => 'Nama lokasi wajib diisi.',
+            'name.unique' => 'Nama lokasi sudah digunakan, silakan pilih nama lain.',
         ]);
 
         Category::create($validated);
@@ -118,7 +121,7 @@ public function store(Request $request)
             ->withInput()
             ->with('toast', [
                 'type' => 'error',
-                'message' => 'Validasi gagal.Silakan periksa masukan Anda.'
+                'message' => $e->getMessage(),
             ]);
     } catch (Exception $e) {
         Log::error('Error in AnalyticsController@store: ' . $e->getMessage());

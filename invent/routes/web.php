@@ -49,6 +49,9 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::get('/loan/{id}/pdf', [LoanController::class, 'printPdf'])->name('loan.print.pdf');
 
 
+Route::post('/products/import', [ItemController::class, 'import'])->name('products.import');
+Route::get('/products/template', [ItemController::class, 'downloadTemplate'])->name('products.template');
+
     // Admin-only routes
     // routes/web.php
 Route::middleware('role:admin,superadmin')->group(function () {

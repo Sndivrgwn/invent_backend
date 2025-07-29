@@ -1,5 +1,23 @@
 @include('template.head')
 
+<!-- Toast Wrapper -->
+@if(session('success') || session('error'))
+    <div class="toast toast-top toast-end z-50">
+        @if(session('success'))
+            <div class="alert alert-success">
+                <span>{{ session('success') }}</span>
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="alert alert-error">
+                <span>{{ session('error') }}</span>
+            </div>
+        @endif
+    </div>
+@endif
+
+
 <div class="flex flex-col h-screen bg-gradient-to-b from-blue-100 to-white md:flex-row">
     <!-- Sidebar -->
     <div class="w-full md:w-auto relative">
@@ -19,13 +37,37 @@
             </div>
             <div class="flex-none">
                 @can('adminFunction')
-                <button class="bg-[#2563EB] text-white rounded-lg py-2 px-4 mx-5 hover:bg-blue-400 cursor-pointer flex justify-center items-center" onclick="newProduct.showModal()">
-                    <div class="gap-2 flex">
-                        <i class="fa fa-plus" style="display: flex; justify-content: center; align-items: center;"></i>
-                        <span>Produk baru</span>
-                    </div>
-                </button>
-                @endcan
+<div class="flex gap-3 items-center">
+
+    <!-- Produk Baru -->
+    <button class="bg-blue-600 text-white rounded-lg px-4 py-2 hover:bg-blue-500 flex items-center gap-2" onclick="newProduct.showModal()">
+        <i class="fa fa-plus"></i>
+        <span>Produk Baru</span>
+    </button>
+
+    <!-- Download Template -->
+    <a href="{{ route('products.template') }}" class="bg-white border border-blue-600 text-blue-600 rounded-lg px-4 py-2 hover:bg-blue-50 flex items-center gap-2">
+        <i class="fa fa-download"></i>
+        <span>Template</span>
+    </a>
+
+    <!-- Import Produk -->
+    <form action="{{ route('products.import') }}" method="POST" enctype="multipart/form-data" class="relative">
+        @csrf
+
+        <!-- Hidden File Input -->
+        <input id="importFile" type="file" name="file" accept=".csv" class="hidden" onchange="this.form.submit()" required />
+
+        <!-- Custom Import Button -->
+        <button type="button" onclick="document.getElementById('importFile').click()" class="bg-green-600 text-white rounded-lg px-4 py-2 hover:bg-green-500 flex items-center gap-2">
+            <i class="fa fa-upload"></i>
+            <span>Import Produk</span>
+        </button>
+    </form>
+
+</div>
+@endcan
+
 
                 {{-- modal new product --}}
                 <dialog id="newProduct" class="modal">
@@ -33,7 +75,7 @@
                         <form method="POST" id="itemForm">
                             <button id="cancel" type="button" onclick="closeModal()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
                             <h1 class="font-semibold text-2xl mb-4">Produk baru</h1>
-                            
+
                             {{-- image upload --}}
                             <div class="mb-4 text-gray-600">
                                 <h1 class="font-medium">GAMBAR</h1>
@@ -113,8 +155,8 @@
                                         <label class="select">
                                             <select id="category_select" name="category_id" class="input w-full">
                                                 <option value="">Pilih Kategori</option>
-                                                @foreach($categories as $category) 
-                                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                                @foreach($categories as $category)
+                                                <option value="{{ $category->id }}">{{ $category->name }}</option>
                                                 @endforeach
                                             </select>
                                         </label>
@@ -166,120 +208,120 @@
                 <!-- filter -->
                 <button class="btn flex justify-center items-center bg-transparent" onclick="filterProduct.showModal()">Kategori <i class="fa fa-filter" style="display: flex; justify-content: center; align-items: center;"></i></button>
                 <dialog id="filterProduct" class="modal">
-    <div class="modal-box">
-        <form method="dialog">
-            <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-        </form>
+                    <div class="modal-box">
+                        <form method="dialog">
+                            <button class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
+                        </form>
 
-        <form id="filterForm">
-            <div class="mb-4">
-                <h1 class="text-lg font-semibold mb-2">Merek</h1>
-                <select name="brand" class="select select-bordered w-full max-w-xs">
-                    <option value="" selected>semua Merek</option> {{-- Opsi default untuk reset/tidak memilih filter --}}
-                    @foreach($items->pluck('brand')->unique() as $brand)
-                        <option value="{{ $brand }}" {{ request('brand') == $brand ? 'selected' : '' }}>{{ $brand }}</option>
-                    @endforeach
-                </select>
+                        <form id="filterForm">
+                            <div class="mb-4">
+                                <h1 class="text-lg font-semibold mb-2">Merek</h1>
+                                <select name="brand" class="select select-bordered w-full max-w-xs">
+                                    <option value="" selected>semua Merek</option> {{-- Opsi default untuk reset/tidak memilih filter --}}
+                                    @foreach($items->pluck('brand')->unique() as $brand)
+                                    <option value="{{ $brand }}" {{ request('brand') == $brand ? 'selected' : '' }}>{{ $brand }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="mb-4">
+                                <h1 class="text-lg font-semibold mb-2">Kategori</h1>
+                                <select name="category" class="select select-bordered w-full max-w-xs">
+                                    <option value="" selected>semua Kategori</option> {{-- Opsi default untuk reset/tidak memilih filter --}}
+                                    @foreach($items->pluck('category.name')->unique() as $category)
+                                    <option value="{{ $category }}" {{ request('category') == $category ? 'selected' : '' }}>{{ $category }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="mb-4">
+                                <h1 class="text-lg font-semibold mb-2">Tipe</h1>
+                                <select name="type" class="select select-bordered w-full max-w-xs">
+                                    <option value="" selected>Semua Tipe</option> {{-- Opsi default untuk reset/tidak memilih filter --}}
+                                    @foreach($items->pluck('type')->unique() as $type)
+                                    <option value="{{ $type }}" {{ request('type') == $type ? 'selected' : '' }}>{{ $type }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="mb-4">
+                                <h1 class="text-lg font-semibold mb-2">Lokasi</h1>
+                                <select name="location" class="select select-bordered w-full max-w-xs">
+                                    <option value="" selected>semua Lokasi</option> {{-- Opsi default untuk reset/tidak memilih filter --}}
+                                    @foreach($locations->pluck('description')->unique() as $location)
+                                    <option value="{{ $location }}" {{ request('location') == $location ? 'selected' : '' }}>{{ $location }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+
+                            <div class="mb-4">
+                                <h1 class="text-lg font-semibold mb-2">Kondisi</h1>
+                                <div class="flex flex-wrap gap-1">
+                                    <input class="btn btn-square" type="reset" value="×" onclick="resetFilter('condition')" />
+                                    <input class="btn" type="radio" name="condition" value="GOOD" aria-label="GOOD" {{ request('condition') == 'GOOD' ? 'checked' : '' }} />
+                                    <input class="btn" type="radio" name="condition" value="NOT GOOD" aria-label="NOT GOOD" {{ request('condition') == 'NOT GOOD' ? 'checked' : '' }} />
+                                </div>
+                            </div>
+
+                            <div class="mb-4">
+                                <h1 class="text-lg font-semibold mb-2">Status</h1>
+                                <div class="flex flex-wrap gap-1">
+                                    <input class="btn btn-square" type="reset" value="×" onclick="resetFilter('status')" />
+                                    <input class="btn" type="radio" name="status" value="READY" aria-label="READY" {{ request('status') == 'READY' ? 'checked' : '' }} />
+                                    <input class="btn" type="radio" name="status" value="NOT READY" aria-label="NOT READY" {{ request('status') == 'NOT READY' ? 'checked' : '' }} />
+                                </div>
+                            </div>
+
+                            <button type="button" class="btn btn-primary mt-4" onclick="applyFilter()">Terapkan</button>
+                        </form>
+                    </div>
+                </dialog>
             </div>
 
-            <div class="mb-4">
-                <h1 class="text-lg font-semibold mb-2">Kategori</h1>
-                <select name="category" class="select select-bordered w-full max-w-xs">
-                    <option value="" selected>semua Kategori</option> {{-- Opsi default untuk reset/tidak memilih filter --}}
-                    @foreach($items->pluck('category.name')->unique() as $category)
-                        <option value="{{ $category }}" {{ request('category') == $category ? 'selected' : '' }}>{{ $category }}</option>
-                    @endforeach
-                </select>
-            </div>
-
-            <div class="mb-4">
-                <h1 class="text-lg font-semibold mb-2">Tipe</h1>
-                <select name="type" class="select select-bordered w-full max-w-xs">
-                    <option value="" selected>Semua Tipe</option> {{-- Opsi default untuk reset/tidak memilih filter --}}
-                    @foreach($items->pluck('type')->unique() as $type)
-                        <option value="{{ $type }}" {{ request('type') == $type ? 'selected' : '' }}>{{ $type }}</option>
-                    @endforeach
-                </select>
-            </div>
-
-            <div class="mb-4">
-                <h1 class="text-lg font-semibold mb-2">Lokasi</h1>
-                <select name="location" class="select select-bordered w-full max-w-xs">
-                    <option value="" selected>semua Lokasi</option> {{-- Opsi default untuk reset/tidak memilih filter --}}
-                    @foreach($locations->pluck('description')->unique() as $location)
-                        <option value="{{ $location }}" {{ request('location') == $location ? 'selected' : '' }}>{{ $location }}</option>
-                    @endforeach
-                </select>
-            </div>
-            
-            <div class="mb-4">
-                <h1 class="text-lg font-semibold mb-2">Kondisi</h1>
-                <div class="flex flex-wrap gap-1">
-                    <input class="btn btn-square" type="reset" value="×" onclick="resetFilter('condition')" />
-                    <input class="btn" type="radio" name="condition" value="GOOD" aria-label="GOOD" {{ request('condition') == 'GOOD' ? 'checked' : '' }} />
-                    <input class="btn" type="radio" name="condition" value="NOT GOOD" aria-label="NOT GOOD" {{ request('condition') == 'NOT GOOD' ? 'checked' : '' }} />
-                </div>
-            </div>
-
-            <div class="mb-4">
-                <h1 class="text-lg font-semibold mb-2">Status</h1>
-                <div class="flex flex-wrap gap-1">
-                    <input class="btn btn-square" type="reset" value="×" onclick="resetFilter('status')" />
-                    <input class="btn" type="radio" name="status" value="READY" aria-label="READY" {{ request('status') == 'READY' ? 'checked' : '' }} />
-                    <input class="btn" type="radio" name="status" value="NOT READY" aria-label="NOT READY" {{ request('status') == 'NOT READY' ? 'checked' : '' }} />
-                </div>
-            </div>
-
-            <button type="button" class="btn btn-primary mt-4" onclick="applyFilter()">Terapkan</button>
-        </form>
-    </div>
-</dialog>
-            </div>
-            
             <!-- table -->
             <div id="itemTableContainer" class="overflow-x-auto px-2">
                 <table class="table w-full">
                     <thead>
                         <tr>
                             <thead>
-    <tr>
-        <th class="text-center font-semibold">FOTO</th>
-        <th class="text-center font-semibold">
-            <a href="{{ route('products', ['sortBy' => 'name', 'sortDir' => ($sortBy === 'name' && $sortDir === 'asc') ? 'desc' : 'asc', 'search-navbar' => request('search-navbar')]) }}">
-                PRODUK
-                @if($sortBy === 'name') {{ $sortDir === 'asc' ? '↑' : '↓' }} @endif
-            </a>
-        </th>
-        <th class="text-center font-semibold">
-            RAK {{-- atau tambahkan logic sorting location.name jika mau --}}
-        </th>
-        <th class="text-center font-semibold">
-            <a href="{{ route('products', ['sortBy' => 'code', 'sortDir' => ($sortBy === 'code' && $sortDir === 'asc') ? 'desc' : 'asc', 'search-navbar' => request('search-navbar')]) }}">
-                NOMOR SERIAL
-                @if($sortBy === 'code') {{ $sortDir === 'asc' ? '↑' : '↓' }} @endif
-            </a>
-        </th>
-        <th class="text-center font-semibold">
-            <a href="{{ route('products', ['sortBy' => 'type', 'sortDir' => ($sortBy === 'type' && $sortDir === 'asc') ? 'desc' : 'asc', 'search-navbar' => request('search-navbar')]) }}">
-                TIPE
-                @if($sortBy === 'type') {{ $sortDir === 'asc' ? '↑' : '↓' }} @endif
-            </a>
-        </th>
-        <th class="text-center font-semibold">
-            <a href="{{ route('products', ['sortBy' => 'condition', 'sortDir' => ($sortBy === 'condition' && $sortDir === 'asc') ? 'desc' : 'asc', 'search-navbar' => request('search-navbar')]) }}">
-                KONDISI
-                @if($sortBy === 'condition') {{ $sortDir === 'asc' ? '↑' : '↓' }} @endif
-            </a>
-        </th>
-        <th class="text-center font-semibold">
-            <a href="{{ route('products', ['sortBy' => 'status', 'sortDir' => ($sortBy === 'status' && $sortDir === 'asc') ? 'desc' : 'asc', 'search-navbar' => request('search-navbar')]) }}">
-                STATUS
-                @if($sortBy === 'status') {{ $sortDir === 'asc' ? '↑' : '↓' }} @endif
-            </a>
-        </th>
-        <th class="text-center font-semibold">TINDAKAN</th>
-    </tr>
-</thead>
+                                <tr>
+                                    <th class="text-center font-semibold">FOTO</th>
+                                    <th class="text-center font-semibold">
+                                        <a href="{{ route('products', ['sortBy' => 'name', 'sortDir' => ($sortBy === 'name' && $sortDir === 'asc') ? 'desc' : 'asc', 'search-navbar' => request('search-navbar')]) }}">
+                                            PRODUK
+                                            @if($sortBy === 'name') {{ $sortDir === 'asc' ? '↑' : '↓' }} @endif
+                                        </a>
+                                    </th>
+                                    <th class="text-center font-semibold">
+                                        RAK {{-- atau tambahkan logic sorting location.name jika mau --}}
+                                    </th>
+                                    <th class="text-center font-semibold">
+                                        <a href="{{ route('products', ['sortBy' => 'code', 'sortDir' => ($sortBy === 'code' && $sortDir === 'asc') ? 'desc' : 'asc', 'search-navbar' => request('search-navbar')]) }}">
+                                            NOMOR SERIAL
+                                            @if($sortBy === 'code') {{ $sortDir === 'asc' ? '↑' : '↓' }} @endif
+                                        </a>
+                                    </th>
+                                    <th class="text-center font-semibold">
+                                        <a href="{{ route('products', ['sortBy' => 'type', 'sortDir' => ($sortBy === 'type' && $sortDir === 'asc') ? 'desc' : 'asc', 'search-navbar' => request('search-navbar')]) }}">
+                                            TIPE
+                                            @if($sortBy === 'type') {{ $sortDir === 'asc' ? '↑' : '↓' }} @endif
+                                        </a>
+                                    </th>
+                                    <th class="text-center font-semibold">
+                                        <a href="{{ route('products', ['sortBy' => 'condition', 'sortDir' => ($sortBy === 'condition' && $sortDir === 'asc') ? 'desc' : 'asc', 'search-navbar' => request('search-navbar')]) }}">
+                                            KONDISI
+                                            @if($sortBy === 'condition') {{ $sortDir === 'asc' ? '↑' : '↓' }} @endif
+                                        </a>
+                                    </th>
+                                    <th class="text-center font-semibold">
+                                        <a href="{{ route('products', ['sortBy' => 'status', 'sortDir' => ($sortBy === 'status' && $sortDir === 'asc') ? 'desc' : 'asc', 'search-navbar' => request('search-navbar')]) }}">
+                                            STATUS
+                                            @if($sortBy === 'status') {{ $sortDir === 'asc' ? '↑' : '↓' }} @endif
+                                        </a>
+                                    </th>
+                                    <th class="text-center font-semibold">TINDAKAN</th>
+                                </tr>
+                            </thead>
 
                         </tr>
                     </thead>
@@ -287,8 +329,7 @@
                         @forelse ($items as $item)
                         <tr>
                             <td class="flex justify-center">
-                                <img src="{{ $item->image === 'items/default.png' || $item->image === 'default.png' ? asset('image/default.png') : asset('storage/' . $item->image) }}" 
-                                    alt="Product Image" class="w-12 h-12 object-cover" />
+                                <img src="{{ $item->image === 'items/default.png' || $item->image === 'default.png' ? asset('image/default.png') : asset('storage/' . $item->image) }}" alt="Product Image" class="w-12 h-12 object-cover" />
                             </td>
                             <td class="text-center">{{ $item->name }}</td>
                             <td class="text-center">{{ $item->location->name }}</td>
@@ -323,9 +364,9 @@
                             </td>
                         </tr>
                         @empty
-                                <tr>
-                                    <td colspan="8" class="text-center text-gray-500">Tidak ada Produk</td>
-                                </tr>
+                        <tr>
+                            <td colspan="8" class="text-center text-gray-500">Tidak ada Produk</td>
+                        </tr>
                         @endforelse
                     </tbody>
                 </table>
@@ -353,7 +394,7 @@
                         <button type="button" onclick="closeEditModal()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
                     </form>
                     <h1 class="font-semibold text-2xl mb-4">Edit Produk</h1>
-                    
+
                     <div class="mb-4 text-gray-600">
                         <h1 class="font-medium">IMAGE</h1>
                         <div class="flex items-center gap-4">
@@ -387,7 +428,7 @@
                             </label>
                         </div>
                     </div>
-                    
+
                     <div class="flex gap-5 justify-between text-gray-600">
                         <div class="w-[50%]">
                             <h1 class="font-medium">MEREK</h1>
@@ -410,7 +451,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="flex gap-5 justify-between text-gray-600">
                         <div class="w-[50%]">
                             <h1 class="font-medium">Tipe</h1>
@@ -432,15 +473,15 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="w-[50%]">
                         <h1 class="font-medium">Kategori</h1>
                         <div>
                             <label class="select">
                                 <select id="edit_category" class="input w-full">
                                     <option value="">Pilih Kategori</option>
-                                    @foreach($categories as $category) 
-                                        <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                    @foreach($categories as $category)
+                                    <option value="{{ $category->id }}">{{ $category->name }}</option>
                                     @endforeach
                                 </select>
                             </label>
@@ -611,7 +652,7 @@
         const formData = new FormData();
         const imageInput = document.getElementById("imageUpload");
         const preview = document.getElementById("imagePreview");
-        
+
         // Only include image if a new one was selected and it's not the default
         if (imageInput.files.length > 0 && !preview.src.includes('image/default.png')) {
             formData.append("image", imageInput.files[0]);
@@ -641,83 +682,83 @@
         formData.append("category_id", categoryId);
 
         fetch("/api/items", {
-            method: "POST",
-            body: formData,
-        })
-        .then(res => res.json())
-        .then(data => {
-            if (data.errors) {
-                showToast("Harap isi semua bidang dengan benar", "error");
-            } else {
-                showToast("Item berhasil dibuat", "success");
-                document.getElementById("itemForm").reset();
-                document.getElementById("imagePreview").src = "{{ asset('image/default.png') }}";
-                document.getElementById("newProduct").close();
-                window.location.reload();
-            }
-        });
+                method: "POST"
+                , body: formData
+            , })
+            .then(res => res.json())
+            .then(data => {
+                if (data.errors) {
+                    showToast("Harap isi semua bidang dengan benar", "error");
+                } else {
+                    showToast("Item berhasil dibuat", "success");
+                    document.getElementById("itemForm").reset();
+                    document.getElementById("imagePreview").src = "{{ asset('image/default.png') }}";
+                    document.getElementById("newProduct").close();
+                    window.location.reload();
+                }
+            });
     });
 
     function closeModal() {
         document.getElementById('newProduct').close();
     }
 
-   function openPreviewModal(id) {
-    fetch(`/api/items/${id}`)
-    .then(res => {
-        if (!res.ok) throw new Error("Product not found");
-        return res.json();
-    })
-    .then(response => {
-        const item = response.data;
+    function openPreviewModal(id) {
+        fetch(`/api/items/${id}`)
+            .then(res => {
+                if (!res.ok) throw new Error("Product not found");
+                return res.json();
+            })
+            .then(response => {
+                const item = response.data;
 
-        document.getElementById("view_product").textContent = item.name;
-        document.getElementById("view_rack").textContent = item.location?.name ?? "-";
-        document.getElementById("view_brand").textContent = item.brand;
-        document.getElementById("view_condition").textContent = item.condition;
-        document.getElementById("view_type").textContent = item.type;
-        document.getElementById("view_status").textContent = item.status;
-        document.getElementById("view_serial").textContent = item.code;
-        document.getElementById("view_description").textContent = item.description ?? "-";
-        document.getElementById("view_category").textContent = item.category?.name ?? "-";
+                document.getElementById("view_product").textContent = item.name;
+                document.getElementById("view_rack").textContent = item.location ? .name ? ? "-";
+                document.getElementById("view_brand").textContent = item.brand;
+                document.getElementById("view_condition").textContent = item.condition;
+                document.getElementById("view_type").textContent = item.type;
+                document.getElementById("view_status").textContent = item.status;
+                document.getElementById("view_serial").textContent = item.code;
+                document.getElementById("view_description").textContent = item.description ? ? "-";
+                document.getElementById("view_category").textContent = item.category ? .name ? ? "-";
 
-        // Updated image URL logic
-        const imageUrl = (item.image === 'items/default.png' || item.image === 'default.png' || !item.image)
-            ? '/image/default.png'
-            : `/storage/${item.image}`;
-        document.getElementById("view_image").src = imageUrl;
+                // Updated image URL logic
+                const imageUrl = (item.image === 'items/default.png' || item.image === 'default.png' || !item.image) ?
+                    '/image/default.png' :
+                    `/storage/${item.image}`;
+                document.getElementById("view_image").src = imageUrl;
 
-        document.getElementById("viewProduct").showModal();
-    })
-    .catch(error => {
-        console.error("Failed to fetch product:", error);
-        showToast("Gagal memuat data produk", "error");
-    });
-}
+                document.getElementById("viewProduct").showModal();
+            })
+            .catch(error => {
+                console.error("Failed to fetch product:", error);
+                showToast("Gagal memuat data produk", "error");
+            });
+    }
 
     // Edit modal functions
     function openEditModal(item) {
-    currentEditId = item.id;
-    
-    // Set form values
-    document.getElementById("edit_product").value = item.name || "";
-    document.getElementById("edit_brand").value = item.brand || "";
-    document.getElementById("edit_type").value = item.type || "";
-    document.getElementById("edit_condition").value = item.condition || "";
-    document.getElementById("edit_status").value = item.status || "";
-    document.getElementById("edit_serialNumber").value = item.code || "";
-    document.getElementById("edit_description").value = item.description || "";
-    document.getElementById("edit_rack").value = item.location_id || "";
-    document.getElementById("edit_category").value = item.category_id || "";
-    
-    // Updated image preview logic
-    const imageUrl = (item.image === 'items/default.png' || item.image === 'default.png' || !item.image)
-        ? '/image/default.png'
-        : `/storage/${item.image}`;
-    document.getElementById("edit_imagePreview").src = imageUrl;
-    
-    document.getElementById("editProduct").showModal();
-}
+        currentEditId = item.id;
+
+        // Set form values
+        document.getElementById("edit_product").value = item.name || "";
+        document.getElementById("edit_brand").value = item.brand || "";
+        document.getElementById("edit_type").value = item.type || "";
+        document.getElementById("edit_condition").value = item.condition || "";
+        document.getElementById("edit_status").value = item.status || "";
+        document.getElementById("edit_serialNumber").value = item.code || "";
+        document.getElementById("edit_description").value = item.description || "";
+        document.getElementById("edit_rack").value = item.location_id || "";
+        document.getElementById("edit_category").value = item.category_id || "";
+
+        // Updated image preview logic
+        const imageUrl = (item.image === 'items/default.png' || item.image === 'default.png' || !item.image) ?
+            '/image/default.png' :
+            `/storage/${item.image}`;
+        document.getElementById("edit_imagePreview").src = imageUrl;
+
+        document.getElementById("editProduct").showModal();
+    }
 
     function closeEditModal() {
         document.getElementById("editProduct").close();
@@ -725,52 +766,54 @@
     }
 
     function submitEditForm() {
-    if (!currentEditId) return;
+        if (!currentEditId) return;
 
-    const formData = new FormData();
-    const imageInput = document.getElementById("edit_imageUpload");
-    
-    // Always append the image if a file is selected
-    if (imageInput.files.length > 0) {
-        formData.append("image", imageInput.files[0]);
+        const formData = new FormData();
+        const imageInput = document.getElementById("edit_imageUpload");
+
+        // Always append the image if a file is selected
+        if (imageInput.files.length > 0) {
+            formData.append("image", imageInput.files[0]);
+        }
+
+        // Append other form data
+        formData.append("name", document.getElementById("edit_product").value);
+        formData.append("brand", document.getElementById("edit_brand").value);
+        formData.append("type", document.getElementById("edit_type").value);
+        formData.append("location_id", document.getElementById("edit_rack").value);
+        formData.append("condition", document.getElementById("edit_condition").value);
+        formData.append("status", document.getElementById("edit_status").value);
+        formData.append("code", document.getElementById("edit_serialNumber").value);
+        formData.append("description", document.getElementById("edit_description").value);
+        formData.append("category_id", document.getElementById("edit_category").value);
+        formData.append("_method", "PUT");
+
+        fetch(`/api/items/${currentEditId}`, {
+                method: "POST"
+                , body: formData
+                , headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    // Don't set Content-Type header - let the browser set it with the boundary
+                }
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => {
+                        throw err;
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                showToast("Item berhasil diperbarui", "success");
+                closeEditModal();
+                window.location.reload();
+            })
+            .catch(error => {
+                console.error("Error updating item:", error);
+                showToast(error.errors ? Object.values(error.errors).join(', ') : "Gagal memperbarui item", "error");
+            });
     }
-
-    // Append other form data
-    formData.append("name", document.getElementById("edit_product").value);
-    formData.append("brand", document.getElementById("edit_brand").value);
-    formData.append("type", document.getElementById("edit_type").value);
-    formData.append("location_id", document.getElementById("edit_rack").value);
-    formData.append("condition", document.getElementById("edit_condition").value);
-    formData.append("status", document.getElementById("edit_status").value);
-    formData.append("code", document.getElementById("edit_serialNumber").value);
-    formData.append("description", document.getElementById("edit_description").value);
-    formData.append("category_id", document.getElementById("edit_category").value);
-    formData.append("_method", "PUT");
-
-    fetch(`/api/items/${currentEditId}`, {
-        method: "POST",
-        body: formData,
-        headers: {
-            'X-CSRF-TOKEN': '{{ csrf_token() }}',
-            // Don't set Content-Type header - let the browser set it with the boundary
-        }
-    })
-    .then(response => {
-        if (!response.ok) {
-            return response.json().then(err => { throw err; });
-        }
-        return response.json();
-    })
-    .then(data => {
-        showToast("Item berhasil diperbarui", "success");
-        closeEditModal();
-        window.location.reload();
-    })
-    .catch(error => {
-        console.error("Error updating item:", error);
-        showToast(error.errors ? Object.values(error.errors).join(', ') : "Gagal memperbarui item", "error");
-    });
-}
 
     // Delete functions
     function deleteItem(id) {
@@ -782,24 +825,24 @@
         if (!deleteTargetId) return;
 
         fetch(`/api/items/${deleteTargetId}`, {
-            method: 'DELETE',
-            headers: {
-                'Accept': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            }
-        })
-        .then(res => {
-            if (res.ok) {
-                showToast("Item berhasil dihapus", "success");
-                window.location.reload();
-            } else {
-                throw new Error("Hapus gagal");
-            }
-        })
-        .catch(error => {
-            console.error(error);
-            showToast("Item tidak dihapus", "error");
-        });
+                method: 'DELETE'
+                , headers: {
+                    'Accept': 'application/json'
+                    , 'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                }
+            })
+            .then(res => {
+                if (res.ok) {
+                    showToast("Item berhasil dihapus", "success");
+                    window.location.reload();
+                } else {
+                    throw new Error("Hapus gagal");
+                }
+            })
+            .catch(error => {
+                console.error(error);
+                showToast("Item tidak dihapus", "error");
+            });
 
         closeDeleteDialog();
     }
@@ -893,32 +936,34 @@
         document.body.appendChild(toast);
         setTimeout(() => toast.remove(), 3000);
     }
+
 </script>
 @endpush
 
 <script>
     // image preview zoom
-document.addEventListener('DOMContentLoaded', function() {
-    const imagePreview = document.getElementById('view_image');
-    const imageZoomModal = document.getElementById('imageZoomModal');
-    const modalZoomImage = document.getElementById('modalZoomImage');
+    document.addEventListener('DOMContentLoaded', function() {
+        const imagePreview = document.getElementById('view_image');
+        const imageZoomModal = document.getElementById('imageZoomModal');
+        const modalZoomImage = document.getElementById('modalZoomImage');
 
-    // Fungsi untuk menampilkan gambar diperbesar saat preview diklik
-    imagePreview.addEventListener('click', function() {
-        const currentImageSrc = imagePreview.src;
-        if (currentImageSrc && currentImageSrc !== "{{ asset('image/default.png') }}") { 
-            modalZoomImage.src = currentImageSrc;
-            imageZoomModal.showModal(); 
-        }
+        // Fungsi untuk menampilkan gambar diperbesar saat preview diklik
+        imagePreview.addEventListener('click', function() {
+            const currentImageSrc = imagePreview.src;
+            if (currentImageSrc && currentImageSrc !== "{{ asset('image/default.png') }}") {
+                modalZoomImage.src = currentImageSrc;
+                imageZoomModal.showModal();
+            }
+        });
+
+        // Close diluar dialog
+        imageZoomModal.addEventListener('click', (event) => {
+            if (event.target === imageZoomModal) {
+                imageZoomModal.close();
+            }
+        });
     });
 
-    // Close diluar dialog
-    imageZoomModal.addEventListener('click', (event) => {
-        if (event.target === imageZoomModal) { 
-            imageZoomModal.close();
-        }
-    });
-});
 </script>
 
 @stack('scripts')

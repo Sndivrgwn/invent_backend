@@ -16,7 +16,8 @@ class CategoryController extends Controller
         return response()->json(Category::all(), 200);
     }
 
-    public function getAllItems() {
+    public function getAllItems()
+    {
         $categories = Category::all();
         return response()->json(['data' => $categories], 200);
     }
@@ -26,9 +27,13 @@ class CategoryController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:categories,name',
             'description' => 'nullable|string',
+        ], [
+            'name.required' => 'Nama lokasi wajib diisi.',
+            'name.unique' => 'Nama lokasi sudah digunakan, silakan pilih nama lain.',
         ]);
+
 
         $category = Category::create($validated);
         return response()->json(['message' => 'Kategori berhasil dibuat', 'data' => $category], 201);

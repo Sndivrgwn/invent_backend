@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Imports\ProductsImport;
 use App\Models\Category;
 use App\Models\Item;
 use App\Models\Location;
@@ -12,7 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
-
+use Maatwebsite\Excel\Facades\Excel;
 
 class ItemController extends Controller
 {
@@ -22,6 +23,41 @@ class ItemController extends Controller
     public function index()
     {
         return response()->json(Item::all(), 200);
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:csv,txt'
+        ], [
+            'file.required' => 'Silakan pilih file CSV terlebih dahulu.',
+            'file.mimes' => 'Format file harus .csv atau .txt.',
+        ]);
+
+        try {
+            Excel::import(new ProductsImport, $request->file('file'));
+
+            return back()->with('success', 'Data produk berhasil diimpor!');
+        } catch (QueryException $e) {
+            if ($e->getCode() === '23000') {
+                // Ambil kode yang menyebabkan duplikat (jika bisa)
+                preg_match("/Duplicate entry '(.+?)'/", $e->getMessage(), $matches);
+                $duplicate = $matches[1] ?? 'Tidak diketahui';
+
+                return back()->with('error', "Gagal impor: Item dengan kode \"$duplicate\" sudah ada.");
+            }
+
+            report($e);
+            return back()->with('error', 'Terjadi kesalahan saat impor.');
+        } catch (\Exception $e) {
+            report($e);
+            return back()->with('error', 'Terjadi kesalahan saat impor: ' . $e->getMessage());
+        }
+    }
+
+    public function downloadTemplate()
+    {
+        return response()->download(storage_path('app/public/import/template_import_produk.csv'));
     }
 
     public function search(Request $request)
