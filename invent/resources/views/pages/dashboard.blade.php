@@ -102,19 +102,7 @@
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 mb-4">
                     <h2 class="text-lg font-semibold text-gray-700">Pinjaman Terbaru</h2>
                     
-                    <!-- Search -->
-                    <div class="relative w-full md:w-64">
-                        <form method="GET" action="{{ route('dashboard') }}">
-                            <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
-                                <svg class="w-4 h-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
-                                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
-                                </svg>
-                            </div>
-                            <input type="text" name="search" value="{{ request('search') }}" 
-                                   class="block w-full p-2 ps-10 text-sm border border-gray-400 rounded-lg" 
-                                   placeholder="Cari...">
-                        </form>
-                    </div>
+                    
                 </div>
                 
                 <div class="overflow-x-auto">
