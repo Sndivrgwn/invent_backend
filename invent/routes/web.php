@@ -34,6 +34,7 @@ Route::middleware('auth:sanctum')->group(function () {
     
     Route::middleware('role:admin,superadmin,km')->group(function () {
         Route::get('/newLoan', [NewLoanController::class, 'index'])->name('newLoan');
+        Route::post('/loans', [LoanController::class, 'store']);
     });
 
     Route::middleware('role:admin,superadmin')->group(function () {
@@ -41,7 +42,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/analytics', [AnalyticsController::class, 'store'])->name('analytics.store');
         Route::get('/history', [HistoryController::class, 'index'])->name('history');
         Route::get('/manageLoan', [ManageLoanController::class, 'index'])->name('pages.manageLoan');
-        Route::post('/loans', [LoanController::class, 'store']);
         Route::get('/settings', [SettingController::class, 'index'])->name('setting');
 
         Route::get('/profil', [profilController::class, 'index'])->name('profil');

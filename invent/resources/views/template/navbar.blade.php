@@ -15,6 +15,9 @@
             </button>
         </a>
         
+        @endcan
+        @can('adminFunction')     
+
         <div class="dropdown dropdown-end">
             <div tabindex="0" role="button" class="btn btn-ghost btn-circle avatar">
                 <div class="w-10 rounded-full">
@@ -30,7 +33,7 @@
                 </li>
             </ul>
         </div>
-        @endcan
+        @endcan   
     </div>
 </div>
 
