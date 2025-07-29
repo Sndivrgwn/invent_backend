@@ -704,37 +704,37 @@
     }
 
     function openPreviewModal(id) {
-        fetch(`/api/items/${id}`)
-            .then(res => {
-                if (!res.ok) throw new Error("Product not found");
-                return res.json();
-            })
-            .then(response => {
-                const item = response.data;
+    fetch(`/api/items/${id}`)
+        .then(res => {
+            if (!res.ok) throw new Error("Product not found");
+            return res.json();
+        })
+        .then(response => {
+            const item = response.data;
 
-                document.getElementById("view_product").textContent = item.name;
-                document.getElementById("view_rack").textContent = item.location ? .name ? ? "-";
-                document.getElementById("view_brand").textContent = item.brand;
-                document.getElementById("view_condition").textContent = item.condition;
-                document.getElementById("view_type").textContent = item.type;
-                document.getElementById("view_status").textContent = item.status;
-                document.getElementById("view_serial").textContent = item.code;
-                document.getElementById("view_description").textContent = item.description ? ? "-";
-                document.getElementById("view_category").textContent = item.category ? .name ? ? "-";
+            document.getElementById("view_product").textContent = item.name;
+            document.getElementById("view_rack").textContent = item.location?.name ?? "-";  // Fixed
+            document.getElementById("view_brand").textContent = item.brand;
+            document.getElementById("view_condition").textContent = item.condition;
+            document.getElementById("view_type").textContent = item.type;
+            document.getElementById("view_status").textContent = item.status;
+            document.getElementById("view_serial").textContent = item.code;
+            document.getElementById("view_description").textContent = item.description ?? "-";
+            document.getElementById("view_category").textContent = item.category?.name ?? "-";  // Fixed
 
-                // Updated image URL logic
-                const imageUrl = (item.image === 'items/default.png' || item.image === 'default.png' || !item.image) ?
-                    '/image/default.png' :
-                    `/storage/${item.image}`;
-                document.getElementById("view_image").src = imageUrl;
+            // Image URL logic
+            const imageUrl = (item.image === 'items/default.png' || item.image === 'default.png' || !item.image) ?
+                '/image/default.png' :
+                `/storage/${item.image}`;
+            document.getElementById("view_image").src = imageUrl;
 
-                document.getElementById("viewProduct").showModal();
-            })
-            .catch(error => {
-                console.error("Failed to fetch product:", error);
-                showToast("Gagal memuat data produk", "error");
-            });
-    }
+            document.getElementById("viewProduct").showModal();
+        })
+        .catch(error => {
+            console.error("Failed to fetch product:", error);
+            showToast("Gagal memuat data produk", "error");
+        });
+}
 
     // Edit modal functions
     function openEditModal(item) {
