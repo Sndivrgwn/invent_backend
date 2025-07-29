@@ -22,10 +22,39 @@
                 <h1 class="text-2xl font-semibold py-4">Riwayat</h1>
             </div>
             <div class="flex-none">
-                <a href="{{ route('loans.exportHistory') }}" class="bg-white rounded-lg py-2 px-4 mx-5 hover:bg-blue-400 cursor-pointer flex items-center gap-2">
+                <button onclick="document.getElementById('exportModal').showModal()" class="bg-white rounded-lg py-2 px-4 mx-5 hover:bg-blue-400 cursor-pointer flex items-center gap-2">
                     <i class="fa fa-download" style="display: flex; justify-content: center; align-items: center;"></i> Ekspor laporan
-                </a>
+                </button>
             </div>
+
+            {{-- Modal Ekspor laporan --}}
+            <dialog id="exportModal" class="modal">
+                <div class="modal-box">
+                    <h3 class="font-bold text-lg mb-4">Tentukan Tanggal</h3>
+
+                    <form id="exportForm" action="{{ route('loans.exportHistory') }}" method="GET" class="flex flex-col gap-4">
+                    <div class="flex flex-col">
+                        <label for="start_date">Tanggal Mulai</label>
+                        <input type="date" id="start_date" name="start_date" class="input input-bordered" required>
+                    </div>
+
+                    <div class="flex flex-col">
+                        <label for="end_date">Tanggal Akhir</label>
+                        <input type="date" id="end_date" name="end_date" class="input input-bordered" required>
+                    </div>
+
+                    <div class="modal-action">
+                        <button type="submit" class="btn btn-primary">Ekspor</button>
+                        <button type="button" class="btn" onclick="document.getElementById('exportModal').close()">Batal</button>
+                    </div>
+                    </form>
+                </div>
+
+                <!-- Klik di luar modal untuk close -->
+                <form method="dialog" class="modal-backdrop">
+                    <button>close</button>
+                </form>
+            </dialog>
         </div>
 
         <!-- Filters and Actions -->
@@ -266,11 +295,21 @@
 </script>
 
 <script>
+    const startInput = document.getElementById('start_date');
+    const endInput = document.getElementById('end_date');
+
+    startInput.addEventListener('change', function () {
+        endInput.min = this.value;
+    });
+
+    document.getElementById('exportForm').addEventListener('submit', function () {
+        document.getElementById('exportModal').close();
+        showToast('Export Berhasil', 'success');
+    });
+
      function resetFilter(name) {
         document.querySelectorAll(`input[name="${name}"]`).forEach(r => r.checked = false);
     }
-
-    
 
     async function showLoanDetails(loanId) {
         try {
@@ -539,14 +578,14 @@
                         }
 
                         html += `
-    <td>${loan.return?.return_date || '-'}</td>
-    <td>${loan.return_date}</td>
-    <td>${loan.code_loans}</td>
-    <td>${loan.loaner_name}</td>
-    <td class="font-semibold">${item.code}</td>
-    <td>${item.name}</td>
-    <td><span class="badge badge-warning text-xs">${loan.status}</span></td>
-`;
+                            <td>${loan.return?.return_date || '-'}</td>
+                            <td>${loan.return_date}</td>
+                            <td>${loan.code_loans}</td>
+                            <td>${loan.loaner_name}</td>
+                            <td class="font-semibold">${item.code}</td>
+                            <td>${item.name}</td>
+                            <td><span class="badge badge-warning text-xs">${loan.status}</span></td>
+                        `;
 
                         if (index === 0) {
                 html += `

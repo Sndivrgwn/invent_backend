@@ -16,40 +16,82 @@ use PhpOffice\PhpSpreadsheet\Style\Color;
 
 class HistoryExport implements FromCollection, WithHeadings, WithStyles, ShouldAutoSize, WithMapping
 {
+    protected $startDate;
+    protected $endDate;
+
+    public function __construct($startDate, $endDate)
+    {
+        $this->startDate = $startDate;
+        $this->endDate = $endDate;
+    }
+
     public function collection()
     {
-        return Loan::with(['user', 'items.category', 'items.location', 'return'])
-            ->where('status', 'returned')
-            ->orderBy('loan_date', 'desc')
-            ->get();
+        $query = Loan::with(['items.category', 'items.location', 'return', 'user'])
+        ->where('status', 'returned');
+
+        if ($this->startDate && $this->endDate) {
+            $query->whereHas('return', function ($q) {
+                $q->whereBetween('return_date', [$this->startDate, $this->endDate]);
+            });
+        }
+
+        return $query->get();
+
+        // return Loan::with(['user', 'items.category', 'items.location', 'return'])
+        //     ->where('status', 'returned')
+        //     ->orderBy('loan_date', 'desc')
+        //     ->get();
     }
 
     public function map($loan): array
     {
-        $mappedData = [];
-        
-        foreach ($loan->items as $item) {
-            $mappedData[] = [
-                $loan->loan_date,
-                $loan->return?->return_date ?? '',
-                $loan->return_date,
-                $loan->code_loans,
-                $loan->loaner_name,
-                $loan->user->name ?? 'N/A',
-                $item->code,
-                $item->name,
-                $loan->status,
-                $item->category->name ?? '-',
-                $item->location->description ?? '-',
-                $item->brand,
-                $item->type,
-                $item->condition,
-                $loan->description,
-                $loan->return?->notes ?? '',
-            ];
-        }
+        // Ambil item pertama saja untuk disederhanakan
+        $item = $loan->items->first();
 
-        return $mappedData;
+        return [
+            $loan->loan_date,
+            $loan->return?->return_date ?? '-',
+            $loan->return_date ?? '-',
+            $loan->code_loans,
+            $loan->loaner_name,
+            $loan->user->name ?? '-',
+            $item->code ?? '-',
+            $item->name ?? '-',
+            $loan->status,
+            $item->category->name ?? '-',
+            $item->location->description ?? '-',
+            $item->brand ?? '-',
+            $item->type ?? '-',
+            $item->condition ?? '-',
+            $loan->description ?? '-',
+            $loan->return?->notes ?? '-',
+        ];
+
+        // $mappedData = [];
+        
+        // foreach ($loan->items as $item) {
+        //     $mappedData[] = [
+        //         $loan->loan_date,
+        //         $loan->return?->return_date ?? '',
+        //         $loan->return_date,
+        //         $loan->code_loans,
+        //         $loan->loaner_name,
+        //         $loan->user->name ?? 'N/A',
+        //         $item->code,
+        //         $item->name,
+        //         $loan->status,
+        //         $item->category->name ?? '-',
+        //         $item->location->description ?? '-',
+        //         $item->brand,
+        //         $item->type,
+        //         $item->condition,
+        //         $loan->description,
+        //         $loan->return?->notes ?? '',
+        //     ];
+        // }
+
+        // return $mappedData;
     }
 
     public function headings(): array

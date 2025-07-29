@@ -160,17 +160,25 @@ class LoanController extends Controller
     }
 }
 
-    public function exportHistory()
+    public function exportHistory(Request $request)
     {
-        try {
-            return Excel::download(new HistoryExport, 'loan_history_' . date('Ymd_His') . '.xlsx');
-        } catch (\Exception $e) {
-            report($e); // atau Log::error($e)
+        $startDate = $request->query('start_date');
+        $endDate = $request->query('end_date');
 
-            Log::error('Export failed: ' . $e->getMessage());
-            return back()->with('toast_error', 'Gagal menghasilkan ekspor.Tolong coba lagi.');
-        }
+        return Excel::download(new HistoryExport($startDate, $endDate), 'loan_history_' . date('Ymd_His') . '.xlsx');
     }
+
+    // public function exportHistory()
+    // {
+    //     try {
+    //         return Excel::download(new HistoryExport, 'loan_history_' . date('Ymd_His') . '.xlsx');
+    //     } catch (\Exception $e) {
+    //         report($e); // atau Log::error($e)
+
+    //         Log::error('Export failed: ' . $e->getMessage());
+    //         return back()->with('toast_error', 'Gagal menghasilkan ekspor.Tolong coba lagi.');
+    //     }
+    // }
 
     public function printPdf(string $id)
 {
