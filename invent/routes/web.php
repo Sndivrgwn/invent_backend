@@ -20,6 +20,7 @@ Route::get('/', function () {
 
 Route::get('/login', [App\Http\Controllers\Auth\LoginController::class, 'login'])->name('login');
 Route::post('/login', [App\Http\Controllers\Auth\LoginController::class, 'actionlogin']);
+Route::post('/guest-login', [App\Http\Controllers\Auth\GuestLoginController::class, 'login'])->name('guest.login');
 
 // Authenticated routes (available to all logged-in users)
 Route::middleware('auth:sanctum')->group(function () {

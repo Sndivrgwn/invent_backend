@@ -19,6 +19,8 @@
             <div class="flex-1">
                 <h1 class="text-2xl font-semibold py-4">Analisis Inventaris </h1>
             </div>
+        @can('adminFunction')     
+            
             <div class="flex-none">
                 {{-- new product --}}
                 <button class="bg-[#ffffff] rounded-lg py-2 px-4 mx-5 hover:bg-blue-400 cursor-pointer flex justify-center items-center">
@@ -28,6 +30,8 @@
                     </div>
                 </button>
             </div>
+
+        @endcan
         </div>
 
         <!-- Tambahkan ini setelah bagian "Category Overview" -->

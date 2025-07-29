@@ -137,7 +137,10 @@
                                 <td class="text-center">{{ $loan->status }}</td>
 
                                 <td class="text-center gap-2">
+        @can('adminFunction')     
+
                                     <i class="fa-solid fa-file-pdf fa-lg text-red-600 cursor-pointer" title="Lihat PDF" onclick="window.open('{{ route('loan.print.pdf', ['id' => \Illuminate\Support\Facades\Crypt::encryptString($loan->id)]) }}', '_blank')"></i>
+                                    @endcan
                                     <i class="fa-regular fa-eye fa-lg cursor-pointer" onclick="showLoanDetails({{ $loan->id }})"></i>
                                 </td>
 
@@ -298,7 +301,10 @@
                                     <a href="{{ sortLink('return_date', $sortByOutgoing, $sortDirOutgoing, false) }}">TENGGAT</a>
                                 </th>
                                 <th class="text-center font-semibold">STATUS</th>
+        @can('adminFunction')     
+
                                 <th class="text-center font-semibold">TINDAKAN</th>
+                                @endcan
                             </tr>
                         </thead>
                         <tbody>
@@ -312,8 +318,8 @@
                                 <td class="text-center">{{ $loan->return_date }}</td>
                                 <td class="text-center">{{ $loan->status }}</td>
 
+                                @can('adminFunction')
                                 <td class="text-center">
-                                    @can('adminFunction')
                                     <i class="fa-solid fa-right-left fa-lg cursor-pointer !leading-none" onclick="showReturnProduct({{ $loan->id }})"></i>
                                     <i class="fa fa-pen-to-square fa-lg cursor-pointer" onclick="openEditModal(
                                     {{ $loan->id }}, 
@@ -322,10 +328,10 @@
                                     '{{ $loan->return_date }}',
                                     '{{ $loan->loan_date }}'
                                 )"></i>
-                                    @endcan
                                     <i class="fa-solid fa-file-pdf fa-lg text-red-600 cursor-pointer" title="Lihat PDF" onclick="window.open('{{ route('loan.print.pdf', ['id' => \Illuminate\Support\Facades\Crypt::encryptString($loan->id)]) }}', '_blank')"></i>
                                     <i class="fa-regular fa-eye fa-lg cursor-pointer" onclick="showLoanDetailsTwo({{ $loan->id }})"></i>
                                 </td>
+                                @endcan
                                 {{-- tampilan delete --}}
 
 
