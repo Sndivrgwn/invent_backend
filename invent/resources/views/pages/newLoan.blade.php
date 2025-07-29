@@ -90,11 +90,6 @@
                             </label>
                             <div class="relative">
                                 <input type="text" id="loanSN" class="input input-bordered w-full mb-3" placeholder="Masukkan SN" required autocomplete="off">
-                                <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-                                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                    </svg>
-                                </div>
                             </div>
 
                             <!-- Enhanced custom dropdown -->
@@ -113,11 +108,11 @@
                             @endforeach
                         </datalist>
 
-                        <div class="form-control">
+                        <div class="form-control hidden">
                             <label class="label">
                                 <span class="label-text text-gray-600 font-medium">Jumlah</span>
                             </label>
-                            <input type="number" id="loanQty" min="1" class="input input-bordered w-full" placeholder="Jumlah" required>
+                            <input type="number" id="loanQty" min="1" value="1" class="input input-bordered w-full" placeholder="Jumlah" required>
                         </div>
 
                         <div class="modal-action">
@@ -228,10 +223,13 @@
             return;
         }
 
-        const filteredOptions = dropdownOptions.filter(option => 
-            option.value.toLowerCase().includes(inputValue) || 
-            option.name.toLowerCase().includes(inputValue)
-        ).slice(0, 50); // Limit to 50 results for performance
+        const filteredOptions = dropdownOptions
+            .filter(option =>{
+                const alreadyAdded = tempItems.some(item => item.code === option.value);
+                const matchesInput = option.value.toLowerCase().includes(inputValue) || option.name.toLowerCase().includes(inputValue);
+                return matchesInput && !alreadyAdded;
+            })
+        .slice(0, 50);
 
         if (filteredOptions.length === 0) {
             dropdown.classList.add('hidden');
