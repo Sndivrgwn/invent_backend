@@ -29,6 +29,13 @@
                             <span>Pengguna baru</span>
                         </div>
                     </button>
+                    <form method="POST" action="{{ route('admin.guests.destroyAll') }}" onsubmit="return confirm('Yakin ingin menghapus semua akun tamu?')">
+    @csrf
+    @method('DELETE')
+    <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition">
+        Hapus Semua Guest
+    </button>
+</form>
                     <dialog id="newProduct" class="modal">
                         <div class="modal-box">
                             <!-- close button -->

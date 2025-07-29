@@ -23,4 +23,11 @@ class GuestLoginController extends Controller
 
         return redirect('/dashboard')->with('status', 'Berhasil masuk sebagai tamu.');
     }
+
+     public function destroyAll()
+    {
+        $deleted = User::where('is_guest', true)->delete();
+
+        return redirect()->back()->with('status', "Berhasil menghapus $deleted akun tamu.");
+    }
 }

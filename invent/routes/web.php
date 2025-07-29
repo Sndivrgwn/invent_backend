@@ -6,6 +6,7 @@ use App\Http\Controllers\LocationController;
 use App\Http\Controllers\LoanController;
 use App\Http\Controllers\ItemController;
 use App\Http\Controllers\AnalyticsController;
+use App\Http\Controllers\Auth\GuestLoginController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\HistoryController;
 use App\Http\Controllers\NewLoanController;
@@ -43,6 +44,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/history', [HistoryController::class, 'index'])->name('history');
         Route::get('/manageLoan', [ManageLoanController::class, 'index'])->name('pages.manageLoan');
         Route::get('/settings', [SettingController::class, 'index'])->name('setting');
+
+        Route::delete('/admin/delete-all-guests', [GuestLoginController::class, 'destroyAll'])->name('admin.guests.destroyAll');
+
 
         Route::get('/profil', [profilController::class, 'index'])->name('profil');
         Route::put('/profile/name', [profilController::class, 'updateName'])->name('profile.update.name');
