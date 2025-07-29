@@ -24,6 +24,7 @@ class CheckRole
             'admin' => 1,
             'user' => 2,
             'superadmin' => 3,
+            'km' => 4,
         ];
 
         $allowedRoleIds = collect($roles)

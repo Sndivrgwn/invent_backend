@@ -64,9 +64,11 @@
         @if(auth()->user()->roles_id == 3) <!-- Superadmin -->
             <option value="1">Admin</option>
             <option value="2">User</option>
+            <option value="4">Km</option>
         @elseif(auth()->user()->roles_id == 1) <!-- Admin -->
             <option value="1">Admin</option>
             <option value="2">User</option>
+            <option value="4">Km</option>
         @endif
     @endauth
 </select>
@@ -141,6 +143,8 @@
                                     <option value="">Semua Role</option>
                                     <option value="admin">Admin</option>
                                     <option value="user">User</option>
+                                    <option value="km">Km</option>
+
                                 </select>
 
 
@@ -210,6 +214,10 @@ function sortLinkUser($field, $currentSortBy, $currentSortDir) {
                             @endif
                         @elseif(auth()->user()->roles_id == 1) <!-- Admin -->
                             @if($usr->roles_id == 2) <!-- Hanya bisa mengedit/menghapus user biasa -->
+                                <i class="fa fa-trash fa-lg cursor-pointer !leading-none" onclick="deleteItem({{ $usr->id }})"></i>
+                                <i class="fa fa-pen-to-square fa-lg cursor-pointer !leading-none" onclick="openEditModal({{ $usr->id }}, '{{ $usr->name }}', '{{ $usr->email }}', {{ $usr->roles_id }})"></i>
+                            @endif
+                            @if($usr->roles_id == 4) <!-- Hanya bisa mengedit/menghapus user biasa -->
                                 <i class="fa fa-trash fa-lg cursor-pointer !leading-none" onclick="deleteItem({{ $usr->id }})"></i>
                                 <i class="fa fa-pen-to-square fa-lg cursor-pointer !leading-none" onclick="openEditModal({{ $usr->id }}, '{{ $usr->name }}', '{{ $usr->email }}', {{ $usr->roles_id }})"></i>
                             @endif
@@ -299,10 +307,12 @@ function sortLinkUser($field, $currentSortBy, $currentSortDir) {
         @if(auth()->user()->roles_id == 3) <!-- Superadmin -->
             <option value="3">Superadmin</option>
             <option value="1">Admin</option>
+            <option value="4">Km</option>
             <option value="2">User</option>
         @elseif(auth()->user()->roles_id == 1) <!-- Admin -->
             <option value="1">Admin</option>
             <option value="2">User</option>
+            <option value="4">Km</option>
         @endif
     @endauth
 </select>

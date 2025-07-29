@@ -39,9 +39,16 @@ class AuthServiceProvider extends ServiceProvider
             return $user->roles_id == 3; // 3 = super admin
         });
 
-        Gate::define('adminFunction', function ($user) {
-    return in_array($user->roles_id, [1, 3]); // Admin dan Super Admin
-});
+        Gate::define('isKm', function ($user) {
+            return $user->roles_id == 4; // 4 = km
+        });
 
+        Gate::define('kmCanAccess', function ($user) {
+            return in_array($user->roles_id, [1, 3,4]); // Admin dan Super Admin
+        });
+
+        Gate::define('adminFunction', function ($user) {
+            return in_array($user->roles_id, [1, 3]); // Admin dan Super Admin
+        });
     }
 }

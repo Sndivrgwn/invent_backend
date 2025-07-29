@@ -146,7 +146,7 @@
     const input = document.getElementById('returnDate');
   const today = new Date().toISOString().split('T')[0];
   const maxDate = new Date();
-  maxDate.setDate(maxDate.getDate() + 14);
+  maxDate.setDate(maxDate.getDate() + 7);
   input.min = today;
   input.max = maxDate.toISOString().split('T')[0];
 
@@ -160,7 +160,7 @@
     const dateInput = document.getElementById('returnDate');
     const today = new Date().toISOString().split('T')[0];
     const maxDate = new Date();
-    maxDate.setDate(maxDate.getDate() + 14);
+    maxDate.setDate(maxDate.getDate() + 7);
     dateInput.min = today;
     dateInput.max = maxDate.toISOString().split('T')[0];
 

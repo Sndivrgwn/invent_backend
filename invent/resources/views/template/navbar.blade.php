@@ -6,7 +6,7 @@
     </div>
     <div class="flex w-full place-content-end md:w-2/5 lg:w-1/4">
 
-        @can('adminFunction')     
+        @can('kmCanAccess')     
         {{-- new loan --}}
         <a href="newLoan" class="w-1/2 md:w-2/3 mx-3">
             <button class="bg-[#2563EB] text-white rounded-lg p-2 px-5 w-full hover:bg-blue-400 cursor-pointer flex justify-center items-center gap-2">

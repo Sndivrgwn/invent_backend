@@ -18,7 +18,7 @@ class UserManagementController extends Controller
 
     // Jika admin, filter role
     if (auth()->user()->roles_id == 1) {
-        $query->whereIn('roles_id', [1, 2]);
+        $query->whereIn('roles_id', [1, 2, 4]);
     }
 
     // Search
