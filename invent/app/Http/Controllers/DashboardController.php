@@ -6,74 +6,73 @@ use App\Models\Category;
 use App\Models\Item;
 use App\Models\Loan;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
     public function index(Request $request)
-{
-    $search = $request->input('search');
-    $sortBy = $request->input('sortBy', 'loan_date'); // default sort
-    $sortDir = $request->input('sortDir', 'asc');     // default ascending
+    {
+        // Total semua barang
+        $totalItems = Item::count();
 
-    $items = Item::all();
-    $totalItems = $items->count();
+        // Total kategori
+        $totalCategories = Category::count();
 
-    $categories = Category::all();
-    $totalCategories = $categories->count();
+        // Total peminjaman
+        $totalLoans = Loan::count();
 
-    $loans = Loan::with('items');
+        // Peminjaman aktif
+        $activeLoans = Loan::where('status', 'borrowed')->orWhereNull('return_date')->get();
+        $totalActiveLoans = $activeLoans->count();
 
-    if ($search) {
-        $loans->where(function ($query) use ($search) {
-            $query->where('code_loans', 'like', "%{$search}%")
-                ->orWhere('loaner_name', 'like', "%{$search}%")
-                ->orWhere('status', 'like', "%{$search}%")
-                ->orWhere('loan_date', 'like', "%{$search}%")
-                ->orWhere('return_date', 'like', "%{$search}%")
-                ->orWhereHas('items', function ($query) use ($search) {
-                    $query->where('name', 'like', "%{$search}%")
-                        ->orWhere('type', 'like', "%{$search}%")
-                        ->orWhere('code', 'like', "%{$search}%")
-                        ->orWhereHas('category', function ($query) use ($search) {
-                            $query->where('name', 'like', "%{$search}%");
-                        });
-                })
-                ->orWhere('description', 'like', "%{$search}%");
-        });
+        // Jumlah barang yang sedang dipinjam
+        $totalLoanedItems = $activeLoans->sum(fn($loan) => $loan->items->count());
+
+        // Jumlah peminjaman yang sudah dikembalikan
+        $returnedLoans = Loan::where('status', 'returned')->count();
+
+        // 10 peminjaman terbaru
+        $latestLoans = Loan::with('items')
+            ->orderBy('loan_date', 'desc')
+            ->take(10)
+            ->get();
+
+        // Barang paling sering dipinjam (Top 5)
+        $mostLoanedItems = Item::withCount('loans')
+            ->orderBy('loans_count', 'desc')
+            ->take(5)
+            ->get();
+
+        // Statistik peminjaman per bulan (12 bulan terakhir)
+        $loansPerMonth = Loan::select(
+                DB::raw("DATE_FORMAT(loan_date, '%Y-%m') as month"),
+                DB::raw("COUNT(*) as total")
+            )
+            ->groupBy('month')
+            ->orderBy('month', 'desc')
+            ->limit(12)
+            ->get()
+            ->reverse() // agar urut dari bulan paling lama ke terbaru
+            ->values();
+
+        // Barang berdasarkan kondisi
+        $itemConditions = Item::select('condition', DB::raw('COUNT(*) as total'))
+            ->groupBy('condition')
+            ->get();
+
+        return view('pages.dashboard', compact(
+            'totalItems',
+            'totalCategories',
+            'totalLoans',
+            'totalActiveLoans',
+            'totalLoanedItems',
+            'returnedLoans',
+            'latestLoans',
+            'mostLoanedItems',
+            'loansPerMonth',
+            'itemConditions'
+        ));
     }
-
-    // Tambahkan sort
-    if (in_array($sortBy, ['loan_date', 'loaner_name'])) {
-        $loans->orderBy($sortBy, $sortDir);
-    }
-
-    $loans = $loans->paginate(20)->appends([
-        'search' => $search,
-        'sortBy' => $sortBy,
-        'sortDir' => $sortDir,
-    ]);
-
-    $totalLoans = $loans->total();
-
-    $activeLoans = Loan::where('status', 'borrowed')
-                     ->orWhereNull('return_date')
-                     ->with('items')
-                     ->get();
-
-    $totalLoanedItems = $activeLoans->sum(fn($loan) => $loan->items->count());
-
-    return view('pages.dashboard', compact(
-        'totalItems',
-        'totalCategories',
-        'totalLoans',
-        'loans',
-        'search',
-        'totalLoanedItems',
-        'sortBy',
-        'sortDir'
-    ));
-}
-
 
     public function search(Request $request)
     {
