@@ -17,7 +17,7 @@
 
         <div class="navbar my-6">
             <div class="flex-1">
-                <h1 class="text-2xl font-semibold py-4">Profil Settings</h1>
+                <h1 class="text-2xl font-semibold py-4">Pengaturan profil</h1>
             </div>
         </div>
 
@@ -41,7 +41,7 @@
                     <i class="fa-solid fa-user text-xl text-gray-600"></i>
                 </div>
                 <div>
-                    <h1 class="text-sm text-gray-500">Name</h1>
+                    <h1 class="text-sm text-gray-500">Nama</h1>
                     <h1 class="text-base font-medium">{{$user->name}}</h1>
                 </div>
             </div>
@@ -74,7 +74,7 @@
                 <i class="fa-solid fa-right-left text-xl text-gray-600"></i>
             </div>
             <div>
-                <h1 class="text-sm text-gray-500">Total Loan</h1>
+                <h1 class="text-sm text-gray-500">Total Pinjaman</h1>
                 <h1 class="text-base font-medium">{{$totalLoans}}</h1>
             </div>
         </div>
@@ -86,7 +86,7 @@
                 <i class="fa-solid fa-rotate-left text-xl text-gray-600"></i>
             </div>
             <div>
-                <h1 class="text-sm text-gray-500">Total Return</h1>
+                <h1 class="text-sm text-gray-500">Total pengembalian</h1>
                 <h1 class="text-base font-medium">{{$totalReturns}}</h1>
             </div>
         </div>
@@ -106,7 +106,7 @@
             @method('PUT')
             <div class="form-control">
                 <label class="label">
-                    <span class="label-text">Choose Avatar Image</span>
+                    <span class="label-text">Pilih Avatar Image</span>
                 </label>
                 <input type="file" name="avatar" class="file-input file-input-bordered w-full" accept="image/*" required />
                 <div class="text-sm text-gray-500 mt-2">Max file size: 2MB | Allowed formats: jpeg, png, jpg, gif, webp</div>
@@ -129,7 +129,7 @@
             @method('PUT')
             <div class="form-control">
                 <label class="label">
-                    <span class="label-text">New Name</span>
+                    <span class="label-text">Nama baru</span>
                 </label>
                 <input type="text" name="name" value="{{ $user->name }}" class="input input-bordered" required />
                 @error('name', 'nameUpdate')
@@ -137,8 +137,8 @@
                 @enderror
             </div>
             <div class="modal-action">
-                <label for="name-modal" class="btn">Cancel</label>
-                <button type="submit" class="btn btn-primary">Save</button>
+                <label for="name-modal" class="btn">Batal</label>
+                <button type="submit" class="btn btn-primary">Simpan</button>
             </div>
         </form>
     </div>
@@ -154,7 +154,7 @@
             @method('PUT')
             <div class="form-control">
                 <label class="label">
-                    <span class="label-text">New Email</span>
+                    <span class="label-text">Email Baru</span>
                 </label>
                 <input type="email" name="email" value="{{ $user->email }}" class="input input-bordered" required />
                 @error('email', 'emailUpdate')
@@ -162,8 +162,8 @@
                 @enderror
             </div>
             <div class="modal-action">
-                <label for="email-modal" class="btn">Cancel</label>
-                <button type="submit" class="btn btn-primary">Save</button>
+                <label for="email-modal" class="btn">Batal</label>
+                <button type="submit" class="btn btn-primary">Simpan</button>
             </div>
         </form>
     </div>

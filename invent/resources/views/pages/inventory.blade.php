@@ -18,13 +18,13 @@
         <!-- Page Header -->
         <div class="navbar my-6">
             <div class="flex-1">
-                <h1 class="text-2xl font-semibold py-4">Inventory Management</h1>
+                <h1 class="text-2xl font-semibold py-4">Manajemen inventaris</h1>
             </div>
             @can('adminFunction')
             <div class="flex-none">
                 <button class="bg-[#2563EB] text-white rounded-lg py-2 px-2 mx-3 hover:bg-blue-400 cursor-pointer flex justify-center items-center" onclick="document.getElementById('newInventory').showModal()">
                     <i class="fa-regular me-2 fa-plus flex justify-center items-center"></i>
-                    <span class="">New Inventory</span>
+                    <span class="">Inventaris baru</span>
                 </button>
             </div>
             @endcan
@@ -35,11 +35,11 @@
             <div class="modal-box">
                 <form method="POST" id="itemForm" enctype="multipart/form-data">
                     <button type="button" onclick="closeModal()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-                    <h1 class="font-semibold text-2xl mb-4">New Inventory</h1>
+                    <h1 class="font-semibold text-2xl mb-4">Inventaris baru</h1>
 
                     <!-- Image Upload -->
                     <div class="mb-4">
-                        <h1 class="font-medium">Image</h1>
+                        <h1 class="font-medium">Gambar</h1>
                         <div class="flex items-center gap-4">
                             <div class="avatar">
                                 <div class="w-24 rounded-lg bg-gray-200">
@@ -52,18 +52,18 @@
 
                     <div class="flex gap-5 justify-between text-gray-600">
                         <div class="w-[50%]">
-                            <h1 class="font-medium">Name</h1>
-                            <input type="text" name="name" id="locationName" class="input input-bordered w-full" placeholder="Enter location name" required>
+                            <h1 class="font-medium">Nama</h1>
+                            <input type="text" name="name" id="locationName" class="input input-bordered w-full" placeholder="Masukkan nama lokasi" required>
                         </div>
                         <div class="w-[50%]">
-                            <h1 class="font-medium">Description</h1>
-                            <input type="text" name="description" id="locationDescription" class="input input-bordered w-full" placeholder="Enter location description">
+                            <h1 class="font-medium">Deskripsi</h1>
+                            <input type="text" name="description" id="locationDescription" class="input input-bordered w-full" placeholder="Deskripsi Lokasi">
                         </div>
                     </div>
 
                     <div class="w-full flex justify-end items-end gap-4 mt-4">
-                        <button type="button" onclick="closeModal()" class="btn btn-error text-white">Cancel</button>
-                        <button type="submit" class="btn btn-primary text-white">Submit</button>
+                        <button type="button" onclick="closeModal()" class="btn btn-error text-white">Batal</button>
+                        <button type="submit" class="btn btn-primary text-white">Kirim</button>
                     </div>
                 </form>
             </div>
@@ -83,7 +83,7 @@
                                     <p class="text-3xl font-bold">{{ $location['total_items'] }}</p>
                                 </div>
                                 <span class="text-[#2563EB]">
-                                    see details
+                                    Lihat lengkap
                                 </span>
                             </div>
                             @if($location['categories']->isNotEmpty())
@@ -96,7 +96,7 @@
                         </div>
                         @empty
                         <div class="col-span-full text-center py-10">
-                            <p class="text-gray-500">No locations found</p>
+                            <p class="text-gray-500">Tidak ada lokasi</p>
                         </div>
                         @endforelse
                     </div>
@@ -122,31 +122,31 @@
                     <!-- Close Button -->
                     <button type="button" onclick="document.getElementById('viewProduct').close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
 
-                    <h1 class="font-semibold text-2xl mb-2">Location Details</h1>
+                    <h1 class="font-semibold text-2xl mb-2">Rincian Lokasi</h1>
                     <h2 id="modalLocationName" class="font-semibold text-xl text-primary mb-4"></h2>
 
                     <div class="w-full mt-3">
-                        <h1 class="font-medium text-gray-600">DESCRIPTION</h1>
+                        <h1 class="font-medium text-gray-600">DESKRIPSI</h1>
                         <p id="modalLocationDescription" class="text-gray-600"></p>
                     </div>
 
                     <div class="w-full mt-4">
-                        <h1 class="font-medium text-gray-600 mb-2">ITEMS (Preview)</h1>
+                        <h1 class="font-medium text-gray-600 mb-2">ITEM (Pratinjau)</h1>
                         <ul id="modalItemList" class="list-disc pl-5 space-y-1 text-gray-700 text-sm max-h-40 overflow-y-auto"></ul>
-                        <button id="viewAllBtn" class="text-sm text-primary mt-2 hover:underline hidden">View All Items →</button>
+                        <button id="viewAllBtn" class="text-sm text-primary mt-2 hover:underline hidden">Lihat Semua Item →</button>
                     </div>
 
                     <div class="w-full mt-4">
-                        <h1 class="font-medium text-gray-600 mb-2">CATEGORIES</h1>
+                        <h1 class="font-medium text-gray-600 mb-2">KATEGORI</h1>
                         <div id="modalCategoryList" class="flex flex-wrap gap-2"></div>
                     </div>
 
                     <div class="w-full flex justify-end items-end gap-4 mt-6">
                         @can('adminFunction')
                         <button type="button" class="btn btn-primary" onclick="prepareEditModal()">Edit</button>
-                        <button type="button" class="btn btn-error !text-white" onclick="deleteItem(currentLocationId)">Delete</button>
+                        <button type="button" class="btn btn-error !text-white" onclick="deleteItem(currentLocationId)">Hapus</button>
                         @endcan
-                        <button type="button" class="btn btn-secondary" onclick="document.getElementById('viewProduct').close()">Close</button>
+                        <button type="button" class="btn btn-secondary" onclick="document.getElementById('viewProduct').close()">Tutup</button>
                     </div>
                 </form>
             </div>
@@ -170,11 +170,11 @@
             <div class="modal-box">
                 <form method="dialog">
                     <button type="button" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onclick="closeDeleteDialog()">✕</button>
-                    <h1 class="text-xl font-bold text-center mb-4">Delete Location?</h1>
-                    <p class="text-center text-gray-600">Are you sure you want to delete this location? All items in this location will also be deleted.</p>
+                    <h1 class="text-xl font-bold text-center mb-4">Hapus lokasi?</h1>
+                    <p class="text-center text-gray-600">Apakah Anda yakin ingin menghapus lokasi ini? Semua item di lokasi ini juga akan dihapus.</p>
                     <div class="flex justify-end gap-3 mt-6">
-                        <button type="button" class="btn" onclick="closeDeleteDialog()">Cancel</button>
-                        <button type="button" class="btn btn-error" onclick="confirmDelete()">Delete</button>
+                        <button type="button" class="btn" onclick="closeDeleteDialog()">Batal</button>
+                        <button type="button" class="btn btn-error" onclick="confirmDelete()">Hapus</button>
                     </div>
                 </form>
             </div>
@@ -185,13 +185,13 @@
             <div class="modal-box">
                 <form method="POST" id="editForm" enctype="multipart/form-data">
                     <button type="button" onclick="closeEditModal()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-                    <h1 class="font-semibold text-2xl mb-4">Edit Location</h1>
+                    <h1 class="font-semibold text-2xl mb-4">Edit Lokasi</h1>
                     <input type="hidden" name="_method" value="PUT">
                     <input type="hidden" name="id" id="edit_location_id">
 
                     <!-- Image Upload -->
                     <div class="mb-4">
-                        <h1 class="font-medium">Image</h1>
+                        <h1 class="font-medium">Gambar</h1>
                         <div class="flex items-center gap-4">
                             <div class="avatar">
                                 <div class="w-24 rounded-lg bg-gray-200">
@@ -204,18 +204,18 @@
 
                     <div class="flex gap-5 justify-between text-gray-600">
                         <div class="w-[50%]">
-                            <h1 class="font-medium">NAME</h1>
+                            <h1 class="font-medium">NAMA</h1>
                             <input type="text" name="name" id="edit_name" class="input w-full" required>
                         </div>
                         <div class="w-[50%]">
-                            <h1 class="font-medium">DESCRIPTION</h1>
+                            <h1 class="font-medium">DESKRIPSI</h1>
                             <input type="text" name="description" id="edit_description" class="input w-full">
                         </div>
                     </div>
 
                     <div class="w-full flex justify-end items-end gap-4 mt-4">
-                        <button type="button" class="btn btn-error" onclick="closeEditModal()">Cancel</button>
-                        <button type="submit" class="btn btn-primary">Save</button>
+                        <button type="button" class="btn btn-error" onclick="closeEditModal()">Batal</button>
+                        <button type="submit" class="btn btn-primary">Simpan</button>
                     </div>
                 </form>
             </div>
@@ -303,7 +303,7 @@ function submitForm(form, url) {
     .catch(error => {
         console.error('Error:', error);
         if (!error.message.includes('An error occurred')) {
-            showToast(error.message || 'Request failed', 'error');
+            showToast(error.message || 'Permintaan gagal', 'error');
         }
     }).finally(() => {
         submitButton.innerHTML = originalText;
@@ -339,7 +339,7 @@ function submitForm(form, url) {
             const data = await response.json();
             
             if (!response.ok) {
-                const errorMessage = data.toast?.message || data.message || 'Location not found';
+                const errorMessage = data.toast?.message || data.message || 'Lokasi tidak ditemukan';
                 showToast(errorMessage, 'error');
                 throw new Error(errorMessage);
             }
@@ -383,13 +383,13 @@ function submitForm(form, url) {
             return data;
         } else {
             const text = await response.text();
-            showToast('Unexpected response from server', 'error');
+            showToast('Respons tak terduga dari server', 'error');
             console.error('Non-JSON response:', text);
         }
     })
     .catch(error => {
         console.error('Error:', error);
-        showToast(error.message || 'Failed to load location', 'error');
+        showToast(error.message || 'Gagal memuat lokasi', 'error');
     });
 }
     function prepareEditModal() {
@@ -443,7 +443,7 @@ function submitForm(form, url) {
         const data = await response.json();
         
         if (!response.ok) {
-            const errorMessage = data.toast?.message || data.message || 'Failed to delete location';
+            const errorMessage = data.toast?.message || data.message || 'Gagal menghapus lokasi';
             showToast(errorMessage, 'error');
             throw new Error(errorMessage);
         }

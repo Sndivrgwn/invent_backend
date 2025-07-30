@@ -20,192 +20,201 @@ class LoanController extends Controller
      * Display a listing of the resource.
      */
     public function index(Request $request)
-{
-    try {
-        $search = $request->input('search-navbar');
-
-        $sortByIncoming = $request->input('sortByIncoming', 'loan_date');
-        $sortDirIncoming = $request->input('sortDirIncoming', 'desc');
-
-        $sortByOutgoing = $request->input('sortByOutgoing', 'loan_date');
-        $sortDirOutgoing = $request->input('sortDirOutgoing', 'desc');
-
-        $allowedSorts = ['loaner_name', 'loan_date', 'return_date', 'status'];
-
-        $incomingLoans = Loan::with('items')
-            ->where('status', 'RETURNED')
-            ->when($search, function ($query) use ($search) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('loaner_name', 'like', "%{$search}%")
-                        ->orWhere('loan_date', 'like', "%{$search}%")
-                        ->orWhere('return_date', 'like', "%{$search}%")
-                        ->orWhereHas('items', function ($itemQuery) use ($search) {
-                            $itemQuery->where('name', 'like', "%{$search}%");
-                        });
-                });
-            });
-
-        if (in_array($sortByIncoming, $allowedSorts)) {
-            $incomingLoans->orderBy($sortByIncoming, $sortDirIncoming);
-        }
-
-        $incomingLoans = $incomingLoans->paginate(20)->appends([
-            'search-navbar' => $search,
-            'sortByIncoming' => $sortByIncoming,
-            'sortDirIncoming' => $sortDirIncoming,
-            'sortByOutgoing' => $sortByOutgoing,
-            'sortDirOutgoing' => $sortDirOutgoing,
-        ]);
-
-        $outgoingLoans = Loan::with('items')
-            ->where('status', '!=', 'RETURNED')
-            ->when($search, function ($query) use ($search) {
-                $query->where(function ($q) use ($search) {
-                    $q->where('loaner_name', 'like', "%{$search}%")
-                        ->orWhere('loan_date', 'like', "%{$search}%")
-                        ->orWhere('return_date', 'like', "%{$search}%")
-                        ->orWhere('status', 'like', "%{$search}%")
-                        ->orWhereHas('items', function ($itemQuery) use ($search) {
-                            $itemQuery->where('name', 'like', "%{$search}%");
-                        });
-                });
-            });
-
-        if (in_array($sortByOutgoing, $allowedSorts)) {
-            $outgoingLoans->orderBy($sortByOutgoing, $sortDirOutgoing);
-        }
-
-        $outgoingLoans = $outgoingLoans->paginate(20)->appends([
-            'search-navbar' => $search,
-            'sortByIncoming' => $sortByIncoming,
-            'sortDirIncoming' => $sortDirIncoming,
-            'sortByOutgoing' => $sortByOutgoing,
-            'sortDirOutgoing' => $sortDirOutgoing,
-        ]);
-
-        return view('pages.loan', compact(
-            'incomingLoans', 'outgoingLoans',
-            'sortByIncoming', 'sortDirIncoming',
-            'sortByOutgoing', 'sortDirOutgoing',
-        ));
-
-    } catch (\Exception $e) {
-        report($e); // atau Log::error($e)
-
-        Log::error('Error fetching loans: ' . $e->getMessage());
-        return redirect()->back()->with('toast_error', 'Failed to load loan data. Please try again.');
-    }
-}
-
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    
-    /**
-     * Store a newly created resource in storage.
-     */
-   public function store(Request $request)
-{
-    $request->validate([
-        'user_id' => 'required|exists:users,id',
-        'code_loans' => 'required|string|unique:loans',
-        'loan_date' => 'required|date',
-        'return_date' => 'required|date',
-        'status' => 'required|string',
-        'loaner_name' => 'required|string',
-        'description' => 'nullable|string',
-        'items' => 'required|array',
-        'items.*.item_id' => 'required|exists:items,id',
-        'items.*.quantity' => 'required|integer|min:1',
-    ]);
-
-    DB::beginTransaction();
-    try {
-        $loan = Loan::create([
-            'user_id' => $request->user_id,
-            'code_loans' => $request->code_loans,
-            'loan_date' => $request->loan_date,
-            'return_date' => $request->return_date,
-            'status' => $request->status,
-            'loaner_name' => $request->loaner_name,
-            'description' => $request->description,
-        ]);
-
-        foreach ($request->items as $item) {
-            $itemModel = Item::findOrFail($item['item_id']);
-
-            if ($itemModel->status === 'NOT READY') {
-                throw new \Exception("Item '{$itemModel->name}' (SN: {$itemModel->code}) is currently borrowed and cannot be loaned again.");
-            }
-
-            $loan->items()->attach($item['item_id'], [
-                'quantity' => $item['quantity'],
-            ]);
-
-            $itemModel->update(['status' => 'NOT READY']);
-        }
-
-        DB::commit();
-        return response()->json([
-            'message' => 'Loan successfully created!'
-        ], 201);
-    } catch (\Exception $e) {
-        report($e); // atau Log::error($e)
-        Log::error('Loan creation failed: ' . $e->getMessage());
-        DB::rollBack();
-        return response()->json([
-            'message' => $e->getMessage()
-        ], 400);
-    }
-}
-
-    public function exportHistory()
     {
         try {
-            return Excel::download(new HistoryExport, 'loan_history_' . date('Ymd_His') . '.xlsx');
+            $search = $request->input('search-navbar');
+
+            $sortByIncoming = $request->input('sortByIncoming', 'loan_date');
+            $sortDirIncoming = $request->input('sortDirIncoming', 'desc');
+
+            $sortByOutgoing = $request->input('sortByOutgoing', 'loan_date');
+            $sortDirOutgoing = $request->input('sortDirOutgoing', 'desc');
+
+            $allowedSorts = ['loaner_name', 'loan_date', 'return_date', 'status'];
+
+            $incomingLoans = Loan::with('items')
+                ->where('status', 'RETURNED')
+                ->when($search, function ($query) use ($search) {
+                    $query->where(function ($q) use ($search) {
+                        $q->where('loaner_name', 'like', "%{$search}%")
+                            ->orWhere('loan_date', 'like', "%{$search}%")
+                            ->orWhere('return_date', 'like', "%{$search}%")
+                            ->orWhereHas('items', function ($itemQuery) use ($search) {
+                                $itemQuery->where('name', 'like', "%{$search}%");
+                            });
+                    });
+                });
+
+            if (in_array($sortByIncoming, $allowedSorts)) {
+                $incomingLoans->orderBy($sortByIncoming, $sortDirIncoming);
+            }
+
+            $incomingLoans = $incomingLoans->paginate(20)->appends([
+                'search-navbar' => $search,
+                'sortByIncoming' => $sortByIncoming,
+                'sortDirIncoming' => $sortDirIncoming,
+                'sortByOutgoing' => $sortByOutgoing,
+                'sortDirOutgoing' => $sortDirOutgoing,
+            ]);
+
+            $outgoingLoans = Loan::with('items')
+                ->where('status', '!=', 'RETURNED')
+                ->when($search, function ($query) use ($search) {
+                    $query->where(function ($q) use ($search) {
+                        $q->where('loaner_name', 'like', "%{$search}%")
+                            ->orWhere('loan_date', 'like', "%{$search}%")
+                            ->orWhere('return_date', 'like', "%{$search}%")
+                            ->orWhere('status', 'like', "%{$search}%")
+                            ->orWhereHas('items', function ($itemQuery) use ($search) {
+                                $itemQuery->where('name', 'like', "%{$search}%");
+                            });
+                    });
+                });
+
+            if (in_array($sortByOutgoing, $allowedSorts)) {
+                $outgoingLoans->orderBy($sortByOutgoing, $sortDirOutgoing);
+            }
+
+            $outgoingLoans = $outgoingLoans->paginate(20)->appends([
+                'search-navbar' => $search,
+                'sortByIncoming' => $sortByIncoming,
+                'sortDirIncoming' => $sortDirIncoming,
+                'sortByOutgoing' => $sortByOutgoing,
+                'sortDirOutgoing' => $sortDirOutgoing,
+            ]);
+
+            return view('pages.loan', compact(
+                'incomingLoans',
+                'outgoingLoans',
+                'sortByIncoming',
+                'sortDirIncoming',
+                'sortByOutgoing',
+                'sortDirOutgoing',
+            ));
         } catch (\Exception $e) {
             report($e); // atau Log::error($e)
 
-            Log::error('Export failed: ' . $e->getMessage());
-            return back()->with('toast_error', 'Failed to generate export. Please try again.');
+            Log::error('Error fetching loans: ' . $e->getMessage());
+            return redirect()->back()->with('toast_error', 'Gagal memuat data pinjaman.Tolong coba lagi.');
         }
     }
 
-    public function printPdf(string $id)
-{
-    try {
-        $loanId = Crypt::decryptString($id);
-        $loan = Loan::with(['items.category', 'user'])->findOrFail($loanId);
 
-        $pdf = Pdf::loadView('print.loan-detail', compact('loan'))
-                  ->setPaper('A4', 'portrait');
+    /**
+     * Store a newly created resource in storage.
+     */
 
-        return $pdf->stream('loan_form_' . $loan->code_loans . '.pdf');
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'code_loans' => 'required|string|unique:loans',
+            'loan_date' => 'required|date',
+            'return_date' => 'required|date',
+            'status' => 'required|string',
+            'loaner_name' => 'required|string',
+            'description' => 'nullable|string',
+            'items' => 'required|array',
+            'items.*.item_id' => 'required|exists:items,id',
+            'items.*.quantity' => 'required|integer|min:1',
+        ]);
 
-    } catch (\Exception $e) {
-        report($e); // atau Log::error($e)
+        DB::beginTransaction();
+        try {
+            $loan = Loan::create([
+                'user_id' => $request->user_id,
+                'code_loans' => $request->code_loans,
+                'loan_date' => $request->loan_date,
+                'return_date' => $request->return_date,
+                'status' => $request->status,
+                'loaner_name' => $request->loaner_name,
+                'description' => $request->description,
+            ]);
 
-        Log::error('Loan PDF stream failed: ' . $e->getMessage());
-        return redirect()->back()->with('toast_error', 'Gagal menampilkan PDF');
+            foreach ($request->items as $item) {
+                $itemModel = Item::findOrFail($item['item_id']);
+
+                if ($itemModel->status === 'NOT READY') {
+                    throw new \Exception("Item '{$itemModel->name}' (SN: {$itemModel->code}) Sedang Dipinjam Tidak Dapat Dipinjam Kembali");
+                }
+
+                $loan->items()->attach($item['item_id'], [
+                    'quantity' => $item['quantity'],
+                ]);
+
+                $itemModel->update(['status' => 'NOT READY']);
+            }
+
+            DB::commit();
+            return response()->json([
+                'message' => 'Pinjaman berhasil dibuat!'
+            ], 201);
+        } catch (\Exception $e) {
+            report($e); // atau Log::error($e)
+            Log::error('Loan creation failed: ' . $e->getMessage());
+            DB::rollBack();
+            return response()->json([
+                'message' => $e->getMessage()
+            ], 400);
+        }
     }
-}
+
+    public function exportHistory(Request $request)
+    {
+        $startDate = $request->query('start_date');
+        $endDate = $request->query('end_date');
+
+        return Excel::download(new HistoryExport($startDate, $endDate), 'loan_history_' . date('Ymd_His') . '.xlsx');
+    }
+
+    // public function exportHistory()
+    // {
+    //     try {
+    //         return Excel::download(new HistoryExport, 'loan_history_' . date('Ymd_His') . '.xlsx');
+    //     } catch (\Exception $e) {
+    //         report($e); // atau Log::error($e)
+
+    //         Log::error('Export failed: ' . $e->getMessage());
+    //         return back()->with('toast_error', 'Gagal menghasilkan ekspor.Tolong coba lagi.');
+    //     }
+    // }
+
+    public function printPdf(string $id)
+    {
+        try {
+            $loanId = Crypt::decryptString($id);
+            $loan = Loan::with(['items.category', 'user'])->findOrFail($loanId);
+
+            $pdf = Pdf::loadView('print.loan-detail', compact('loan'))
+                ->setPaper('A4', 'portrait');
+
+            return $pdf->stream('loan_form_' . $loan->code_loans . '.pdf');
+        } catch (\Exception $e) {
+            report($e); // atau Log::error($e)
+
+            Log::error('Loan PDF stream failed: ' . $e->getMessage());
+            return redirect()->back()->with('toast_error', 'Gagal menampilkan PDF');
+        }
+    }
 
 
     public function search(Request $request)
     {
         try {
             $keyword = $request->query('q');
-            
+
             if (empty($keyword) || strlen($keyword) < 2) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Search keyword must be at least 2 characters'
+                    'message' => 'Kata kunci pencarian harus minimal 2 karakter'
                 ], 400);
             }
 
             $items = Item::where('status', 'READY')
-                ->where(function($query) use ($keyword) {
+                ->where(function ($query) use ($keyword) {
                     $query->where('code', 'LIKE', "%$keyword%")
                         ->orWhere('name', 'LIKE', "%$keyword%")
                         ->orWhere('brand', 'LIKE', "%$keyword%")
@@ -218,14 +227,13 @@ class LoanController extends Controller
                 'success' => true,
                 'data' => $items
             ]);
-
         } catch (\Exception $e) {
             report($e); // atau Log::error($e)
 
             Log::error('Search failed: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Search failed. Please try again.'
+                'message' => 'Pencarian gagal.Tolong coba lagi.'
             ], 500);
         }
     }
@@ -237,19 +245,18 @@ class LoanController extends Controller
     {
         try {
             $loan = Loan::with(['user', 'items', 'return'])->findOrFail($id);
-            
+
             return response()->json([
                 'success' => true,
                 'data' => $loan
             ]);
-
         } catch (\Exception $e) {
             report($e); // atau Log::error($e)
 
             Log::error('Failed to fetch loan: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Loan not found'
+                'message' => 'Pinjaman tidak ditemukan'
             ], 404);
         }
     }
@@ -260,37 +267,37 @@ class LoanController extends Controller
     public function update(Request $request, string $id)
     {
         $validator = Validator::make($request->all(), [
-        'loaner_name' => 'sometimes|required|string|max:100',
-        'return_date' => [
-            'sometimes',
-            'required',
-            'date',
-            function ($attribute, $value, $fail) use ($request, $id) {
-                $loan = Loan::find($id);
-                if (!$loan) {
-                    $fail('Loan not found');
-                    return;
+            'loaner_name' => 'sometimes|required|string|max:100',
+            'return_date' => [
+                'sometimes',
+                'required',
+                'date',
+                function ($attribute, $value, $fail) use ($request, $id) {
+                    $loan = Loan::find($id);
+                    if (!$loan) {
+                        $fail('Pinjaman tidak ditemukan');
+                        return;
+                    }
+
+                    $today = now()->format('Y-m-d');
+                    $maxDate = date('Y-m-d', strtotime($loan->loan_date . ' +14 days'));
+
+                    if ($value < $today) {
+                        $fail('Tanggal pengembalian tidak bisa sebelum hari ini');
+                    }
+
+                    if ($value > $maxDate) {
+                        $fail('Tanggal pengembalian tidak bisa lebih dari 2 minggu dari tanggal pinjaman');
+                    }
                 }
-                
-                $today = now()->format('Y-m-d');
-                $maxDate = date('Y-m-d', strtotime($loan->loan_date . ' +14 days'));
-                
-                if ($value < $today) {
-                    $fail('Return date cannot be before today');
-                }
-                
-                if ($value > $maxDate) {
-                    $fail('Return date cannot be more than 2 weeks from loan date');
-                }
-            }
-        ],
-        'description' => 'nullable|string|max:500',
-    ]);
+            ],
+            'description' => 'nullable|string|max:500',
+        ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Validation failed',
+                'message' => 'Validasi gagal',
                 'errors' => $validator->errors()
             ], 422);
         }
@@ -301,7 +308,7 @@ class LoanController extends Controller
             if ($loan->status === 'RETURNED') {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Cannot update a returned loan'
+                    'message' => 'Tidak dapat memperbarui pinjaman yang dikembalikan'
                 ], 403);
             }
 
@@ -317,17 +324,16 @@ class LoanController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Loan updated successfully!',
+                'message' => 'Pinjaman berhasil diperbarui!',
                 'data' => $loan
             ]);
-
         } catch (\Exception $e) {
             report($e); // atau Log::error($e)
 
             Log::error('Loan update failed: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to update loan',
+                'message' => 'Gagal memperbarui pinjaman',
                 'error' => $e->getMessage()
             ], 500);
         }
@@ -346,7 +352,7 @@ class LoanController extends Controller
             if ($loan->status === 'RETURNED') {
                 return response()->json([
                     'success' => false,
-                    'message' => 'Cannot delete a returned loan'
+                    'message' => 'Tidak dapat menghapus pinjaman yang dikembalikan'
                 ], 403);
             }
 
@@ -358,21 +364,20 @@ class LoanController extends Controller
             $loan->delete();
 
             DB::commit();
-            
+
             return response()->json([
                 'success' => true,
-                'message' => 'Loan deleted successfully!'
+                'message' => 'Pinjaman berhasil dihapus!'
             ]);
-
         } catch (\Exception $e) {
             report($e); // atau Log::error($e)
 
             DB::rollBack();
             Log::error('Loan deletion failed: ' . $e->getMessage());
-            
+
             return response()->json([
                 'success' => false,
-                'message' => 'Failed to delete loan',
+                'message' => 'gagal Menghapus Pinjaman',
                 'error' => $e->getMessage()
             ], 500);
         }

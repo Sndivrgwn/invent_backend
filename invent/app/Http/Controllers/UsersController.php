@@ -36,7 +36,7 @@ class UsersController extends Controller
             'roles_id'  => $request->roles_id,
         ]);
 
-        return response()->json(['message' => 'User created', 'user' => $user], 201);
+        return response()->json(['message' => 'Pengguna dibuat', 'user' => $user], 201);
     }
 
     /**
@@ -45,7 +45,7 @@ class UsersController extends Controller
     public function show(string $id)
     {
         $user = User::with('roles')->find($id);
-        if (!$user) return response()->json(['message' => 'User not found'], 404);
+        if (!$user) return response()->json(['message' => 'Pengguna tidak ditemukan'], 404);
         return response()->json($user, 200);
     }
 
@@ -55,7 +55,7 @@ class UsersController extends Controller
     public function update(Request $request, string $id)
     {
         $user = User::find($id);
-        if (!$user) return response()->json(['message' => 'User not found'], 404);
+        if (!$user) return response()->json(['message' => 'Pengguna tidak ditemukan'], 404);
 
         $request->validate([
             'name'     => 'sometimes|required|string|max:255',
@@ -70,7 +70,7 @@ class UsersController extends Controller
         }
 
         $user->update($data);
-        return response()->json(['message' => 'User updated', 'user' => $user], 200);
+        return response()->json(['message' => 'Pengguna diperbarui', 'user' => $user], 200);
     }
 
     /**
@@ -79,8 +79,8 @@ class UsersController extends Controller
     public function destroy(string $id)
     {
         $user = User::find($id);
-        if (!$user) return response()->json(['message' => 'User not found'], 404);
+        if (!$user) return response()->json(['message' => 'Pengguna tidak ditemukan'], 404);
         $user->delete();
-        return response()->json(['message' => 'User deleted'], 200);
+        return response()->json(['message' => 'Pengguna dihapus'], 200);
     }
 }

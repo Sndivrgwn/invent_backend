@@ -25,7 +25,7 @@ class ProfilController extends Controller
             report($e); // atau Log::error($e)
 
             Log::error('Profile index error: ' . $e->getMessage());
-            return redirect()->back()->with('error', 'Failed to load profile data');
+            return redirect()->back()->with('error', 'Gagal memuat data profil');
         }
     }
     
@@ -47,7 +47,7 @@ public function updateName(Request $request)
 
         return redirect()->back()->with('toast', [
             'type' => 'success',
-            'message' => 'Name updated successfully'
+            'message' => 'Nama berhasil diperbarui'
         ]);
         
     } catch (\Exception $e) {
@@ -56,7 +56,7 @@ public function updateName(Request $request)
         Log::error('Name update error: ' . $e->getMessage());
         return redirect()->back()->with('toast', [
             'type' => 'error',
-            'message' => 'Failed to update name'
+            'message' => 'Gagal memperbarui nama'
         ]);
     }
 }
@@ -87,7 +87,7 @@ public function updateEmail(Request $request)
 
         return redirect()->back()->with('toast', [
             'type' => 'success',
-            'message' => 'Email updated successfully'
+            'message' => 'Email berhasil diperbarui'
         ]);
         
     } catch (\Exception $e) {
@@ -96,7 +96,7 @@ public function updateEmail(Request $request)
         Log::error('Email update error: ' . $e->getMessage());
         return redirect()->back()->with('toast', [
             'type' => 'error',
-            'message' => 'Failed to update email'
+            'message' => 'Gagal memperbarui email'
         ]);
     }
 }
@@ -136,7 +136,7 @@ public function updateAvatar(Request $request)
 
         return redirect()->back()->with('toast', [
             'type' => 'success',
-            'message' => 'Avatar updated successfully'
+            'message' => 'Avatar berhasil diperbarui'
         ]);
         
     } catch (\Exception $e) {
@@ -145,7 +145,7 @@ public function updateAvatar(Request $request)
         Log::error('Avatar upload error: ' . $e->getMessage());
         return redirect()->back()->with('toast', [
             'type' => 'error',
-            'message' => 'Failed to update avatar'
+            'message' => 'Gagal memperbarui Avatar'
         ]);
     }
 }

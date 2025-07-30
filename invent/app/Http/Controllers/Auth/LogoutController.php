@@ -11,30 +11,31 @@ class LogoutController extends Controller
     public function logout(Request $request)
     {
         try {
-            // Explicitly use the 'web' guard as configured in auth.php
-            $guard = Auth::guard('web');
-            
-            // Perform logout
-            $guard->logout();
+            // Ambil user SEBELUM logout
+            $user = $request->user();
 
-            // Invalidate the session
+            // Logout dengan guard 'web'
+            Auth::guard('web')->logout();
+
+            // Invalidate session dan token
             $request->session()->invalidate();
-
-            // Regenerate CSRF token
             $request->session()->regenerateToken();
 
-            // Redirect with success message
+            // Jika user adalah guest, hapus akunnya
+            if ($user && $user->is_guest) {
+                $user->delete();
+            }
+
             return redirect()->route('login')->with('toast', [
                 'type' => 'success',
-                'message' => 'You have been logged out successfully.'
+                'message' => 'Anda telah berhasil logout.'
             ]);
-
         } catch (\Exception $e) {
-            report($e); // Log the error
-            
+            report($e); // Log error jika ada
+
             return redirect()->back()->with('toast', [
                 'type' => 'error',
-                'message' => 'Logout failed. Please try again.'
+                'message' => 'Logout gagal. Tolong coba lagi.'
             ]);
         }
     }

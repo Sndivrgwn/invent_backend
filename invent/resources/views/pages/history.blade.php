@@ -19,13 +19,42 @@
         <!-- Header -->
         <div class="navbar my-6">
             <div class="flex-1">
-                <h1 class="text-2xl font-semibold py-4">History</h1>
+                <h1 class="text-2xl font-semibold py-4">Riwayat</h1>
             </div>
             <div class="flex-none">
-                <a href="{{ route('loans.exportHistory') }}" class="bg-white rounded-lg py-2 px-4 mx-5 hover:bg-blue-400 cursor-pointer flex items-center gap-2">
-                    <i class="fa fa-download" style="display: flex; justify-content: center; align-items: center;"></i> Export Report
-                </a>
+                <button onclick="document.getElementById('exportModal').showModal()" class="bg-white rounded-lg py-2 px-4 mx-5 hover:bg-blue-400 cursor-pointer flex items-center gap-2">
+                    <i class="fa fa-download" style="display: flex; justify-content: center; align-items: center;"></i> Ekspor laporan
+                </button>
             </div>
+
+            {{-- Modal Ekspor laporan --}}
+            <dialog id="exportModal" class="modal">
+                <div class="modal-box">
+                    <h3 class="font-bold text-lg mb-4">Tentukan Tanggal</h3>
+
+                    <form id="exportForm" action="{{ route('loans.exportHistory') }}" method="GET" class="flex flex-col gap-4">
+                    <div class="flex flex-col">
+                        <label for="start_date">Tanggal Mulai</label>
+                        <input type="date" id="start_date" name="start_date" class="input input-bordered" required>
+                    </div>
+
+                    <div class="flex flex-col">
+                        <label for="end_date">Tanggal Akhir</label>
+                        <input type="date" id="end_date" name="end_date" class="input input-bordered" required>
+                    </div>
+
+                    <div class="modal-action">
+                        <button type="submit" class="btn btn-primary">Ekspor</button>
+                        <button type="button" class="btn" onclick="document.getElementById('exportModal').close()">Batal</button>
+                    </div>
+                    </form>
+                </div>
+
+                <!-- Klik di luar modal untuk close -->
+                <form method="dialog" class="modal-backdrop">
+                    <button>close</button>
+                </form>
+            </dialog>
         </div>
 
         <!-- Filters and Actions -->
@@ -39,7 +68,7 @@
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
                             </svg>
                         </div>
-                        <input type="text" name="search" value="{{ request('search') }}" class="block w-full p-2 ps-10 text-sm border border-gray-400 rounded-lg" placeholder="Search...">
+                        <input type="text" name="search" value="{{ request('search') }}" class="block w-full p-2 ps-10 text-sm border border-gray-400 rounded-lg" placeholder="Cari...">
                     </form>
 
                     <!-- Filter Button -->
@@ -54,14 +83,14 @@
                     <form method="GET" action="{{ route('history') }}" class="flex flex-col sm:flex-row gap-2 sm:gap-3 w-full">
                         <div class="flex flex-row gap-2 sm:gap-3 flex-grow w-full"> <!-- Changed to flex-row for all screens -->
                             <div class="flex flex-col w-full sm:w-auto">
-                                <label for="start_date" class="text-xs sm:text-sm font-medium mb-1">From</label>
+                                <label for="start_date" class="text-xs sm:text-sm font-medium mb-1">Dari</label>
                                 <input type="date" id="start_date" name="start_date" 
                                     value="{{ request('start_date') ?? \Carbon\Carbon::today()->format('Y-m-d') }}" 
                                     class="input input-bordered input-sm sm:input-md w-full"
                                     placeholder="Select start date" />
                             </div>
                             <div class="flex flex-col w-full sm:w-auto">
-                                <label for="end_date" class="text-xs sm:text-sm font-medium mb-1">To</label>
+                                <label for="end_date" class="text-xs sm:text-sm font-medium mb-1">Ke</label>
                                 <input type="date" id="end_date" name="end_date" 
                                     value="{{ request('end_date') ?? \Carbon\Carbon::today()->format('Y-m-d') }}" 
                                     class="input input-bordered input-sm sm:input-md w-full"
@@ -69,8 +98,8 @@
                             </div>
                         </div>
                         <div class="flex gap-2 self-end mt-2 sm:mt-0"> <!-- Added mt-2 for mobile spacing -->
-                            <button type="submit" class="btn btn-primary btn-sm sm:btn-md">Apply</button>
-                            <a href="{{ route('history') }}" class="btn btn-secondary btn-sm sm:btn-md">Reset</a>
+                            <button type="submit" class="btn btn-primary btn-sm sm:btn-md">Terapkan</button>
+                            <a href="{{ route('history') }}" class="btn btn-secondary btn-sm sm:btn-md">Atur ulang</a>
                         </div>
                     </form>
                 </div>
@@ -88,9 +117,9 @@
 
                         <!-- Brand -->
                         <div class="mb-4">
-                            <h1 class="text-lg font-semibold mb-2">Brand</h1>
+                            <h1 class="text-lg font-semibold mb-2">Merek</h1>
                             <select name="brand" class="select select-bordered w-full max-w-xs">
-                                <option value="" selected>All Brands</option>
+                                <option value="" selected>Semua Merek</option>
                                 @foreach($allItems->pluck('brand')->filter()->unique() as $brand)
                                     <option value="{{ $brand }}" {{ request('brand') == $brand ? 'selected' : '' }}>{{ $brand }}</option>
                                 @endforeach
@@ -99,9 +128,9 @@
 
                         <!-- Category -->
                         <div class="mb-4">
-                            <h1 class="text-lg font-semibold mb-2">Category</h1>
+                            <h1 class="text-lg font-semibold mb-2">Kategori</h1>
                             <select name="category" class="select select-bordered w-full max-w-xs">
-                                <option value="" selected>All Categories</option>
+                                <option value="" selected>Semua Kategori</option>
                                 @foreach($allItems->pluck('category.name')->filter()->unique() as $category)
                                     <option value="{{ $category }}" {{ request('category') == $category ? 'selected' : '' }}>{{ $category }}</option>
                                 @endforeach
@@ -110,9 +139,9 @@
 
                         <!-- Type -->
                         <div class="mb-4">
-                            <h1 class="text-lg font-semibold mb-2">Type</h1>
+                            <h1 class="text-lg font-semibold mb-2">Tipe</h1>
                             <select name="type" class="select select-bordered w-full max-w-xs">
-                                <option value="" selected>All Types</option>
+                                <option value="" selected>Semua Tipe</option>
                                 @foreach($allItems->pluck('type')->filter()->unique() as $type)
                                     <option value="{{ $type }}" {{ request('type') == $type ? 'selected' : '' }}>{{ $type }}</option>
                                 @endforeach
@@ -121,9 +150,9 @@
 
                         <!-- Location -->
                         <div class="mb-4">
-                            <h1 class="text-lg font-semibold mb-2">Location</h1>
+                            <h1 class="text-lg font-semibold mb-2">Lokasi</h1>
                             <select name="location" class="select select-bordered w-full max-w-xs">
-                                <option value="" selected>All Locations</option>
+                                <option value="" selected>Semua Lokasi</option>
                                 @foreach($locations->pluck('description')->unique() as $loc)
                                     <option value="{{ $loc }}" {{ request('location') == $loc ? 'selected' : '' }}>{{ $loc }}</option>
                                 @endforeach
@@ -132,11 +161,11 @@
 
                         <!-- Condition -->
                         <div class="mb-4">
-                            <h1 class="text-lg font-semibold mb-2">Condition</h1>
+                            <h1 class="text-lg font-semibold mb-2">Kondisi</h1>
                             <div class="flex flex-wrap gap-1">
                                 <input class="btn btn-square" type="reset" value="×" onclick="resetFilter('condition')" />
-                                <input class="btn" type="radio" name="condition" value="GOOD" aria-label="GOOD" />
-                                <input class="btn" type="radio" name="condition" value="NOT GOOD" aria-label="NOT GOOD" />
+                                <input class="btn" type="radio" name="condition" value="GOOD" aria-label="BAGUS" />
+                                <input class="btn" type="radio" name="condition" value="NOT GOOD" aria-label="TIDAK BAGUS" />
                             </div>
                         </div>
 
@@ -150,7 +179,7 @@
                             </div>
                         </div>
 
-                        <button type="button" class="btn btn-primary mt-4" onclick="applyFilter()">Apply</button>
+                        <button type="button" class="btn btn-primary mt-4" onclick="applyFilter()">Terapkan</button>
                     </form>
                 </div>
             </dialog>
@@ -160,15 +189,15 @@
                 <table class="table w-full">
                     <thead class="text-gray-500 text-sm font-semibold border-b">
                         <tr>
-                            <th>DATE</th>
-                            <th>RETURNED AT</th>
-                            <th>DUE DATE</th>
-                            <th>LOAN CODE</th>
-                            <th>NAME</th>
-                            <th>SERIAL NUMBER</th>
-                            <th>PRODUCT</th>
+                            <th>TANGGAL</th>
+                            <th>DIKEMBALIKAN PADA</th>
+                            <th>TENGGAT</th>
+                            <th>KODE PINJAMAN</th>
+                            <th>NAMA</th>
+                            <th>NOMOR SERIAL</th>
+                            <th>PRODUK</th>
                             <th>STATUS</th>
-                            <th class="text-center">ACTIONS</th>
+                            <th class="text-center">TINDAKAN</th>
                         </tr>
                     </thead>
                     <tbody id="itemTableBody" class="text-sm">
@@ -204,7 +233,7 @@
                         @endforeach
                         @empty
                         <tr>
-                            <td colspan="8" class="text-center text-gray-500">No history found</td>
+                            <td colspan="8" class="text-center text-gray-500">Tidak ada riwayat</td>
                         </tr>
                         @endforelse
                     </tbody>
@@ -223,12 +252,12 @@
                         <!-- Close Button -->
                         <button type="button" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onclick="closeDeleteDialog()">✕</button>
                         <!-- Konten -->
-                        <h1 class="text-xl font-bold text-center mb-4">Delete Item?</h1>
-                        <p class="text-center text-gray-600">Are you sure you want to delete this item? This action cannot be undone.</p>
+                        <h1 class="text-xl font-bold text-center mb-4">Hapus item?</h1>
+                        <p class="text-center text-gray-600">Apakah Anda yakin ingin menghapus item ini?Tindakan ini tidak bisa dibatalkan.</p>
                         <!-- Tombol -->
                         <div class="flex justify-end gap-3 mt-6">
-                            <button type="button" onclick="closeDeleteDialog()" class="bg-gray-300 text-gray-800 rounded-lg px-4 py-2 hover:bg-gray-400">Cancel</button>
-                            <button type="button" onclick="confirmDelete()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-red-600">Yes, Delete</button>
+                            <button type="button" onclick="closeDeleteDialog()" class="bg-gray-300 text-gray-800 rounded-lg px-4 py-2 hover:bg-gray-400">Batal</button>
+                            <button type="button" onclick="confirmDelete()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-red-600">Ya, Hapus</button>
                         </div>
                     </form>
                 </div>
@@ -266,11 +295,21 @@
 </script>
 
 <script>
+    const startInput = document.getElementById('start_date');
+    const endInput = document.getElementById('end_date');
+
+    startInput.addEventListener('change', function () {
+        endInput.min = this.value;
+    });
+
+    document.getElementById('exportForm').addEventListener('submit', function () {
+        document.getElementById('exportModal').close();
+        showToast('Export Berhasil', 'success');
+    });
+
      function resetFilter(name) {
         document.querySelectorAll(`input[name="${name}"]`).forEach(r => r.checked = false);
     }
-
-    
 
     async function showLoanDetails(loanId) {
         try {
@@ -288,7 +327,7 @@
             const data = await response.json();
 
             if (!data.success) {
-                throw new Error(data.message || 'Failed to load loan');
+                throw new Error(data.message || 'Gagal memuat pinjaman');
             }
 
             const loan = data.data;
@@ -300,10 +339,10 @@
                     class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
                 <h1 class="font-semibold text-2xl mb-4">Loan Details</h1>
                 <div class="mb-6">
-                    <h2 class="font-semibold text-lg mb-2">Loan Information</h2>
+                    <h2 class="font-semibold text-lg mb-2">Informasi pinjaman</h2>
                     <div class="grid grid-cols-2 gap-4">
                         <div>
-                            <p class="text-gray-600">Loan Code:</p>
+                            <p class="text-gray-600">Kode pinjaman:</p>
                             <p>${loan.code_loans || 'N/A'}</p>
                         </div>
                         <div>
@@ -311,27 +350,27 @@
                             <p>${loan.user?.name || 'N/A'}</p>
                         </div>
                         <div>
-                            <p class="text-gray-600">Borrower:</p>
+                            <p class="text-gray-600">Peminjam:</p>
                             <p>${loan.loaner_name || 'N/A'}</p>
                         </div>
                         <div>
-                            <p class="text-gray-600">Loan Date:</p>
+                            <p class="text-gray-600">Tanggal pinjam:</p>
                             <p>${loan.loan_date || 'N/A'}</p>
                         </div>
                         <div>
-                            <p class="text-gray-600">Due Date:</p>
-                            <p>${loan.return_date || 'Not returned yet'}</p>
+                            <p class="text-gray-600">Tenggat:</p>
+                            <p>${loan.return_date || 'belum dikembalikan'}</p>
                         </div>
                         <div>
-                            <p class="text-gray-600">Returned At:</p>
-                            <p>${loan.return?.return_date || 'Not returned yet'}</p>
+                            <p class="text-gray-600">Dikembalikan pada:</p>
+                            <p>${loan.return?.return_date || 'belum dikembalikan'}</p>
                         </div>
                         <div>
-                            <p class="text-gray-600">Description:</p>
+                            <p class="text-gray-600">Deskripsi:</p>
                             <p>${loan.description || 'N/A'}</p>
                         </div>
                         <div>
-                            <p class="text-gray-600">Notes:</p>
+                            <p class="text-gray-600">Catatan:</p>
                             <p>${loan.return?.notes || 'N/A'}</p>
                         </div>
                         <div>
@@ -354,10 +393,10 @@
                             <table class="table w-full">
                                 <thead>
                                     <tr>
-                                        <th>Item Name</th>
-                                        <th>Serial Number</th>
-                                        <th>Category</th>
-                                        <th>Actions</th>
+                                        <th>Nama item</th>
+                                        <th>Nomor serial</th>
+                                        <th>Kategori</th>
+                                        <th>Tindakan</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -372,7 +411,7 @@
                                 <td>
                                     <button onclick="showItemDetails(${index}, ${loanId})" 
                                         class="btn btn-sm btn-ghost">
-                                        View Details
+                                        Lihat detail
                                     </button>
                                 </td>
                             </tr>
@@ -391,31 +430,31 @@
                         <div class="border p-4 rounded-lg">
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
-                                    <p class="text-gray-600">Product Name:</p>
+                                    <p class="text-gray-600">Nama produk:</p>
                                     <p>${item.name || 'N/A'}</p>
                                 </div>
                                 <div>
-                                    <p class="text-gray-600">Serial Number:</p>
+                                    <p class="text-gray-600">Nomor serial:</p>
                                     <p>${item.code || 'N/A'}</p>
                                 </div>
                                 <div>
-                                    <p class="text-gray-600">Category:</p>
+                                    <p class="text-gray-600">Kategori:</p>
                                     <p>${item.category?.name || 'N/A'}</p>
                                 </div>
                                 <div>
-                                    <p class="text-gray-600">Location:</p>
+                                    <p class="text-gray-600">Lokasi:</p>
                                     <p>${item.location?.name || 'N/A'}</p>
                                 </div>
                                 <div>
-                                    <p class="text-gray-600">Brand:</p>
+                                    <p class="text-gray-600">Merek:</p>
                                     <p>${item.brand || 'N/A'}</p>
                                 </div>
                                 <div>
-                                    <p class="text-gray-600">Type:</p>
+                                    <p class="text-gray-600">Tipe:</p>
                                     <p>${item.type || 'N/A'}</p>
                                 </div>
                                 <div>
-                                    <p class="text-gray-600">Condition:</p>
+                                    <p class="text-gray-600">Kondisi:</p>
                                     <p>${item.condition || 'N/A'}</p>
                                 </div>
                             </div>
@@ -423,7 +462,7 @@
                     `;
                 }
             } else {
-                modalContent += `<p class="text-gray-500">No items found for this loan</p>`;
+                modalContent += `<p class="text-gray-500">Tidak ada item yang ditemukan untuk pinjaman ini</p>`;
             }
 
             modalContent += `</div>`; // Close items section
@@ -431,7 +470,7 @@
             modalContent += `
                 <div class="w-full flex justify-end items-end gap-4 mt-4">
                     <button type="button" onclick="document.getElementById('viewProduct').close()"
-                        class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Close</button>
+                        class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Tutup</button>
                 </div>
             `;
 
@@ -440,7 +479,7 @@
 
         } catch (error) {
             console.error('Error:', error);
-            showToast('Failed to load loan details', 'error');
+            showToast('Gagal memuat detail pinjaman', 'error');
         }
     }
 
@@ -497,7 +536,7 @@
 
         } catch (error) {
             console.error('Error showing item details:', error);
-            showToast('Failed to load item details', 'error');
+            showToast('Gagal memuat detail item', 'error');
         }
     }
 
@@ -539,14 +578,14 @@
                         }
 
                         html += `
-    <td>${loan.return?.return_date || '-'}</td>
-    <td>${loan.return_date}</td>
-    <td>${loan.code_loans}</td>
-    <td>${loan.loaner_name}</td>
-    <td class="font-semibold">${item.code}</td>
-    <td>${item.name}</td>
-    <td><span class="badge badge-warning text-xs">${loan.status}</span></td>
-`;
+                            <td>${loan.return?.return_date || '-'}</td>
+                            <td>${loan.return_date}</td>
+                            <td>${loan.code_loans}</td>
+                            <td>${loan.loaner_name}</td>
+                            <td class="font-semibold">${item.code}</td>
+                            <td>${item.name}</td>
+                            <td><span class="badge badge-warning text-xs">${loan.status}</span></td>
+                        `;
 
                         if (index === 0) {
                 html += `
@@ -571,7 +610,7 @@
             })
             .catch(error => {
                 console.error("Error fetching filtered data:", error);
-                showToast('Error loading filtered data', 'error');
+                showToast('Kesalahan memuat data yang difilter', 'error');
             });
     }
 
@@ -595,11 +634,11 @@
         });
 
         if (res.ok) {
-            showToast('Item deleted successfully', 'success');
+            showToast('Item berhasil dihapus', 'success');
             window.location.reload();
         } else {
             const data = await res.json();
-            showToast('Failed to delete item', 'error');
+            showToast('Gagal menghapus item', 'error');
             console.log(data.message || res.statusText);
         }
 

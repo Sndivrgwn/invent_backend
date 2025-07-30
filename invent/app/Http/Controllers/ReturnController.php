@@ -29,7 +29,7 @@ class ReturnController extends Controller
         ]);
 
         $data = Returns::create($request->all());
-        return response()->json(['message' => 'Return created', 'data' => $data], 201);
+        return response()->json(['message' => 'pengembalian dibuat', 'data' => $data], 201);
     }
 
     /**
@@ -39,7 +39,7 @@ class ReturnController extends Controller
     {
         $data = Returns::with('loan')->find($id);
         if (!$data) {
-            return response()->json(['message' => 'Return not found'], 404);
+            return response()->json(['message' => 'pengembalian tidak ditemukan'], 404);
         }
 
         return response()->json($data, 200);
@@ -52,7 +52,7 @@ class ReturnController extends Controller
     {
         $data = Returns::find($id);
         if (!$data) {
-            return response()->json(['message' => 'Return not found'], 404);
+            return response()->json(['message' => 'pengembalian tidak ditemukan'], 404);
         }
 
         $request->validate([
@@ -63,7 +63,7 @@ class ReturnController extends Controller
         ]);
 
         $data->update($request->all());
-        return response()->json(['message' => 'Return updated', 'data' => $data], 200);
+        return response()->json(['message' => 'Pengembalian diperbarui', 'data' => $data], 200);
     }
 
     /**
@@ -73,10 +73,10 @@ class ReturnController extends Controller
     {
         $data = Returns::find($id);
         if (!$data) {
-            return response()->json(['message' => 'Return not found'], 404);
+            return response()->json(['message' => 'pengembalian tidak ditemukan'], 404);
         }
 
         $data->delete();
-        return response()->json(['message' => 'Return deleted'], 200);
+        return response()->json(['message' => 'pengembalian dihapus'], 200);
     }
 }

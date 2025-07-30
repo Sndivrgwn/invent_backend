@@ -25,9 +25,9 @@ class LoginController extends Controller
 
             if (!Auth::attempt($request->only('email', 'password'))) {
                 return response()->json([
-                    'message' => 'Invalid credentials',
+                    'message' => 'Informasi login tidak benar',
                     'errors' => [
-                        'email' => ['The provided credentials are incorrect.']
+                        'email' => ['Informasi login yang Anda masukkan tidak valid.']
                     ]
                 ], 401);
             }
@@ -36,7 +36,7 @@ class LoginController extends Controller
             $token = $user->createToken('authToken')->plainTextToken;
 
             return response()->json([
-                'message' => 'Login successful',
+                'message' => 'Login berhasil',
                 'user' => $user,
                 'token' => $token,
             ], 200);
@@ -45,14 +45,14 @@ class LoginController extends Controller
             report($e); // atau Log::error($e)
 
             return response()->json([
-                'message' => 'Validation failed',
+                'message' => 'Data yang dimasukkan tidak valid',
                 'errors' => $e->errors(),
             ], 422);
         } catch (\Exception $e) {
             report($e); // atau Log::error($e)
             // Log the exception for debugging
             return response()->json([
-                'message' => 'Login failed',
+                'message' => 'gagal Login',
                 'error' => $e->getMessage(),
             ], 500);
         }
@@ -95,7 +95,7 @@ class LoginController extends Controller
         // Flash success toast message
         $request->session()->flash('toast', [
             'type' => 'success',
-            'message' => 'Login successful! Welcome back!'
+            'message' => 'Login berhasil! selamat kembali!'
         ]);
 
         return redirect()->intended('dashboard');
@@ -108,7 +108,7 @@ class LoginController extends Controller
             ->withInput()
             ->with('toast', [
                 'type' => 'error',
-                'message' => 'Login failed. Please check your credentials.'
+                'message' => 'Login gagal. check ulang informasi login.'
             ]);
     }
 }

@@ -18,13 +18,13 @@ class LocationController extends Controller
     {
         // Load all locations with counts and categories in single query
         $locations = Location::withCount('items')
-            ->with(['items.category' => function($query) {
+            ->with(['items.category' => function ($query) {
                 $query->select('id', 'name')->distinct();
             }])
             ->get();
 
         // Process data for view
-        $formattedData = $locations->map(function($location) {
+        $formattedData = $locations->map(function ($location) {
             return [
                 'location' => $location,
                 'total_items' => $location->items_count,
@@ -42,10 +42,17 @@ class LocationController extends Controller
     {
         try {
             $validated = $request->validate([
-                'name' => 'required|string|max:255',
+                'name' => 'required|string|max:255|unique:locations,name',
                 'description' => 'nullable|string',
                 'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            ], [
+                'name.required' => 'Nama lokasi wajib diisi.',
+                'name.unique' => 'Nama rak sudah digunakan, silakan pilih nama lain.',
+                'image.image' => 'File harus berupa gambar.',
+                'image.mimes' => 'Gambar harus berformat: jpeg, png, jpg, atau gif.',
+                'image.max' => 'Ukuran gambar maksimal 2MB.',
             ]);
+
 
             $location = new Location();
             $location->name = $validated['name'];
@@ -64,18 +71,17 @@ class LocationController extends Controller
                 'success' => true,
                 'reload' => true, // This will trigger page reload
                 'toast' => [
-                    'message' => 'Location created successfully',
+                    'message' => 'Lokasi berhasil dibuat',
                     'type' => 'success'
                 ]
             ]);
-
         } catch (\Exception $e) {
             report($e); // atau Log::error($e)
 
             return response()->json([
                 'success' => false,
                 'toast' => [
-                    'message' => 'Failed to create location: ' . $e->getMessage(),
+                    'message' => 'Gagal membuat lokasi: ' . $e->getMessage(),
                     'type' => 'error'
                 ]
             ], 500);
@@ -93,7 +99,7 @@ class LocationController extends Controller
             if (!$location) {
                 return response()->json([
                     'toast' => [
-                        'message' => 'Location not found',
+                        'message' => 'Lokasi tidak ditemukan',
                         'type' => 'error'
                     ]
                 ], 404);
@@ -118,17 +124,16 @@ class LocationController extends Controller
                 }),
                 'categories' => $uniqueCategories,
                 'toast' => [
-                    'message' => 'Location data retrieved successfully',
+                    'message' => 'Data lokasi berhasil diambil',
                     'type' => 'success'
                 ]
             ], 200);
-
         } catch (\Exception $e) {
             report($e); // atau Log::error($e)
 
             return response()->json([
                 'toast' => [
-                    'message' => 'Failed to retrieve location: ' . $e->getMessage(),
+                    'message' => 'Gagal mengambil lokasi: ' . $e->getMessage(),
                     'type' => 'error'
                 ]
             ], 500);
@@ -138,7 +143,7 @@ class LocationController extends Controller
     /**
      * Update the specified resource in storage.
      */
-     public function update(Request $request, string $id)
+    public function update(Request $request, string $id)
     {
         try {
             $location = Location::find($id);
@@ -146,7 +151,7 @@ class LocationController extends Controller
                 return response()->json([
                     'success' => false,
                     'toast' => [
-                        'message' => 'Location not found',
+                        'message' => 'Lokasi tidak ditemukan',
                         'type' => 'error'
                     ]
                 ], 404);
@@ -175,18 +180,17 @@ class LocationController extends Controller
                 'success' => true,
                 'reload' => true,
                 'toast' => [
-                    'message' => 'Location updated successfully',
+                    'message' => 'Lokasi berhasil diperbarui',
                     'type' => 'success'
                 ]
             ]);
-
         } catch (\Exception $e) {
             report($e); // atau Log::error($e)
 
             return response()->json([
                 'success' => false,
                 'toast' => [
-                    'message' => 'Failed to update location: ' . $e->getMessage(),
+                    'message' => 'Gagal memperbarui lokasi: ' . $e->getMessage(),
                     'type' => 'error'
                 ]
             ], 500);
@@ -203,7 +207,7 @@ class LocationController extends Controller
             if (!$location) {
                 return response()->json([
                     'toast' => [
-                        'message' => 'Location not found',
+                        'message' => 'Lokasi tidak ditemukan',
                         'type' => 'error'
                     ]
                 ], 404);
@@ -212,13 +216,12 @@ class LocationController extends Controller
             $location->delete();
 
             return response()->json([
-                'message' => 'Location deleted successfully',
+                'message' => 'Lokasi berhasil dihapus',
                 'toast' => [
-                    'message' => 'Location deleted successfully',
+                    'message' => 'Lokasi berhasil dihapus',
                     'type' => 'success'
                 ]
             ], 200);
-
         } catch (\Exception $e) {
             report($e); // atau Log::error($e)
 

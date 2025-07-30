@@ -33,7 +33,7 @@ class RolesController extends Controller
     {
         $roles = Roles::find($id);
         if (!$roles){
-            return response()->json(['message' => 'Roles not found'], 404);
+            return response()->json(['message' => 'Role tidak ditemukan'], 404);
         } 
         return response()->json($roles, 200);
     }
@@ -45,11 +45,11 @@ class RolesController extends Controller
     {
         $roles = Roles::find($id);
         if (!$roles) {
-            return response()->json(['message' => 'Roles not found'], 404);
+            return response()->json(['message' => 'Role tidak ditemukan'], 404);
         }
         $request->validate(['name' => 'required|string|unique:roles,name,' . $id]);
         $roles->update(['name' => $request->name]);
-        return response()->json(['message' => 'Roles updated', 'role' => $roles], 200);
+        return response()->json(['message' => 'Role diperbarui', 'role' => $roles], 200);
     }
 
     /**
@@ -59,9 +59,9 @@ class RolesController extends Controller
     {
         $roles = Roles::find($id);
         if (!$roles) {
-            return response()->json(['message' => 'Roles not found'], 404);
+            return response()->json(['message' => 'Role tidak ditemukan'], 404);
         }
         $roles->delete();
-        return response()->json(['message' => 'Roles deleted'], 200);
+        return response()->json(['message' => 'Role dihapus'], 200);
     }
 }

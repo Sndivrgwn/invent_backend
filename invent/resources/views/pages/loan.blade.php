@@ -17,7 +17,7 @@
 
         <div class="navbar my-6">
             <div class="flex-1">
-                <h1 class="text-2xl font-semibold py-4">Active Loans</h1>
+                <h1 class="text-2xl font-semibold py-4">Pinjaman aktif</h1>
             </div>
             {{-- <div class="flex-none">
                 <a href="{{ route('pages.manageLoan') }}" class="">
@@ -37,7 +37,7 @@
             <label class="tab border-0 text-blue-700 my-2 w-[100%] sm:w-[40%]">
                 <input type="radio" name="my_tabs_4" checked="checked" />
                 <i class="fa-solid fa-circle-arrow-up mr-2" style="display: flex; justify-content: center;"></i>
-                Outgoing Product
+                Produk Keluar 
             </label>
             <!-- Value Tab 1 -->
             <div class="tab-content bg-base-100" style="border-top: 1px solid lightgray;">
@@ -51,7 +51,7 @@
                                 </svg>
                                 <span class="sr-only">Search icon</span>
                             </div>
-                            <input type="text" name="search-navbar" value="{{ request('search-navbar') }}" class="block w-full p-2 ps-10 text-sm border border-gray-400 rounded-lg" placeholder="Search...">
+                            <input type="text" name="search-navbar" value="{{ request('search-navbar') }}" class="block w-full p-2 ps-10 text-sm border border-gray-400 rounded-lg" placeholder="Cari...">
 
                         </form>
                     </div>
@@ -65,7 +65,7 @@
                             </form>
                             <!-- product filter -->
                             <div>
-                                <h1 class="text-lg font-semibold mb-2">Rack</h1>
+                                <h1 class="text-lg font-semibold mb-2">Rak</h1>
                                 <form class="filter">
                                     <input class="btn mb-1 btn-square" type="reset" value="×" />
                                     <input class="btn mb-1" type="radio" name="frameworks" aria-label="Rack 1" />
@@ -77,7 +77,7 @@
                             </div>
                             <!-- condition filter -->
                             <div>
-                                <h1 class="text-lg font-semibold mb-2">Condition</h1>
+                                <h1 class="text-lg font-semibold mb-2">Kondisi</h1>
                                 <form class="filter">
                                     <input class="btn mb-1 btn-square" type="reset" value="×" />
                                     <input class="btn mb-1" type="radio" name="frameworks" aria-label="GOOD" />
@@ -112,17 +112,17 @@
                         <thead>
                             <tr>
                                 <th class="text-center font-semibold">
-                                    <a href="{{ sortLink('loaner_name', $sortByIncoming, $sortDirIncoming) }}">BORROWER NAME</a>
+                                    <a href="{{ sortLink('loaner_name', $sortByIncoming, $sortDirIncoming) }}">NAMA PEMINJAM</a>
                                 </th>
-                                <th class="text-center font-semibold">PRODUCT</th>
+                                <th class="text-center font-semibold">PRODUK</th>
                                 <th class="text-center font-semibold">
-                                    <a href="{{ sortLink('loan_date', $sortByIncoming, $sortDirIncoming) }}">BORROW DATE</a>
+                                    <a href="{{ sortLink('loan_date', $sortByIncoming, $sortDirIncoming) }}">TANGGAL PINJAM</a>
                                 </th>
                                 <th class="text-center font-semibold">
-                                    <a href="{{ sortLink('return_date', $sortByIncoming, $sortDirIncoming) }}">DUE DATE</a>
+                                    <a href="{{ sortLink('return_date', $sortByIncoming, $sortDirIncoming) }}">TENGGAT</a>
                                 </th>
                                 <th class="text-center font-semibold">STATUS</th>
-                                <th class="text-center font-semibold">ACTIONS</th>
+                                <th class="text-center font-semibold">TINDAKAN</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -137,7 +137,10 @@
                                 <td class="text-center">{{ $loan->status }}</td>
 
                                 <td class="text-center gap-2">
+        @can('adminFunction')     
+
                                     <i class="fa-solid fa-file-pdf fa-lg text-red-600 cursor-pointer" title="Lihat PDF" onclick="window.open('{{ route('loan.print.pdf', ['id' => \Illuminate\Support\Facades\Crypt::encryptString($loan->id)]) }}', '_blank')"></i>
+                                    @endcan
                                     <i class="fa-regular fa-eye fa-lg cursor-pointer" onclick="showLoanDetails({{ $loan->id }})"></i>
                                 </td>
 
@@ -145,7 +148,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="8" class="text-center text-gray-500">No Loan found</td>
+                                <td colspan="8" class="text-center text-gray-500">Tidak ada pinjaman</td>
                             </tr>
                             @endforelse
                         </tbody>
@@ -263,7 +266,7 @@
             <label class="tab border-0 text-blue-700 w-[100%] sm:w-[40%] sm:my-2">
                 <input type="radio" name="my_tabs_4" />
                 <i class="fa-solid fa-circle-arrow-up mr-2" style="display: flex; justify-content: center;"></i>
-                Incoming Product
+                Produk masuk
             </label>
             <!-- Value Tab 2 -->
             <div class="tab-content bg-base-100" style="border-top: 1px solid lightgray; ">
@@ -277,7 +280,7 @@
                                 </svg>
                                 <span class="sr-only">Search icon</span>
                             </div>
-                            <input type="text" name="search-navbar" value="{{ request('search-navbar') }}" class="block w-full p-2 ps-10 text-sm border border-gray-400 rounded-lg" placeholder="Search...">
+                            <input type="text" name="search-navbar" value="{{ request('search-navbar') }}" class="block w-full p-2 ps-10 text-sm border border-gray-400 rounded-lg" placeholder="Cari...">
 
                         </form>
                     </div>
@@ -288,17 +291,20 @@
                         <thead>
                             <tr>
                                 <th class="text-center font-semibold">
-                                    <a href="{{ sortLink('loaner_name', $sortByOutgoing, $sortDirOutgoing, false) }}">NAME</a>
+                                    <a href="{{ sortLink('loaner_name', $sortByOutgoing, $sortDirOutgoing, false) }}">NAMA</a>
                                 </th>
-                                <th class="text-center font-semibold">PRODUCT</th>
+                                <th class="text-center font-semibold">PRODUK</th>
                                 <th class="text-center font-semibold">
-                                    <a href="{{ sortLink('loan_date', $sortByOutgoing, $sortDirOutgoing, false) }}">BORROW DATE</a>
+                                    <a href="{{ sortLink('loan_date', $sortByOutgoing, $sortDirOutgoing, false) }}">TANGGAL PINJAM</a>
                                 </th>
                                 <th class="text-center font-semibold">
-                                    <a href="{{ sortLink('return_date', $sortByOutgoing, $sortDirOutgoing, false) }}">DUE DATE</a>
+                                    <a href="{{ sortLink('return_date', $sortByOutgoing, $sortDirOutgoing, false) }}">TENGGAT</a>
                                 </th>
                                 <th class="text-center font-semibold">STATUS</th>
-                                <th class="text-center font-semibold">ACTIONS</th>
+        @can('adminFunction')     
+
+                                <th class="text-center font-semibold">TINDAKAN</th>
+                                @endcan
                             </tr>
                         </thead>
                         <tbody>
@@ -312,8 +318,8 @@
                                 <td class="text-center">{{ $loan->return_date }}</td>
                                 <td class="text-center">{{ $loan->status }}</td>
 
+                                @can('adminFunction')
                                 <td class="text-center">
-                                    @can('adminFunction')
                                     <i class="fa-solid fa-right-left fa-lg cursor-pointer !leading-none" onclick="showReturnProduct({{ $loan->id }})"></i>
                                     <i class="fa fa-pen-to-square fa-lg cursor-pointer" onclick="openEditModal(
                                     {{ $loan->id }}, 
@@ -322,10 +328,10 @@
                                     '{{ $loan->return_date }}',
                                     '{{ $loan->loan_date }}'
                                 )"></i>
-                                    @endcan
                                     <i class="fa-solid fa-file-pdf fa-lg text-red-600 cursor-pointer" title="Lihat PDF" onclick="window.open('{{ route('loan.print.pdf', ['id' => \Illuminate\Support\Facades\Crypt::encryptString($loan->id)]) }}', '_blank')"></i>
                                     <i class="fa-regular fa-eye fa-lg cursor-pointer" onclick="showLoanDetailsTwo({{ $loan->id }})"></i>
                                 </td>
+                                @endcan
                                 {{-- tampilan delete --}}
 
 
@@ -336,7 +342,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="8" class="text-center text-gray-500">No Loan found</td>
+                                <td colspan="8" class="text-center text-gray-500">Tidak ada pinjaman</td>
                             </tr>
                             @endforelse
                         </tbody>
@@ -391,19 +397,19 @@
                         <form method="dialog" id="editForm">
                             <input type="hidden" id="edit_loan_id" name="loan_id">
                             <button id="cancel" type="button" onclick="closeEditModal()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-                            <h1 class="font-semibold text-2xl mb-4">Edit Product</h1>
+                            <h1 class="font-semibold text-2xl mb-4">Edit Produk</h1>
 
                             <div class="flex gap-5 justify-between text-gray-600">
                                 <div class="w-[100%]">
-                                    <h1 class="font-medium">BORROWER NAME</h1>
-                                    <input type="text" id="edit_borrower_name" class="input w-full" placeholder="Insert Borrower Name">
+                                    <h1 class="font-medium">NAMA PEMINJAM</h1>
+                                    <input type="text" id="edit_borrower_name" class="input w-full" placeholder="Masukkan Nama Peminjam">
                                 </div>
 
                             </div>
 
                             <div class="flex gap-5 justify-between text-gray-600">
                                 <div class="w-[100%]">
-                                    <h1 class="font-medium">RETURN DATE</h1>
+                                    <h1 class="font-medium">TANGGAL PENGEMBALIAN</h1>
                                     <input type="date" id="edit_return_date" class="input w-full" placeholder="Insert return date">
                                 </div>
 
@@ -411,13 +417,13 @@
 
 
                             <div class="w-full mt-3">
-                                <h1 class="font-medium text-gray-600">DESCRIPTION</h1>
-                                <textarea id="edit_description" class="textarea w-full text-gray-600" placeholder="Description"></textarea>
+                                <h1 class="font-medium text-gray-600">DESKRIPSI</h1>
+                                <textarea id="edit_description" class="textarea w-full text-gray-600" placeholder="deskripsi"></textarea>
                             </div>
 
                             <div class="w-full flex justify-end items-end gap-4 mt-4">
-                                <button type="button" onclick="closeEditModal()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Cancel</button>
-                                <button type="submit" class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Edit</button>
+                                <button type="button" onclick="closeEditModal()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Batal</button>
+                                <button type="submit" class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Perbarui</button>
                             </div>
                         </form>
                     </div>
@@ -430,23 +436,23 @@
 
                             <button type="button" onclick="document.getElementById('returnProduct').close()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
 
-                            <h1 class="font-semibold text-2xl mb-2">Product Details</h1>
+                            <h1 class="font-semibold text-2xl mb-2">Detail Produk</h1>
                             <h2 class="font-semibold text-xl text-blue-600 mb-4" id="modalLocationName">-</h2>
 
                             <div class="w-full mt-4">
-                                <h1 class="font-medium text-gray-600 mb-2">CONDITION</h1>
+                                <h1 class="font-medium text-gray-600 mb-2">KONDISI</h1>
                                 <select id="returnCondition" class="select select-bordered w-full">
-                                    <option value="GOOD">GOOD</option>
-                                    <option value="NOT GOOD">NOT GOOD</option>
+                                    <option value="GOOD">BAGUS</option>
+                                    <option value="NOT GOOD">TIDAK BAGUS</option>
                                 </select>
                             </div>
                             <div class="w-full mt-4">
-                                <h1 class="font-medium text-gray-600 mb-2">NOTES</h1>
-                                <textarea id="returnNotes" class="textarea textarea-bordered w-full" placeholder="Any additional notes..."></textarea>
+                                <h1 class="font-medium text-gray-600 mb-2">CATATAN</h1>
+                                <textarea id="returnNotes" class="textarea textarea-bordered w-full" placeholder="Any additional catatan..."></textarea>
                             </div>
 
                             <div class="w-full mt-4">
-                                <h1 class="font-medium text-gray-600 mb-2">ITEMS (Preview)</h1>
+                                <h1 class="font-medium text-gray-600 mb-2">ITEM (Pratinjau)</h1>
                                 <ul id="modalItemList" class="list-disc pl-5 space-y-1 text-gray-700 text-sm max-h-40 overflow-y-auto">
                                 </ul>
 
@@ -456,14 +462,14 @@
                             </div>
 
                             <div class="w-full mt-4">
-                                <h1 class="font-medium text-gray-600 mb-2">CATEGORIES</h1>
+                                <h1 class="font-medium text-gray-600 mb-2">KATEGORI</h1>
                                 <div id="modalCategoryList" class="flex flex-wrap gap-2">
                                 </div>
                             </div>
 
                             <div class="w-full flex justify-end items-end gap-4 mt-6">
-                                <button type="button" onclick="document.getElementById('returnProduct').close()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Close</button>
-                                <button type="button" class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer" id="confirmReturnButton">Return Product</button>
+                                <button type="button" onclick="document.getElementById('returnProduct').close()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Tutup</button>
+                                <button type="button" class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer" id="confirmReturnButton">Kembalikan Produk</button>
                             </div>
                         </form>
                     </div>
@@ -511,13 +517,13 @@
 
             const contentType = response.headers.get('content-type');
             if (!contentType || !contentType.includes('application/json')) {
-                throw new Error("Response isn't JSON");
+                throw new Error("Respons bukan JSON");
             }
 
             const data = await response.json();
 
             if (!data.success) {
-                throw new Error(data.message || 'Failed to load loan');
+                throw new Error(data.message || 'Gagal memuat pinjaman');
             }
 
             const loan = data.data;
@@ -527,12 +533,12 @@
             let modalContent = `
             <button type="button" onclick="document.getElementById('viewProduct').close()"
                 class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-            <h1 class="font-semibold text-2xl mb-4">Loan Details</h1>
+            <h1 class="font-semibold text-2xl mb-4">Detail pinjaman</h1>
             <div class="mb-6">
-                <h2 class="font-semibold text-lg mb-2">Loan Information</h2>
+                <h2 class="font-semibold text-lg mb-2">informasi pinjaman</h2>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <p class="text-gray-600">Loan Code:</p>
+                        <p class="text-gray-600">Kode pinjaman:</p>
                         <p>${loan.code_loans || 'N/A'}</p>
                     </div>
                     <div>
@@ -540,27 +546,27 @@
                         <p>${loan.user?.name || 'N/A'}</p>
                     </div>
                     <div>
-                        <p class="text-gray-600">Borrower:</p>
+                        <p class="text-gray-600">Peminjam:</p>
                         <p>${loan.loaner_name || 'N/A'}</p>
                     </div>
                     <div>
-                        <p class="text-gray-600">Loan Date:</p>
+                        <p class="text-gray-600">Tanggal pinjam:</p>
                         <p>${loan.loan_date || 'N/A'}</p>
                     </div>
                     <div>
-                        <p class="text-gray-600">Return Date:</p>
-                        <p>${loan.return_date || 'Not returned yet'}</p>
+                        <p class="text-gray-600">Tanggal kembali:</p>
+                        <p>${loan.return_date || 'belum dikembalikan'}</p>
                     </div>
                     <div>
-                        <p class="text-gray-600">Returned At:</p>
-                        <p>${loan.return?.return_date || 'Not returned yet'}</p>
+                        <p class="text-gray-600">Dikembalikan pada:</p>
+                        <p>${loan.return?.return_date || 'belum dikembalikan'}</p>
                     </div>
                     <div>
-                        <p class="text-gray-600">Description:</p>
+                        <p class="text-gray-600">Deskripsi:</p>
                         <p>${loan.description || 'N/A'}</p>
                     </div>
                     <div>
-                        <p class="text-gray-600">Notes:</p>
+                        <p class="text-gray-600">Catatan:</p>
                         <p>${loan.return?.notes || 'N/A'}</p>
                     </div>
                     <div>
@@ -583,10 +589,10 @@
                         <table class="table w-full">
                             <thead>
                                 <tr>
-                                    <th>Item Name</th>
-                                    <th>Serial Number</th>
-                                    <th>Category</th>
-                                    <th>Actions</th>
+                                    <th>Nama Item</th>
+                                    <th>Nomor Serial</th>
+                                    <th>Kategori</th>
+                                    <th>Tindakan</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -601,7 +607,7 @@
                             <td>
                                 <button onclick="showItemDetails(${index}, ${loanId})" 
                                     class="btn btn-sm btn-ghost">
-                                    View Details
+                                    Lihat detail
                                 </button>
                             </td>
                         </tr>
@@ -620,31 +626,31 @@
                     <div class="border p-4 rounded-lg">
                         <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <p class="text-gray-600">Product Name:</p>
+                                <p class="text-gray-600">Nama Produk:</p>
                                 <p>${item.name || 'N/A'}</p>
                             </div>
                             <div>
-                                <p class="text-gray-600">Serial Number:</p>
+                                <p class="text-gray-600">Nomor Serial:</p>
                                 <p>${item.code || 'N/A'}</p>
                             </div>
                             <div>
-                                <p class="text-gray-600">Category:</p>
+                                <p class="text-gray-600">Kategori:</p>
                                 <p>${item.category?.name || 'N/A'}</p>
                             </div>
                             <div>
-                                <p class="text-gray-600">Location:</p>
+                                <p class="text-gray-600">Lokasi:</p>
                                 <p>${item.location?.name || 'N/A'}</p>
                             </div>
                             <div>
-                                <p class="text-gray-600">Brand:</p>
+                                <p class="text-gray-600">Merek:</p>
                                 <p>${item.brand || 'N/A'}</p>
                             </div>
                             <div>
-                                <p class="text-gray-600">Type:</p>
+                                <p class="text-gray-600">Tipe:</p>
                                 <p>${item.type || 'N/A'}</p>
                             </div>
                             <div>
-                                <p class="text-gray-600">Condition:</p>
+                                <p class="text-gray-600">Kondisi:</p>
                                 <p>${item.condition || 'N/A'}</p>
                             </div>
                         </div>
@@ -652,7 +658,7 @@
                 `;
                 }
             } else {
-                modalContent += `<p class="text-gray-500">No items found for this loan</p>`;
+                modalContent += `<p class="text-gray-500">Tidak ada item yang ditemukan untuk pinjaman ini</p>`;
             }
 
             modalContent += `</div>`; // Close items section
@@ -661,7 +667,7 @@
             modalContent += `
             <div class="w-full flex justify-end items-end gap-4 mt-4">
                 <button type="button" onclick="document.getElementById('viewProduct').close()"
-                    class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Close</button>
+                    class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Tutup</button>
             </div>
         `;
 
@@ -671,7 +677,7 @@
 
         } catch (error) {
             console.error('Error:', error);
-            showToast('Failed to load loan details. See console for details.', 'error');
+            showToast('Gagal memuat detail pinjaman.Lihat console untuk detailnya.', 'error');
         }
     }
 
@@ -685,13 +691,13 @@
 
             const contentType = response.headers.get('content-type');
             if (!contentType || !contentType.includes('application/json')) {
-                throw new Error("Response isn't JSON");
+                throw new Error("Respons bukan JSON");
             }
 
             const data = await response.json();
 
             if (!data.success) {
-                throw new Error(data.message || 'Failed to load loan');
+                throw new Error(data.message || 'Gagal memuat pinjaman');
             }
 
             const loan = data.data;
@@ -700,12 +706,12 @@
 
             // Build modal content (same as before)
             let modalContent = `
-            <h1 class="font-semibold text-2xl mb-4">Loan Details</h1>
+            <h1 class="font-semibold text-2xl mb-4">Detail Pinjaman</h1>
             <div class="mb-6">
-                <h2 class="font-semibold text-lg mb-2">Loan Information</h2>
+                <h2 class="font-semibold text-lg mb-2">Informasi pinjaman</h2>
                 <div class="grid grid-cols-2 gap-4">
                     <div>
-                        <p class="text-gray-600">Loan Code:</p>
+                        <p class="text-gray-600">Kode pinjaman:</p>
                         <p>${loan.code_loans || 'N/A'}</p>
                     </div>
                     <div>
@@ -713,19 +719,19 @@
                         <p>${loan.user?.name || 'N/A'}</p>
                     </div>
                     <div>
-                        <p class="text-gray-600">Borrower:</p>
+                        <p class="text-gray-600">Peminjam:</p>
                         <p>${loan.loaner_name || 'N/A'}</p>
                     </div>
                     <div>
-                        <p class="text-gray-600">Loan Date:</p>
+                        <p class="text-gray-600">Tanggal Pinjaman:</p>
                         <p>${loan.loan_date || 'N/A'}</p>
                     </div>
                     <div>
-                        <p class="text-gray-600">Return Date:</p>
+                        <p class="text-gray-600">Tanggal kembali:</p>
                         <p>${loan.return_date || 'Not returned yet'}</p>
                     </div>
                     <div>
-                        <p class="text-gray-600">Description:</p>
+                        <p class="text-gray-600">Deskripsi:</p>
                         <p>${loan.description || 'N/A'}</p>
                     </div>
                     <div>
@@ -748,10 +754,10 @@
                         <table class="table w-full">
                             <thead>
                                 <tr>
-                                    <th>Item Name</th>
-                                    <th>Serial Number</th>
-                                    <th>Category</th>
-                                    <th>Actions</th>
+                                    <th>Nama item</th>
+                                    <th>Nomor serial</th>
+                                    <th>Kategori</th>
+                                    <th>tindakan</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -766,7 +772,7 @@
                             <td>
                                 <button onclick="showItemDetailsTwo(${index}, ${loanId})" 
                                     class="btn btn-sm btn-ghost">
-                                    View Details
+                                    Lihat detail
                                 </button>
                             </td>
                         </tr>
@@ -785,31 +791,31 @@
                     <div class="border p-4 rounded-lg">
                         <div class="grid grid-cols-2 gap-4">
                             <div>
-                                <p class="text-gray-600">Product Name:</p>
+                                <p class="text-gray-600">Nama produk:</p>
                                 <p>${item.name || 'N/A'}</p>
                             </div>
                             <div>
-                                <p class="text-gray-600">Serial Number:</p>
+                                <p class="text-gray-600">Nomor serial:</p>
                                 <p>${item.code || 'N/A'}</p>
                             </div>
                             <div>
-                                <p class="text-gray-600">Category:</p>
+                                <p class="text-gray-600">Kategori:</p>
                                 <p>${item.category?.name || 'N/A'}</p>
                             </div>
                             <div>
-                                <p class="text-gray-600">Location:</p>
+                                <p class="text-gray-600">Lokasi:</p>
                                 <p>${item.location?.name || 'N/A'}</p>
                             </div>
                             <div>
-                                <p class="text-gray-600">Brand:</p>
+                                <p class="text-gray-600">Merek:</p>
                                 <p>${item.brand || 'N/A'}</p>
                             </div>
                             <div>
-                                <p class="text-gray-600">Type:</p>
+                                <p class="text-gray-600">Tipe:</p>
                                 <p>${item.type || 'N/A'}</p>
                             </div>
                             <div>
-                                <p class="text-gray-600">Condition:</p>
+                                <p class="text-gray-600">Kondisi:</p>
                                 <p>${item.condition || 'N/A'}</p>
                             </div>
                         </div>
@@ -817,7 +823,7 @@
                 `;
                 }
             } else {
-                modalContent += `<p class="text-gray-500">No items found for this loan</p>`;
+                modalContent += `<p class="text-gray-500">Tidak ada barang yang ditemukan untuk pinjaman ini</p>`;
             }
 
             modalContent += `</div>`; // Close items section
@@ -826,7 +832,7 @@
             modalContent += `
             <div class="w-full flex justify-end items-end gap-4 mt-4">
                 <button type="button" onclick="document.getElementById('itemDetailsDialogtwo').close()"
-                    class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Close</button>
+                    class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Tutup</button>
             </div>
         `;
 
@@ -836,7 +842,7 @@
 
         } catch (error) {
             console.error('Error:', error);
-            showToast('Failed to load loan details. See console for details.', 'error');
+            showToast('Gagal memuat detail pinjaman.Lihat console untuk detailnya.', 'error');
         }
     }
 
@@ -896,10 +902,10 @@
             const content = document.getElementById('itemDetailsContenttwo');
             content.innerHTML = `
             <div class="alert alert-error">
-                Failed to load item details: ${error.message}
+                Gagal memuat detail item: ${error.message}
             </div>
         `;
-            showToast('Failed to load item details. See console for details.', 'error');
+            showToast('Gagal memuat detail item.Lihat console untuk detailnya.', 'error');
             dialog.showModal();
         }
     }
@@ -961,10 +967,10 @@
             const content = document.getElementById('itemDetailsContent');
             content.innerHTML = `
             <div class="alert alert-error">
-                Failed to load item details: ${error.message}
+                Gagal memuat detail item: ${error.message}
             </div>
         `;
-            showToast('Failed to load item details. See console for details.', 'error');
+            showToast('Gagal memuat detail item.Lihat console untuk detailnya.', 'error');
             dialog.showModal();
         }
     }
@@ -1001,7 +1007,7 @@
         returnDateInput.max = maxDate;
 
         // Tambahkan pesan validasi
-        returnDateInput.title = `Return date must be between today and ${maxDate}`;
+        returnDateInput.title = `Tanggal pengembalian harus antara hari ini dan ${maxDate}`;
     }
 
     document.getElementById("editForm").addEventListener("submit", async function(e) {
@@ -1019,12 +1025,12 @@
         const maxDate = maxDateObj.toISOString().split('T')[0];
 
         if (returnDate < today) {
-            showToast('Return date cannot be before today', 'error');
+            showToast('Tanggal pengembalian tidak bisa sebelum hari ini', 'error');
             return;
         }
 
         if (returnDate > maxDate) {
-            showToast('Return date cannot be more than 2 weeks from loan date', 'error');
+            showToast('Tanggal pengembalian tidak bisa lebih dari 2 minggu dari tanggal pinjaman', 'error');
             return;
         }
 
@@ -1046,15 +1052,15 @@
 
             if (!response.ok) {
                 const errorData = await response.json();
-                throw new Error(errorData.message || 'Failed to update loan');
+                throw new Error(errorData.message || 'Gagal memperbarui pinjaman');
             }
 
             const data = await response.json();
-            showToast('Loan updated successfully!', 'success');
+            showToast('Pinjaman berhasil diperbarui!', 'success');
             location.reload();
         } catch (error) {
             console.error('Error:', error);
-            showToast(error.message || 'Failed to update loan', 'error');
+            showToast(error.message || 'Gagal memperbarui pinjaman', 'error');
         }
     });
 
@@ -1065,7 +1071,7 @@
             const data = await response.json();
 
             if (!data.success) {
-                throw new Error(data.message || 'Failed to fetch loan details');
+                throw new Error(data.message || 'Gagal mengambil detail pinjaman');
             }
 
             const loan = data.data;
@@ -1109,7 +1115,7 @@
             modal.showModal();
         } catch (error) {
             console.error('Error:', error);
-            showToast(error.message || 'Failed to load loan details', 'error');
+            showToast(error.message || 'Gagal memuat detail pinjaman', 'error');
         }
     }
 
@@ -1139,17 +1145,17 @@
             if (response.ok) {
                 handleAjaxResponse({
                     toast: {
-                        message: data.message || 'Loan returned successfully'
+                        message: data.message || 'Pinjaman berhasil kembali'
                         , type: 'success'
                     }
                 });
                 window.location.href = "{{ route('history') }}";
             } else {
-                throw new Error(data.message || 'Failed to return loan');
+                throw new Error(data.message || 'Gagal mengembalikan pinjaman');
             }
         } catch (error) {
             console.error('Error:', error);
-            showToast(error.message || 'An error occurred while returning the loan', 'error');
+            showToast(error.message || 'Terjadi kesalahan saat mengembalikan pinjaman', 'error');
         } finally {
             document.getElementById('returnProduct').close();
             returnTargetId = null;

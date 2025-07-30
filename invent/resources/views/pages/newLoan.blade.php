@@ -33,24 +33,24 @@
 
         <div class="list bg-base-100 rounded-box shadow-md p-5 my-6">
             <form id="loanForm">
-                <h1 class="font-semibold text-2xl mb-4">New Loan</h1>
+                <h1 class="font-semibold text-2xl mb-4">Pinjaman baru</h1>
 
                 <div class="mb-4">
-                    <label class="font-medium text-gray-600">BORROWER NAME</label>
+                    <label class="font-medium text-gray-600">NAMA PEMINJAM</label>
                     <input class="input w-full text-gray-600" type="text" id="loanerName" placeholder="Nama Peminjam" required>
                 </div>
 
                 <div class="mb-4">
-                    <label class="font-medium text-gray-600">DESCRIPTION (LOCATION)</label>
-                    <textarea id="loanDescription" class="textarea w-full text-gray-600" placeholder="Description"></textarea>
+                    <label class="font-medium text-gray-600">DESKRIPSI (LOKASI)</label>
+                    <textarea id="loanDescription" class="textarea w-full text-gray-600" placeholder="Deskripsi"></textarea>
                 </div>
                 
                 <div class="mb-4">
-                    <label class="font-medium text-gray-600">RETURN DATE</label>
+                    <label class="font-medium text-gray-600">TANGGAL PENGEMBALIAN</label>
                     <input type="date" id="returnDate" class="input w-full text-gray-600" placeholder="YYYY-MM-DD" required>
                 </div>
                 <button type="button" onclick="document.getElementById('newLoan').showModal()" class="btn btn-primary my-3">
-                    <i class="fa-regular fa-plus mr-2"></i> Add Item
+                    <i class="fa-regular fa-plus mr-2"></i> Tambah Item
                 </button>
                 <div class="overflow-x-auto">
                     <table class="table mt-4">
@@ -58,9 +58,9 @@
                             <tr>
                                 <th>SN</th>
                                 <th>Nama</th>
-                                <th>Type</th>
-                                <th>Qty</th>
-                                <th>Action</th>
+                                <th>Tipe</th>
+                                <th>Jumlah</th>
+                                <th>Tindakan</th>
                             </tr>
                         </thead>
                         <tbody id="tempLoanTableBody"></tbody>
@@ -73,7 +73,7 @@
                 <input type="hidden" id="status" value="borrowed">
 
                 <div class="w-full flex justify-end gap-4 mt-6">
-                    <button type="button" class="btn btn-primary" onclick="submitLoan()">Submit</button>
+                    <button type="button" class="btn btn-primary" onclick="submitLoan()">Kirim</button>
                 </div>
             </form>
 
@@ -82,7 +82,7 @@
                 <div class="modal-box">
                     <form id="modalLoanForm" class="space-y-4">
                         <button type="button" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onclick="document.getElementById('newLoan').close()">✕</button>
-                        <h1 class="text-xl font-bold mb-4">Add Item</h1>
+                        <h1 class="text-xl font-bold mb-4">Tambah Item</h1>
 
                         <div class="form-control">
                             <label class="label">
@@ -90,11 +90,6 @@
                             </label>
                             <div class="relative">
                                 <input type="text" id="loanSN" class="input input-bordered w-full mb-3" placeholder="Masukkan SN" required autocomplete="off">
-                                <div class="absolute inset-y-0 right-3 flex items-center pointer-events-none">
-                                    <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
-                                    </svg>
-                                </div>
                             </div>
 
                             <!-- Enhanced custom dropdown -->
@@ -108,20 +103,20 @@
                             @foreach ($items as $item)
                             <option value="{{ $item->code }}" data-name="{{ $item->name }}" data-type="{{ $item->type }}" data-status="{{ $item->status }}">
                                 {{ $item->name }} | {{ $item->type }}
-                                @if ($item->status === 'NOT READY') (BORROWED) @endif
+                                @if ($item->status === 'NOT READY') (DIPINJAM) @endif
                             </option>
                             @endforeach
                         </datalist>
 
-                        <div class="form-control">
+                        <div class="form-control hidden">
                             <label class="label">
-                                <span class="label-text text-gray-600 font-medium">Qty</span>
+                                <span class="label-text text-gray-600 font-medium">Jumlah</span>
                             </label>
-                            <input type="number" id="loanQty" min="1" class="input input-bordered w-full" placeholder="Jumlah" required>
+                            <input type="number" id="loanQty" min="1" value="1" class="input input-bordered w-full" placeholder="Jumlah" required>
                         </div>
 
                         <div class="modal-action">
-                            <button type="button" class="btn" onclick="document.getElementById('newLoan').close()">Cancel</button>
+                            <button type="button" class="btn" onclick="document.getElementById('newLoan').close()">Batal</button>
                             <button type="button" class="btn btn-primary" onclick="handleAddItem()">Tambah</button>
                         </div>
                     </form>
@@ -151,7 +146,7 @@
     const input = document.getElementById('returnDate');
   const today = new Date().toISOString().split('T')[0];
   const maxDate = new Date();
-  maxDate.setDate(maxDate.getDate() + 14);
+  maxDate.setDate(maxDate.getDate() + 7);
   input.min = today;
   input.max = maxDate.toISOString().split('T')[0];
 
@@ -165,7 +160,7 @@
     const dateInput = document.getElementById('returnDate');
     const today = new Date().toISOString().split('T')[0];
     const maxDate = new Date();
-    maxDate.setDate(maxDate.getDate() + 14);
+    maxDate.setDate(maxDate.getDate() + 7);
     dateInput.min = today;
     dateInput.max = maxDate.toISOString().split('T')[0];
 
@@ -206,7 +201,7 @@
             tempItems.splice(itemIndexToDelete, 1);
             updateTempTable();
             document.getElementById('deleteConfirmationModal').close();
-            showToast("Item removed successfully", "success");
+            showToast("Item berhasil dihapus", "success");
         }
     });
 
@@ -228,10 +223,13 @@
             return;
         }
 
-        const filteredOptions = dropdownOptions.filter(option => 
-            option.value.toLowerCase().includes(inputValue) || 
-            option.name.toLowerCase().includes(inputValue)
-        ).slice(0, 50); // Limit to 50 results for performance
+        const filteredOptions = dropdownOptions
+            .filter(option =>{
+                const alreadyAdded = tempItems.some(item => item.code === option.value);
+                const matchesInput = option.value.toLowerCase().includes(inputValue) || option.name.toLowerCase().includes(inputValue);
+                return matchesInput && !alreadyAdded;
+            })
+        .slice(0, 50);
 
         if (filteredOptions.length === 0) {
             dropdown.classList.add('hidden');
@@ -247,7 +245,7 @@
                 <div class="font-medium">${option.value}</div>
                 <div class="text-sm">
                     ${option.name} | ${option.type}
-                    ${option.status === 'NOT READY' ? '<span class="text-red-500 ml-2">(BORROWED)</span>' : ''}
+                    ${option.status === 'NOT READY' ? '<span class="text-red-500 ml-2">(DIPINJAM)</span>' : ''}
                 </div>
             `;
             
@@ -277,7 +275,7 @@
                 <td>${item.type}</td>
                 <td>${item.quantity}</td>
                 <td>
-                    <div class="flex items-center">
+                    <div class="items-center">
                         <i class="fa fa-trash fa-lg cursor-pointer"></i>
                     </div>
                 </td>
@@ -294,12 +292,12 @@
         const selectedItem = allItems.find(i => i.code === sn);
 
         if (!selectedItem || isNaN(qty) || qty < 1) {
-            showToast("Invalid data", "error");
+            showToast("Data tidak valid", "error");
             return;
         }
 
         if (selectedItem.status === 'NOT READY') {
-            showToast("This item is currently borrowed and cannot be added", "error");
+            showToast("Item ini saat ini dipinjam dan tidak dapat ditambahkan", "error");
             return;
         }
 
@@ -320,12 +318,12 @@
         updateTempTable();
         document.getElementById("modalLoanForm").reset();
         document.getElementById("newLoan").close();
-        showToast("Item added successfully", "success");
+        showToast("Item berhasil ditambahkan", "success");
     }
 
     async function submitLoan() {
         if (tempItems.length === 0) {
-            showToast("Please add at least one item", "error");
+            showToast("Harap tambahkan setidaknya satu item", "error");
             return;
         }
 
@@ -365,10 +363,10 @@
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error(data.message || "Failed to save loan");
+                throw new Error(data.message || "Gagal untuk menyimpan pinjaman");
             }
 
-            showToast("Loan created successfully!", "success");
+            showToast("Pinjaman berhasil dibuat!", "success");
             setTimeout(() => {
                 window.location.href = "/manageLoan";
             }, 1000);
