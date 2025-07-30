@@ -45,6 +45,9 @@ php artisan migrate --seed
 # Jalankan server
 php artisan serve
 
+# Jalankan Queue Worker
+php artisan queue:work
+
 # Jalankan Vite (frontend assets)
 npm install
 npm run dev
