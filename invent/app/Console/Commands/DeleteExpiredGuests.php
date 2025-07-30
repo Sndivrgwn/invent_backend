@@ -8,13 +8,13 @@ use Carbon\Carbon;
 
 class DeleteExpiredGuests extends Command
 {
-    protected $signature = 'guests:cleanup';
-    protected $description = 'Hapus akun guest yang lebih dari 1 hari';
+    protected $signature = 'guests:delete-expired';
+    protected $description = 'Hapus akun guest yang lebih dari 30 menit';
 
     public function handle(): int
     {
         $deleted = User::where('is_guest', true)
-            ->where('created_at', '<', now()->subHour())
+            ->where('created_at', '<', now()->subMinutes(30))
             ->delete();
 
 
