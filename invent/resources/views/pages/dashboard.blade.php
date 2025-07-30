@@ -41,6 +41,17 @@
                         <i class="fas fa-boxes text-green-500"></i>
                     </div>
                 </div>
+
+                <div class="bg-white p-4 rounded-lg shadow flex items-center justify-between">
+                    <div>
+                        <h2 class="text-sm font-medium text-gray-400 mb-1">Total Rak Inventaris</h2>
+                        <p class="text-2xl font-semibold">{{ $totalInventory }}</p>
+                        <p class="text-sm text-gray-400 mt-1">Rak inventaris yang tersedia</p>
+                    </div>
+                    <div class="bg-red-500 bg-opacity-25 text-white p-4 rounded-full flex items-center justify-center">
+                        <i class="fas fa-check-circle text-red-500"></i>
+                    </div>
+                </div>
                 
                 <!-- Total Loans -->
                 <div class="bg-white p-4 rounded-lg shadow flex items-center justify-between">

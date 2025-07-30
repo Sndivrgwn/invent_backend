@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Artisan;
 
 return function (Schedule $schedule) {
     // Penjadwalan commands
-    $schedule->command(DeleteExpiredGuests::class)->daily();
+    $schedule->command(DeleteExpiredGuests::class)->everyTenMinutes();
 
     // Command motivasi default
     Artisan::command('inspire', function () {

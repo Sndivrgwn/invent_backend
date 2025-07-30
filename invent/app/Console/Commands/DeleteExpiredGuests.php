@@ -14,12 +14,12 @@ class DeleteExpiredGuests extends Command
     public function handle(): int
     {
         $deleted = User::where('is_guest', true)
-            ->where('created_at', '<', now()->subDay())
+            ->where('created_at', '<', now()->subHour())
             ->delete();
+
 
         $this->info("Total guest dihapus: $deleted");
 
         return self::SUCCESS;
     }
 }
-

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Category;
 use App\Models\Item;
 use App\Models\Loan;
+use App\Models\Location;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -17,6 +18,8 @@ class DashboardController extends Controller
 
         // Total kategori
         $totalCategories = Category::count();
+
+        $totalInventory = Location::count();
 
         // Total peminjaman
         $totalLoans = Loan::count();
@@ -67,6 +70,7 @@ class DashboardController extends Controller
             'totalActiveLoans',
             'totalLoanedItems',
             'returnedLoans',
+            'totalInventory',
             'latestLoans',
             'mostLoanedItems',
             'loansPerMonth',
