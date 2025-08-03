@@ -60,13 +60,28 @@
         <a href="{{ route('products.template') }}"
             class="block px-4 py-2 hover:bg-gray-100 text-left flex items-center gap-2 text-blue-600">
             <i class="fa fa-download !flex"></i>
-            <span>Download Template</span>
+            <span>Download Template Csv</span>
+        </a>
+
+        <a href="{{ route('products.template.excel') }}"
+            class="block px-4 py-2 hover:bg-gray-100 text-left flex items-center gap-2 text-blue-600">
+            <i class="fa fa-download !flex"></i>
+            <span>Download Template Excel</span>
         </a>
 
         <!-- Import Produk -->
         <form action="{{ route('products.import') }}" method="POST" enctype="multipart/form-data" class="block">
             @csrf
-            <input id="importFile" type="file" name="file" accept=".csv" class="hidden" onchange="this.form.submit()" required />
+            <input 
+    id="importFile" 
+    type="file" 
+    name="file" 
+    accept=".csv,.xls,.xlsx" 
+    class="hidden" 
+    onchange="this.form.submit()" 
+    required 
+/>
+
             <button type="button" onclick="document.getElementById('importFile').click()"
                 class="w-full text-left px-4 py-3 hover:bg-gray-100 flex items-center gap-2 text-green-600">
                 <i class="fa fa-upload !flex"></i>

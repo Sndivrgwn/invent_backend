@@ -28,11 +28,12 @@ class ItemController extends Controller
     public function import(Request $request)
     {
         $request->validate([
-            'file' => 'required|mimes:csv,txt'
+            'file' => 'required|mimes:xlsx,csv,xls,txt'
         ], [
-            'file.required' => 'Silakan pilih file CSV terlebih dahulu.',
-            'file.mimes' => 'Format file harus .csv atau .txt.',
+            'file.required' => 'Silakan pilih file terlebih dahulu.',
+            'file.mimes' => 'Format file harus .xlsx, .xls, .csv, atau .txt.',
         ]);
+
 
         try {
             Excel::import(new ProductsImport, $request->file('file'));
@@ -47,6 +48,10 @@ class ItemController extends Controller
                 return back()->with('error', "Gagal impor: Item dengan kode \"$duplicate\" sudah ada.");
             }
 
+            if (str_contains($e->getMessage(), 'Kolom')) {
+                return back()->with('error', $e->getMessage());
+            }
+
             report($e);
             return back()->with('error', 'Terjadi kesalahan saat impor.');
         } catch (\Exception $e) {
@@ -58,6 +63,11 @@ class ItemController extends Controller
     public function downloadTemplate()
     {
         return response()->download(storage_path('app/public/import/template_import_produk.csv'));
+    }
+
+    public function downloadTemplateExcel()
+    {
+        return response()->download(storage_path('app/public/import/template_produk.xlsx'));
     }
 
     public function search(Request $request)

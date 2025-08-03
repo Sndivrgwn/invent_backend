@@ -62,6 +62,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
         Route::post('/products/import', [ItemController::class, 'import'])->name('products.import');
         Route::get('/products/template', [ItemController::class, 'downloadTemplate'])->name('products.template');
+        Route::get('/products/template/excel', [ItemController::class, 'downloadTemplateExcel'])->name('products.template.excel');
 
         Route::get('/users', [UserManagementController::class, 'index'])->name('users');
         Route::post('/users/store', [UserManagementController::class, 'store'])->name('users.store');
