@@ -10,6 +10,7 @@
 - Laravel 11
 - MySQL
 - Node.js (untuk asset builder via Vite)
+- Redis (caching)
 
 ---
 
