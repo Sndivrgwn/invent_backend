@@ -14,8 +14,10 @@ use Illuminate\Support\Facades\Cache;
 class ManageLoanController extends Controller
 {
     // Cache configuration
-    const CACHE_TTL = 1800; // 30 minutes
+    const DEFAULT_CACHE_TTL = 1800; // 30 minutes
     const CACHE_KEY_PREFIX = 'manage_loans_';
+    const CACHE_VERSION = 'v1_';
+    const CACHE_TAG = 'manage_loans';
 
     public function index()
     {
@@ -23,17 +25,18 @@ class ManageLoanController extends Controller
             $search = request('search-navbar');
             $sortBy = request('sortBy', 'loan_date');
             $sortDir = request('sortDir', 'desc');
-            $allowedSorts = ['loan_date', 'code_loans', 'loaner_name', 'return_date'];
-
-            // Generate unique cache key
-            $cacheKey = self::CACHE_KEY_PREFIX . 'index_' . auth()->id() . '_' . md5(json_encode([
+            
+            $cacheKey = $this->generateCacheKey('index_' . auth()->id() . '_' . md5(json_encode([
                 'search' => $search,
                 'sortBy' => $sortBy,
                 'sortDir' => $sortDir,
                 'page' => request('page', 1)
-            ]));
+            ])));
 
-            $myloans = Cache::remember($cacheKey, self::CACHE_TTL, function () use ($search, $sortBy, $sortDir, $allowedSorts) {
+            $myloans = Cache::tags(self::CACHE_TAG)->remember($cacheKey, self::DEFAULT_CACHE_TTL, function () use ($search, $sortBy, $sortDir) {
+                Log::debug('Cache miss for manage loans index: ' . auth()->id());
+                $allowedSorts = ['loan_date', 'code_loans', 'loaner_name', 'return_date'];
+                
                 $query = auth()->user()->loans()
                     ->where('status', 'borrowed')
                     ->when($search, function ($query) use ($search) {
@@ -57,7 +60,6 @@ class ManageLoanController extends Controller
                 return $query->paginate(20);
             });
 
-            // Add pagination parameters
             $myloans->appends([
                 'search-navbar' => $search,
                 'sortBy' => $sortBy,
@@ -70,7 +72,6 @@ class ManageLoanController extends Controller
                 'sortDir' => $sortDir
             ]);
         } catch (\Exception $e) {
-            report($e);
             Log::error("Failed to fetch loans: " . $e->getMessage());
             return redirect()->back()->with('toast_error', 'Gagal memuat data pinjaman.Tolong coba lagi.');
         }
@@ -78,10 +79,11 @@ class ManageLoanController extends Controller
 
     public function show($id): JsonResponse
     {
-        $cacheKey = self::CACHE_KEY_PREFIX . 'show_' . $id;
+        $cacheKey = $this->generateCacheKey('show_' . $id);
 
         try {
-            $loan = Cache::remember($cacheKey, self::CACHE_TTL, function () use ($id) {
+            $loan = Cache::tags(self::CACHE_TAG)->remember($cacheKey, self::DEFAULT_CACHE_TTL, function () use ($id) {
+                Log::debug('Cache miss for manage loan show: ' . $id);
                 return Loan::with([
                     'items.category:id,name',
                     'items.location:id,name,description',
@@ -95,7 +97,6 @@ class ManageLoanController extends Controller
                 'data' => $loan
             ]);
         } catch (\Exception $e) {
-            report($e);
             Log::error("Failed to fetch loan {$id}: " . $e->getMessage());
             return response()->json([
                 'success' => false,
@@ -120,16 +121,14 @@ class ManageLoanController extends Controller
 
             DB::commit();
 
-            // Clear relevant caches
-            $this->clearLoanCache($id);
-            $this->clearUserLoansCache(auth()->id());
+            Cache::tags([self::CACHE_TAG, 'loans'])->flush();
+            Log::debug('Cleared manage loans and loans cache after delete');
 
             return response()->json([
                 'success' => true,
                 'message' => 'Pinjaman berhasil dihapus'
             ]);
         } catch (\Exception $e) {
-            report($e);
             DB::rollBack();
             Log::error("Failed to delete loan {$id}: " . $e->getMessage());
             return response()->json([
@@ -151,7 +150,6 @@ class ManageLoanController extends Controller
 
             DB::beginTransaction();
 
-            // 1. Create return record
             $return = Returns::create([
                 'return_date' => now(),
                 'condition' => $request->condition,
@@ -159,18 +157,15 @@ class ManageLoanController extends Controller
                 'loan_id' => $loan->id
             ]);
 
-            // 2. Update loan status
             $loan->status = 'returned';
             $loan->save();
 
-            // 3. Update all items status to READY
             $loan->items()->update(['status' => 'READY']);
 
             DB::commit();
 
-            // Clear relevant caches
-            $this->clearLoanCache($id);
-            $this->clearUserLoansCache($loan->user_id);
+            Cache::tags([self::CACHE_TAG, 'loans', 'returns'])->flush();
+            Log::debug('Cleared manage loans, loans and returns cache after return');
 
             return response()->json([
                 'success' => true,
@@ -178,7 +173,6 @@ class ManageLoanController extends Controller
                 'return' => $return
             ]);
         } catch (\Exception $e) {
-            report($e);
             DB::rollBack();
             Log::error("Failed to return loan {$id}: " . $e->getMessage());
             return response()->json([
@@ -189,44 +183,27 @@ class ManageLoanController extends Controller
         }
     }
 
-    /**
-     * Clear specific loan cache
-     */
-    protected function clearLoanCache($id)
+    protected function generateCacheKey(string $key): string
     {
-        Cache::forget(self::CACHE_KEY_PREFIX . 'show_' . $id);
+        return self::CACHE_VERSION . self::CACHE_KEY_PREFIX . $key;
     }
 
-    /**
-     * Clear all loans cache for a specific user
-     */
-    protected function clearUserLoansCache($userId)
-    {
-        // This clears all cached loan lists for the user
-        $keys = Cache::getStore()->getRedis()->keys(self::CACHE_KEY_PREFIX . 'index_' . $userId . '_*');
-        foreach ($keys as $key) {
-            // Remove prefix from key
-            $key = str_replace(config('database.redis.options.prefix'), '', $key);
-            Cache::forget($key);
-        }
-    }
-
-    /**
-     * Clear all caches when loans are modified (callable from other controllers)
-     */
     public static function clearAllManageLoansCache($userId = null)
     {
-        $controller = new self();
-
         if ($userId) {
-            $controller->clearUserLoansCache($userId);
-        } else {
-            // Clear all manage loans caches if no specific user ID provided
-            $keys = Cache::getStore()->getRedis()->keys(self::CACHE_KEY_PREFIX . '*');
+            $keys = Cache::getStore()->getRedis()->keys(
+                config('database.redis.options.prefix') . 
+                self::CACHE_VERSION . 
+                self::CACHE_KEY_PREFIX . 
+                'index_' . $userId . '_*'
+            );
             foreach ($keys as $key) {
                 $key = str_replace(config('database.redis.options.prefix'), '', $key);
-                Cache::forget($key);
+                Cache::tags(self::CACHE_TAG)->forget($key);
             }
+        } else {
+            Cache::tags(self::CACHE_TAG)->flush();
         }
+        Log::debug('Cleared manage loans cache for user: ' . ($userId ?? 'all'));
     }
 }

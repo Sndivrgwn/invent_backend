@@ -9,21 +9,26 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class LocationController extends Controller
 {
     // Cache configuration
-    const CACHE_TTL = 3600; // 1 hour
+    const DEFAULT_CACHE_TTL = 3600; // 1 hour
+    const SHORT_CACHE_TTL = 600;   // 10 minutes for frequently changing data
     const CACHE_KEY_PREFIX = 'locations_';
+    const CACHE_VERSION = 'v1_';   // Cache version for easy invalidation
+    const CACHE_TAG = 'locations'; // Cache tag for all locations-related cache
 
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $cacheKey = self::CACHE_KEY_PREFIX . 'index';
+        $cacheKey = $this->generateCacheKey('index');
         
-        $formattedData = Cache::remember($cacheKey, self::CACHE_TTL, function () {
+        $formattedData = Cache::tags(self::CACHE_TAG)->remember($cacheKey, self::DEFAULT_CACHE_TTL, function () {
+            Log::debug('Cache miss for locations index');
             $locations = Location::withCount('items')
                 ->with(['items.category' => function ($query) {
                     $query->select('id', 'name')->distinct();
@@ -48,6 +53,8 @@ class LocationController extends Controller
     public function store(Request $request)
     {
         try {
+            DB::beginTransaction();
+
             $validated = $request->validate([
                 'name' => 'required|string|max:255|unique:locations,name',
                 'description' => 'nullable|string',
@@ -73,8 +80,11 @@ class LocationController extends Controller
 
             $location->save();
 
-            // Clear locations cache
-            $this->clearLocationsCache();
+            DB::commit();
+
+            // Clear all locations cache using tags
+            Cache::tags(self::CACHE_TAG)->flush();
+            Log::debug('Cleared all locations cache after store');
 
             return response()->json([
                 'success' => true,
@@ -85,6 +95,7 @@ class LocationController extends Controller
                 ]
             ]);
         } catch (\Exception $e) {
+            DB::rollBack();
             report($e);
             return response()->json([
                 'success' => false,
@@ -101,10 +112,11 @@ class LocationController extends Controller
      */
     public function show(string $id)
     {
-        $cacheKey = self::CACHE_KEY_PREFIX . 'show_' . $id;
+        $cacheKey = $this->generateCacheKey('show_' . $id);
         
         try {
-            $data = Cache::remember($cacheKey, self::CACHE_TTL, function () use ($id) {
+            $data = Cache::tags(self::CACHE_TAG)->remember($cacheKey, self::DEFAULT_CACHE_TTL, function () use ($id) {
+                Log::debug('Cache miss for location show: ' . $id);
                 $location = Location::with('items.category')->find($id);
 
                 if (!$location) {
@@ -167,8 +179,11 @@ class LocationController extends Controller
     public function update(Request $request, string $id)
     {
         try {
+            DB::beginTransaction();
+
             $location = Location::find($id);
             if (!$location) {
+                DB::rollBack();
                 return response()->json([
                     'success' => false,
                     'toast' => [
@@ -197,9 +212,11 @@ class LocationController extends Controller
 
             $location->save();
 
-            // Clear relevant caches
-            $this->clearLocationsCache();
-            $this->clearLocationCache($id);
+            DB::commit();
+
+            // Clear all locations cache using tags
+            Cache::tags(self::CACHE_TAG)->flush();
+            Log::debug('Cleared all locations cache after update');
 
             return response()->json([
                 'success' => true,
@@ -210,6 +227,7 @@ class LocationController extends Controller
                 ]
             ]);
         } catch (\Exception $e) {
+            DB::rollBack();
             report($e);
             return response()->json([
                 'success' => false,
@@ -227,8 +245,11 @@ class LocationController extends Controller
     public function destroy(string $id)
     {
         try {
+            DB::beginTransaction();
+
             $location = Location::find($id);
             if (!$location) {
+                DB::rollBack();
                 return response()->json([
                     'toast' => [
                         'message' => 'Lokasi tidak ditemukan',
@@ -239,9 +260,11 @@ class LocationController extends Controller
 
             $location->delete();
 
-            // Clear relevant caches
-            $this->clearLocationsCache();
-            $this->clearLocationCache($id);
+            DB::commit();
+
+            // Clear all locations cache using tags
+            Cache::tags(self::CACHE_TAG)->flush();
+            Log::debug('Cleared all locations cache after delete');
 
             return response()->json([
                 'message' => 'Lokasi berhasil dihapus',
@@ -251,6 +274,7 @@ class LocationController extends Controller
                 ]
             ], 200);
         } catch (\Exception $e) {
+            DB::rollBack();
             report($e);
             return response()->json([
                 'toast' => [
@@ -262,19 +286,11 @@ class LocationController extends Controller
     }
 
     /**
-     * Clear all locations cache
+     * Generate consistent cache key with version prefix
      */
-    protected function clearLocationsCache()
+    protected function generateCacheKey(string $key): string
     {
-        Cache::forget(self::CACHE_KEY_PREFIX . 'index');
-    }
-
-    /**
-     * Clear specific location cache
-     */
-    protected function clearLocationCache($id)
-    {
-        Cache::forget(self::CACHE_KEY_PREFIX . 'show_' . $id);
+        return self::CACHE_VERSION . self::CACHE_KEY_PREFIX . $key;
     }
 
     /**
@@ -282,6 +298,7 @@ class LocationController extends Controller
      */
     public static function clearAllLocationsCache()
     {
-        (new self)->clearLocationsCache();
+        Cache::tags(self::CACHE_TAG)->flush();
+        Log::debug('Cleared all locations cache using tags');
     }
 }

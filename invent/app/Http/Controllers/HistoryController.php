@@ -11,12 +11,15 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class HistoryController extends Controller
 {
     // Cache configuration
-    const CACHE_TTL = 3600; // 1 hour
+    const DEFAULT_CACHE_TTL = 3600; // 1 hour
     const CACHE_KEY_PREFIX = 'history_';
+    const CACHE_VERSION = 'v1_';
+    const CACHE_TAG = 'history';
 
     public function index(Request $request)
     {
@@ -24,15 +27,15 @@ class HistoryController extends Controller
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
 
-        // Generate unique cache key based on request parameters
-        $cacheKey = self::CACHE_KEY_PREFIX . md5(json_encode([
+        $cacheKey = $this->generateCacheKey(md5(json_encode([
             'search' => $search,
             'start_date' => $startDate,
             'end_date' => $endDate,
             'page' => $request->input('page', 1)
-        ]));
+        ])));
 
-        $data = Cache::remember($cacheKey, self::CACHE_TTL, function () use ($request, $search, $startDate, $endDate) {
+        $data = Cache::tags(self::CACHE_TAG)->remember($cacheKey, self::DEFAULT_CACHE_TTL, function () use ($request, $search, $startDate, $endDate) {
+            Log::debug('Cache miss for history index');
             $loans = Loan::query()->where('status', 'returned')
                 ->with(['items.category', 'items.location', 'return'])
                 ->orderBy('loan_date', 'desc');
@@ -59,7 +62,6 @@ class HistoryController extends Controller
                 });
             }
 
-            // Date range filter
             if ($startDate && $endDate) {
                 $loans->whereBetween('loan_date', [$startDate, $endDate]);
             } elseif ($startDate) {
@@ -80,9 +82,10 @@ class HistoryController extends Controller
 
     public function filter(Request $request)
     {
-        $cacheKey = self::CACHE_KEY_PREFIX . 'filter_' . md5(json_encode($request->all()));
+        $cacheKey = $this->generateCacheKey('filter_' . md5(json_encode($request->all())));
 
-        $loans = Cache::remember($cacheKey, self::CACHE_TTL, function () use ($request) {
+        $loans = Cache::tags(self::CACHE_TAG)->remember($cacheKey, self::DEFAULT_CACHE_TTL, function () use ($request) {
+            Log::debug('Cache miss for history filter');
             return Loan::with(['items.location', 'items.category', 'return'])
                 ->where('status', 'returned')
                 ->whereHas('items', function ($query) use ($request) {
@@ -110,10 +113,11 @@ class HistoryController extends Controller
 
     public function show($id): JsonResponse
     {
-        $cacheKey = self::CACHE_KEY_PREFIX . 'loan_' . $id;
+        $cacheKey = $this->generateCacheKey('loan_' . $id);
 
         try {
-            $loan = Cache::remember($cacheKey, self::CACHE_TTL, function () use ($id) {
+            $loan = Cache::tags(self::CACHE_TAG)->remember($cacheKey, self::DEFAULT_CACHE_TTL, function () use ($id) {
+                Log::debug('Cache miss for history loan show: ' . $id);
                 return Loan::with([
                     'items.category:id,name',
                     'items.location:id,name',
@@ -128,7 +132,6 @@ class HistoryController extends Controller
                 'data' => $loan
             ]);
         } catch (\Exception $e) {
-            report($e);
             Log::error("Failed to fetch loan {$id}: " . $e->getMessage());
             return response()->json([
                 'success' => false,
@@ -149,18 +152,19 @@ class HistoryController extends Controller
                 ], 403);
             }
 
+            DB::beginTransaction();
             $loan->delete();
+            DB::commit();
 
-            // Clear relevant caches
-            $this->clearLoanCaches($id);
-            $this->clearHistoryListCaches();
+            Cache::tags(self::CACHE_TAG)->flush();
+            Log::debug('Cleared history cache after delete');
 
             return response()->json([
                 'success' => true,
                 'message' => 'Pinjaman berhasil dihapus'
             ]);
         } catch (\Exception $e) {
-            report($e);
+            DB::rollBack();
             Log::error("Failed to delete loan {$id}: " . $e->getMessage());
             return response()->json([
                 'success' => false,
@@ -169,38 +173,17 @@ class HistoryController extends Controller
         }
     }
 
-    /**
-     * Clear all caches related to a specific loan
-     */
-    protected function clearLoanCaches($id)
+    protected function generateCacheKey(string $key): string
     {
-        Cache::forget(self::CACHE_KEY_PREFIX . 'loan_' . $id);
+        return self::CACHE_VERSION . self::CACHE_KEY_PREFIX . $key;
     }
 
-    /**
-     * Clear all history list caches
-     */
-    protected function clearHistoryListCaches()
-    {
-        // This is a simple implementation that clears all history-related caches
-        // In production, you might want a more targeted approach
-        $keys = Cache::getStore()->getRedis()->keys(self::CACHE_KEY_PREFIX . '*');
-        foreach ($keys as $key) {
-            // Remove prefix from key
-            $key = str_replace(config('database.redis.options.prefix'), '', $key);
-            Cache::forget($key);
-        }
-    }
-
-    /**
-     * Clear all caches when loan status changes
-     */
     public static function clearLoanRelatedCaches($loanId = null)
     {
         if ($loanId) {
-            Cache::forget(self::CACHE_KEY_PREFIX . 'loan_' . $loanId);
+            Cache::tags(self::CACHE_TAG)->forget(self::CACHE_VERSION . self::CACHE_KEY_PREFIX . 'loan_' . $loanId);
         }
-        // Also clear all list caches since they might be affected
-        (new self)->clearHistoryListCaches();
+        Cache::tags(self::CACHE_TAG)->flush();
+        Log::debug('Cleared history loan-related caches');
     }
 }

@@ -11,13 +11,16 @@ use Illuminate\Http\Request;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Exception;
 
 class AnalyticsController extends Controller
 {
-    // Cache duration in seconds (1 hour)
-    const CACHE_TTL = 3600;
-    const CACHE_KEY = 'analytics_categories_data';
+    // Cache configuration
+    const DEFAULT_CACHE_TTL = 3600; // 1 hour
+    const CACHE_KEY_PREFIX = 'analytics_';
+    const CACHE_VERSION = 'v1_';   // Cache version for easy invalidation
+    const CACHE_TAG = 'analytics'; // Cache tag for all analytics-related cache
 
     /**
      * Display analytics dashboard
@@ -25,8 +28,11 @@ class AnalyticsController extends Controller
     public function index()
     {
         try {
+            $cacheKey = $this->generateCacheKey('categories_data');
+            
             // Try to get data from cache
-            $categories = Cache::remember(self::CACHE_KEY, self::CACHE_TTL, function () {
+            $categories = Cache::tags(self::CACHE_TAG)->remember($cacheKey, self::DEFAULT_CACHE_TTL, function () {
+                Log::debug('Cache miss for analytics categories data');
                 return $this->getCategoriesData();
             });
 
@@ -95,19 +101,14 @@ class AnalyticsController extends Controller
     }
 
     /**
-     * Invalidate the cache
-     */
-    protected function invalidateCache()
-    {
-        Cache::forget(self::CACHE_KEY);
-    }
-
-    /**
      * Export categories report
      */
     public function export()
     {
         try {
+            // Clear cache before export to ensure fresh data
+            $this->clearAnalyticsCache();
+            
             return Excel::download(new CategoryExport, 'categories_report_' . now()->format('Ymd_His') . '.xlsx');
         } catch (Exception $e) {
             Log::error('Error in AnalyticsController@export: ' . $e->getMessage());
@@ -123,6 +124,8 @@ class AnalyticsController extends Controller
     public function store(Request $request)
     {
         try {
+            DB::beginTransaction();
+
             $validated = $request->validate([
                 'name' => 'required|string|max:255|unique:categories,name',
                 'description' => 'nullable|string',
@@ -133,14 +136,17 @@ class AnalyticsController extends Controller
 
             Category::create($validated);
             
-            // Invalidate cache after creating a new category
-            $this->invalidateCache();
+            DB::commit();
+
+            // Clear analytics cache after creating a new category
+            $this->clearAnalyticsCache();
 
             return redirect()->route('analytics')->with('toast', [
                 'type' => 'success',
                 'message' => 'Kategori berhasil dibuat!'
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
+            DB::rollBack();
             report($e);
             Log::error('Validation error in AnalyticsController@store: ' . $e->getMessage());
             return redirect()->back()
@@ -151,6 +157,7 @@ class AnalyticsController extends Controller
                     'message' => $e->getMessage(),
                 ]);
         } catch (Exception $e) {
+            DB::rollBack();
             Log::error('Error in AnalyticsController@store: ' . $e->getMessage());
             report($e);
 
@@ -167,18 +174,20 @@ class AnalyticsController extends Controller
     public function destroy(string $id)
     {
         try {
+            DB::beginTransaction();
+
             $category = Category::findOrFail($id);
 
-            \DB::transaction(function () use ($category) {
-                $category->items()->each(function ($item) {
-                    $item->loans()->detach();
-                    $item->delete();
-                });
-                $category->delete();
+            $category->items()->each(function ($item) {
+                $item->loans()->detach();
+                $item->delete();
             });
+            $category->delete();
             
-            // Invalidate cache after deletion
-            $this->invalidateCache();
+            DB::commit();
+
+            // Clear analytics cache after deletion
+            $this->clearAnalyticsCache();
 
             return response()->json([
                 'success' => true,
@@ -189,6 +198,7 @@ class AnalyticsController extends Controller
                 'reload' => true
             ]);
         } catch (Exception $e) {
+            DB::rollBack();
             Log::error('Error in AnalyticsController@destroy: ' . $e->getMessage());
             report($e);
             return response()->json([
@@ -207,6 +217,8 @@ class AnalyticsController extends Controller
     public function update(Request $request, string $id)
     {
         try {
+            DB::beginTransaction();
+
             $validated = $request->validate([
                 'name' => 'required|string|max:255|unique:categories,name,' . $id,
                 'description' => 'nullable|string|max:500',
@@ -215,8 +227,10 @@ class AnalyticsController extends Controller
             $category = Category::findOrFail($id);
             $category->update($validated);
             
-            // Invalidate cache after update
-            $this->invalidateCache();
+            DB::commit();
+
+            // Clear analytics cache after update
+            $this->clearAnalyticsCache();
 
             return response()->json([
                 'success' => true,
@@ -227,6 +241,7 @@ class AnalyticsController extends Controller
                 'reload' => true
             ]);
         } catch (\Illuminate\Validation\ValidationException $e) {
+            DB::rollBack();
             return response()->json([
                 'success' => false,
                 'toast' => [
@@ -235,6 +250,7 @@ class AnalyticsController extends Controller
                 ]
             ], 422);
         } catch (Exception $e) {
+            DB::rollBack();
             Log::error('Error in AnalyticsController@update: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
@@ -244,5 +260,22 @@ class AnalyticsController extends Controller
                 ]
             ], 500);
         }
+    }
+
+    /**
+     * Generate consistent cache key with version prefix
+     */
+    protected function generateCacheKey(string $key): string
+    {
+        return self::CACHE_VERSION . self::CACHE_KEY_PREFIX . $key;
+    }
+
+    /**
+     * Clear all analytics cache
+     */
+    protected function clearAnalyticsCache()
+    {
+        Cache::tags(self::CACHE_TAG)->flush();
+        Log::debug('Cleared all analytics cache');
     }
 }

@@ -19,12 +19,11 @@ use Illuminate\Support\Facades\Cache;
 class LoanController extends Controller
 {
     // Cache configuration
-    const CACHE_TTL = 1800; // 30 minutes
+    const DEFAULT_CACHE_TTL = 1800; // 30 minutes
     const CACHE_KEY_PREFIX = 'loans_';
+    const CACHE_VERSION = 'v1_';
+    const CACHE_TAG = 'loans';
 
-    /**
-     * Display a listing of the resource.
-     */
     public function index(Request $request)
     {
         try {
@@ -33,22 +32,17 @@ class LoanController extends Controller
             $sortDirIncoming = $request->input('sortDirIncoming', 'desc');
             $sortByOutgoing = $request->input('sortByOutgoing', 'loan_date');
             $sortDirOutgoing = $request->input('sortDirOutgoing', 'desc');
-            $perPage = 20;
-
-            // Current page
-            $currentPage = LengthAwarePaginator::resolveCurrentPage();
-
-            // Generate cache key (TIDAK pakai page)
-            $cacheKey = self::CACHE_KEY_PREFIX . 'index_' . md5(json_encode([
+            
+            $cacheKey = $this->generateCacheKey('index_' . md5(json_encode([
                 'search' => $search,
                 'sortByIncoming' => $sortByIncoming,
                 'sortDirIncoming' => $sortDirIncoming,
                 'sortByOutgoing' => $sortByOutgoing,
                 'sortDirOutgoing' => $sortDirOutgoing,
-            ]));
+            ])));
 
-            // Ambil data cache tanpa pagination
-            $cachedData = Cache::remember($cacheKey, self::CACHE_TTL, function () use ($search, $sortByIncoming, $sortDirIncoming, $sortByOutgoing, $sortDirOutgoing) {
+            $cachedData = Cache::tags(self::CACHE_TAG)->remember($cacheKey, self::DEFAULT_CACHE_TTL, function () use ($search, $sortByIncoming, $sortDirIncoming, $sortByOutgoing, $sortDirOutgoing) {
+                Log::debug('Cache miss for loans index');
                 $allowedSorts = ['loaner_name', 'loan_date', 'return_date', 'status'];
 
                 $incomingQuery = Loan::with('items')->where('status', 'RETURNED');
@@ -89,7 +83,9 @@ class LoanController extends Controller
                 ];
             });
 
-            // Manual pagination setelah ambil dari cache
+            $currentPage = LengthAwarePaginator::resolveCurrentPage();
+            $perPage = 20;
+
             $incomingLoans = new LengthAwarePaginator(
                 collect($cachedData['incomingLoans'])->forPage($currentPage, $perPage)->values(),
                 count($cachedData['incomingLoans']),
@@ -123,16 +119,11 @@ class LoanController extends Controller
                 'sortDirOutgoing' => $sortDirOutgoing,
             ]);
         } catch (\Exception $e) {
-            report($e);
             Log::error('Error fetching loans: ' . $e->getMessage());
             return redirect()->back()->with('toast_error', 'Gagal memuat data pinjaman. Tolong coba lagi.');
         }
     }
 
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -176,16 +167,15 @@ class LoanController extends Controller
 
             DB::commit();
 
-            // Clear relevant caches
-            $this->clearLoansCache();
+            Cache::tags([self::CACHE_TAG, 'items', 'manage_loans'])->flush();
+            Log::debug('Cleared loans, items and manage loans cache after store');
 
             return response()->json([
                 'message' => 'Pinjaman berhasil dibuat!'
             ], 201);
         } catch (\Exception $e) {
-            report($e);
-            Log::error('Loan creation failed: ' . $e->getMessage());
             DB::rollBack();
+            Log::error('Loan creation failed: ' . $e->getMessage());
             return response()->json([
                 'message' => $e->getMessage()
             ], 400);
@@ -204,9 +194,10 @@ class LoanController extends Controller
     {
         try {
             $loanId = Crypt::decryptString($id);
-            $cacheKey = self::CACHE_KEY_PREFIX . 'pdf_' . $loanId;
+            $cacheKey = $this->generateCacheKey('pdf_' . $loanId);
 
-            $pdf = Cache::remember($cacheKey, self::CACHE_TTL, function () use ($loanId) {
+            $pdf = Cache::tags(self::CACHE_TAG)->remember($cacheKey, self::DEFAULT_CACHE_TTL, function () use ($loanId) {
+                Log::debug('Cache miss for loan PDF: ' . $loanId);
                 $loan = Loan::with(['items.category', 'user'])->findOrFail($loanId);
                 return Pdf::loadView('print.loan-detail', compact('loan'))
                     ->setPaper('A4', 'portrait');
@@ -214,7 +205,6 @@ class LoanController extends Controller
 
             return $pdf->stream('loan_form_' . $loanId . '.pdf');
         } catch (\Exception $e) {
-            report($e);
             Log::error('Loan PDF stream failed: ' . $e->getMessage());
             return redirect()->back()->with('toast_error', 'Gagal menampilkan PDF');
         }
@@ -232,9 +222,10 @@ class LoanController extends Controller
                 ], 400);
             }
 
-            $cacheKey = self::CACHE_KEY_PREFIX . 'search_' . md5($keyword);
+            $cacheKey = $this->generateCacheKey('search_' . md5($keyword));
 
-            $items = Cache::remember($cacheKey, self::CACHE_TTL, function () use ($keyword) {
+            $items = Cache::tags([self::CACHE_TAG, 'items'])->remember($cacheKey, self::DEFAULT_CACHE_TTL, function () use ($keyword) {
+                Log::debug('Cache miss for loan search: ' . $keyword);
                 return Item::where('status', 'READY')
                     ->where(function ($query) use ($keyword) {
                         $query->where('code', 'LIKE', "%$keyword%")
@@ -251,7 +242,6 @@ class LoanController extends Controller
                 'data' => $items
             ]);
         } catch (\Exception $e) {
-            report($e);
             Log::error('Search failed: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
@@ -260,15 +250,13 @@ class LoanController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
         try {
-            $cacheKey = self::CACHE_KEY_PREFIX . 'show_' . $id;
+            $cacheKey = $this->generateCacheKey('show_' . $id);
 
-            $loan = Cache::remember($cacheKey, self::CACHE_TTL, function () use ($id) {
+            $loan = Cache::tags(self::CACHE_TAG)->remember($cacheKey, self::DEFAULT_CACHE_TTL, function () use ($id) {
+                Log::debug('Cache miss for loan show: ' . $id);
                 return Loan::with(['user', 'items', 'return'])->findOrFail($id);
             });
 
@@ -277,7 +265,6 @@ class LoanController extends Controller
                 'data' => $loan
             ]);
         } catch (\Exception $e) {
-            report($e);
             Log::error('Failed to fetch loan: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
@@ -286,9 +273,6 @@ class LoanController extends Controller
         }
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
         $validator = Validator::make($request->all(), [
@@ -344,11 +328,12 @@ class LoanController extends Controller
                 'status'
             ]);
 
+            DB::beginTransaction();
             $loan->update($updateData);
+            DB::commit();
 
-            // Clear relevant caches
-            $this->clearLoanCache($id);
-            $this->clearLoansCache();
+            Cache::tags([self::CACHE_TAG, 'manage_loans'])->flush();
+            Log::debug('Cleared loans and manage loans cache after update');
 
             return response()->json([
                 'success' => true,
@@ -356,7 +341,7 @@ class LoanController extends Controller
                 'data' => $loan
             ]);
         } catch (\Exception $e) {
-            report($e);
+            DB::rollBack();
             Log::error('Loan update failed: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
@@ -366,9 +351,6 @@ class LoanController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         DB::beginTransaction();
@@ -390,16 +372,14 @@ class LoanController extends Controller
 
             DB::commit();
 
-            // Clear relevant caches
-            $this->clearLoanCache($id);
-            $this->clearLoansCache();
+            Cache::tags([self::CACHE_TAG, 'items', 'manage_loans'])->flush();
+            Log::debug('Cleared loans, items and manage loans cache after delete');
 
             return response()->json([
                 'success' => true,
                 'message' => 'Pinjaman berhasil dihapus!'
             ]);
         } catch (\Exception $e) {
-            report($e);
             DB::rollBack();
             Log::error('Loan deletion failed: ' . $e->getMessage());
 
@@ -411,33 +391,14 @@ class LoanController extends Controller
         }
     }
 
-    /**
-     * Clear all loans cache
-     */
-    protected function clearLoansCache()
+    protected function generateCacheKey(string $key): string
     {
-        $keys = Cache::getStore()->getRedis()->keys(self::CACHE_KEY_PREFIX . '*');
-        foreach ($keys as $key) {
-            // Remove prefix from key
-            $key = str_replace(config('database.redis.options.prefix'), '', $key);
-            Cache::forget($key);
-        }
+        return self::CACHE_VERSION . self::CACHE_KEY_PREFIX . $key;
     }
 
-    /**
-     * Clear specific loan cache
-     */
-    protected function clearLoanCache($id)
-    {
-        Cache::forget(self::CACHE_KEY_PREFIX . 'show_' . $id);
-        Cache::forget(self::CACHE_KEY_PREFIX . 'pdf_' . $id);
-    }
-
-    /**
-     * Clear all caches when loans are modified (callable from other controllers)
-     */
     public static function clearAllLoansCache()
     {
-        (new self)->clearLoansCache();
+        Cache::tags(self::CACHE_TAG)->flush();
+        Log::debug('Cleared all loans cache using static method');
     }
 }

@@ -13,16 +13,19 @@ use Illuminate\Validation\Rule;
 class ProfilController extends Controller
 {
     // Cache configuration
-    const CACHE_TTL = 1800; // 30 minutes
+    const DEFAULT_CACHE_TTL = 1800; // 30 minutes
     const CACHE_KEY_PREFIX = 'profile_';
+    const CACHE_VERSION = 'v1_';
+    const CACHE_TAG = 'profile';
 
     public function index()
     {
         try {
             $user = auth()->user();
-            $cacheKey = self::CACHE_KEY_PREFIX . 'stats_' . $user->id;
+            $cacheKey = $this->generateCacheKey('stats_' . $user->id);
 
-            $stats = Cache::remember($cacheKey, self::CACHE_TTL, function () use ($user) {
+            $stats = Cache::tags(self::CACHE_TAG)->remember($cacheKey, self::DEFAULT_CACHE_TTL, function () use ($user) {
+                Log::debug('Cache miss for profile stats: ' . $user->id);
                 return [
                     'totalLoans' => $user->loans()->count(),
                     'totalReturns' => $user->loans()->where('status', 'returned')->count()
@@ -59,8 +62,8 @@ class ProfilController extends Controller
             $user = auth()->user();
             $user->update(['name' => $request->name]);
 
-            // Clear profile cache
-            $this->clearProfileCache($user->id);
+            Cache::tags(self::CACHE_TAG)->forget($this->generateCacheKey('stats_' . $user->id));
+            Log::debug('Cleared profile cache after name update');
 
             return redirect()->back()->with('toast', [
                 'type' => 'success',
@@ -99,8 +102,8 @@ class ProfilController extends Controller
 
             $user->update(['email' => $request->email]);
 
-            // Clear profile cache
-            $this->clearProfileCache($user->id);
+            Cache::tags(self::CACHE_TAG)->forget($this->generateCacheKey('stats_' . $user->id));
+            Log::debug('Cleared profile cache after email update');
 
             return redirect()->back()->with('toast', [
                 'type' => 'success',
@@ -136,21 +139,18 @@ class ProfilController extends Controller
             $user = auth()->user();
             $file = $request->file('avatar');
 
-            // Delete old avatar if exists
             if ($user->avatar) {
                 Storage::disk('public')->delete($user->avatar);
             }
 
-            // Store with unique filename
             $filename = 'avatar-' . $user->id . '-' . time() . '.' . $file->getClientOriginalExtension();
             $path = $file->storeAs('avatars', $filename, 'public');
 
-            // Update database
             $user->avatar = $path;
             $user->save();
 
-            // Clear profile cache
-            $this->clearProfileCache($user->id);
+            Cache::tags(self::CACHE_TAG)->forget($this->generateCacheKey('stats_' . $user->id));
+            Log::debug('Cleared profile cache after avatar update');
 
             return redirect()->back()->with('toast', [
                 'type' => 'success',
@@ -166,31 +166,18 @@ class ProfilController extends Controller
         }
     }
 
-    /**
-     * Clear profile cache for user
-     */
-    protected function clearProfileCache($userId)
+    protected function generateCacheKey(string $key): string
     {
-        Cache::forget(self::CACHE_KEY_PREFIX . 'stats_' . $userId);
+        return self::CACHE_VERSION . self::CACHE_KEY_PREFIX . $key;
     }
 
-    /**
-     * Clear all profile caches (callable from other controllers)
-     */
     public static function clearAllProfileCaches($userId = null)
     {
-        $controller = new self();
         if ($userId) {
-            $controller->clearProfileCache($userId);
+            Cache::tags(self::CACHE_TAG)->forget(self::CACHE_VERSION . self::CACHE_KEY_PREFIX . 'stats_' . $userId);
         } else {
-            // Clear all profile caches if no specific user ID provided
-            $keys = Cache::getStore()->getRedis()->keys(
-                config('database.redis.options.prefix') . self::CACHE_KEY_PREFIX . '*'
-            );
-            foreach ($keys as $key) {
-                $key = str_replace(config('database.redis.options.prefix'), '', $key);
-                Cache::forget($key);
-            }
+            Cache::tags(self::CACHE_TAG)->flush();
         }
+        Log::debug('Cleared profile cache for user: ' . ($userId ?? 'all'));
     }
 }

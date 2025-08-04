@@ -7,30 +7,29 @@ use App\Models\Returns;
 use App\Models\Loan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ReturnController extends Controller
 {
     // Cache configuration
-    const CACHE_TTL = 3600; // 1 hour
+    const DEFAULT_CACHE_TTL = 3600; // 1 hour
     const CACHE_KEY_PREFIX = 'returns_';
+    const CACHE_VERSION = 'v1_';
+    const CACHE_TAG = 'returns';
 
-    /**
-     * Display a listing of the resource.
-     */
     public function index()
     {
-        $cacheKey = self::CACHE_KEY_PREFIX . 'all';
+        $cacheKey = $this->generateCacheKey('all');
         
-        $returns = Cache::remember($cacheKey, self::CACHE_TTL, function () {
+        $returns = Cache::tags(self::CACHE_TAG)->remember($cacheKey, self::DEFAULT_CACHE_TTL, function () {
+            Log::debug('Cache miss for returns index');
             return Returns::all();
         });
 
         return response()->json($returns, 200);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         $request->validate([
@@ -40,26 +39,21 @@ class ReturnController extends Controller
             'notes' => 'nullable|string',
         ]);
 
-        // Get the loan first to update its status
         $loan = Loan::findOrFail($request->loan_id);
         
         DB::beginTransaction();
         try {
-            // Create the return record
             $data = Returns::create($request->all());
             
-            // Update the loan status
             $loan->status = 'returned';
             $loan->save();
             
-            // Update all items status to READY
             $loan->items()->update(['status' => 'READY']);
             
             DB::commit();
 
-            // Clear relevant caches
-            $this->clearReturnsCache();
-            Cache::forget(self::CACHE_KEY_PREFIX . 'loan_' . $request->loan_id);
+            Cache::tags([self::CACHE_TAG, 'loans'])->flush();
+            Log::debug('Cleared returns and loans cache after store');
 
             return response()->json([
                 'message' => 'Pengembalian dibuat', 
@@ -75,14 +69,12 @@ class ReturnController extends Controller
         }
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
-        $cacheKey = self::CACHE_KEY_PREFIX . 'show_' . $id;
+        $cacheKey = $this->generateCacheKey('show_' . $id);
         
-        $data = Cache::remember($cacheKey, self::CACHE_TTL, function () use ($id) {
+        $data = Cache::tags(self::CACHE_TAG)->remember($cacheKey, self::DEFAULT_CACHE_TTL, function () use ($id) {
+            Log::debug('Cache miss for return show: ' . $id);
             return Returns::with('loan')->find($id);
         });
 
@@ -93,9 +85,6 @@ class ReturnController extends Controller
         return response()->json($data, 200);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
         $data = Returns::find($id);
@@ -114,10 +103,8 @@ class ReturnController extends Controller
         try {
             $data->update($request->all());
             
-            // Clear relevant caches
-            $this->clearReturnsCache();
-            $this->clearReturnCache($id);
-            Cache::forget(self::CACHE_KEY_PREFIX . 'loan_' . $request->loan_id);
+            Cache::tags([self::CACHE_TAG, 'loans'])->flush();
+            Log::debug('Cleared returns and loans cache after update');
             
             DB::commit();
 
@@ -135,9 +122,6 @@ class ReturnController extends Controller
         }
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
         $data = Returns::find($id);
@@ -150,10 +134,8 @@ class ReturnController extends Controller
             $loanId = $data->loan_id;
             $data->delete();
             
-            // Clear relevant caches
-            $this->clearReturnsCache();
-            $this->clearReturnCache($id);
-            Cache::forget(self::CACHE_KEY_PREFIX . 'loan_' . $loanId);
+            Cache::tags([self::CACHE_TAG, 'loans'])->flush();
+            Log::debug('Cleared returns and loans cache after delete');
             
             DB::commit();
 
@@ -168,34 +150,14 @@ class ReturnController extends Controller
         }
     }
 
-    /**
-     * Clear all returns cache
-     */
-    protected function clearReturnsCache()
+    protected function generateCacheKey(string $key): string
     {
-        Cache::forget(self::CACHE_KEY_PREFIX . 'all');
+        return self::CACHE_VERSION . self::CACHE_KEY_PREFIX . $key;
     }
 
-    /**
-     * Clear specific return cache
-     */
-    protected function clearReturnCache($id)
-    {
-        Cache::forget(self::CACHE_KEY_PREFIX . 'show_' . $id);
-    }
-
-    /**
-     * Clear all caches when returns are modified (callable from other controllers)
-     */
     public static function clearAllReturnsCache()
     {
-        $keys = [
-            'all',
-            // Add any other cache keys used in this controller
-        ];
-        
-        foreach ($keys as $key) {
-            Cache::forget(self::CACHE_KEY_PREFIX . $key);
-        }
+        Cache::tags(self::CACHE_TAG)->flush();
+        Log::debug('Cleared all returns cache using static method');
     }
 }
