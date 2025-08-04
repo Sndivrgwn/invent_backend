@@ -13,9 +13,14 @@ use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\Log;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Cache;
 
 class LoanController extends Controller
 {
+    // Cache configuration
+    const CACHE_TTL = 1800; // 30 minutes
+    const CACHE_KEY_PREFIX = 'loans_';
+
     /**
      * Display a listing of the resource.
      */
@@ -23,86 +28,79 @@ class LoanController extends Controller
     {
         try {
             $search = $request->input('search-navbar');
-
             $sortByIncoming = $request->input('sortByIncoming', 'loan_date');
             $sortDirIncoming = $request->input('sortDirIncoming', 'desc');
-
             $sortByOutgoing = $request->input('sortByOutgoing', 'loan_date');
             $sortDirOutgoing = $request->input('sortDirOutgoing', 'desc');
 
-            $allowedSorts = ['loaner_name', 'loan_date', 'return_date', 'status'];
-
-            $incomingLoans = Loan::with('items')
-                ->where('status', 'RETURNED')
-                ->when($search, function ($query) use ($search) {
-                    $query->where(function ($q) use ($search) {
-                        $q->where('loaner_name', 'like', "%{$search}%")
-                            ->orWhere('loan_date', 'like', "%{$search}%")
-                            ->orWhere('return_date', 'like', "%{$search}%")
-                            ->orWhereHas('items', function ($itemQuery) use ($search) {
-                                $itemQuery->where('name', 'like', "%{$search}%");
-                            });
-                    });
-                });
-
-            if (in_array($sortByIncoming, $allowedSorts)) {
-                $incomingLoans->orderBy($sortByIncoming, $sortDirIncoming);
-            }
-
-            $incomingLoans = $incomingLoans->paginate(20)->appends([
-                'search-navbar' => $search,
+            // Generate unique cache key based on request parameters
+            $cacheKey = self::CACHE_KEY_PREFIX . 'index_' . md5(json_encode([
+                'search' => $search,
                 'sortByIncoming' => $sortByIncoming,
                 'sortDirIncoming' => $sortDirIncoming,
                 'sortByOutgoing' => $sortByOutgoing,
                 'sortDirOutgoing' => $sortDirOutgoing,
-            ]);
+                'page' => $request->input('page', 1)
+            ]));
 
-            $outgoingLoans = Loan::with('items')
-                ->where('status', '!=', 'RETURNED')
-                ->when($search, function ($query) use ($search) {
-                    $query->where(function ($q) use ($search) {
-                        $q->where('loaner_name', 'like', "%{$search}%")
-                            ->orWhere('loan_date', 'like', "%{$search}%")
-                            ->orWhere('return_date', 'like', "%{$search}%")
-                            ->orWhere('status', 'like', "%{$search}%")
-                            ->orWhereHas('items', function ($itemQuery) use ($search) {
-                                $itemQuery->where('name', 'like', "%{$search}%");
-                            });
+            $data = Cache::remember($cacheKey, self::CACHE_TTL, function () use ($request, $search, $sortByIncoming, $sortDirIncoming, $sortByOutgoing, $sortDirOutgoing) {
+                $allowedSorts = ['loaner_name', 'loan_date', 'return_date', 'status'];
+
+                // Incoming loans (RETURNED)
+                $incomingLoans = Loan::with('items')
+                    ->where('status', 'RETURNED')
+                    ->when($search, function ($query) use ($search) {
+                        $query->where(function ($q) use ($search) {
+                            $q->where('loaner_name', 'like', "%{$search}%")
+                                ->orWhere('loan_date', 'like', "%{$search}%")
+                                ->orWhere('return_date', 'like', "%{$search}%")
+                                ->orWhereHas('items', function ($itemQuery) use ($search) {
+                                    $itemQuery->where('name', 'like', "%{$search}%");
+                                });
+                        });
                     });
-                });
 
-            if (in_array($sortByOutgoing, $allowedSorts)) {
-                $outgoingLoans->orderBy($sortByOutgoing, $sortDirOutgoing);
-            }
+                if (in_array($sortByIncoming, $allowedSorts)) {
+                    $incomingLoans->orderBy($sortByIncoming, $sortDirIncoming);
+                }
 
-            $outgoingLoans = $outgoingLoans->paginate(20)->appends([
-                'search-navbar' => $search,
+                // Outgoing loans (not RETURNED)
+                $outgoingLoans = Loan::with('items')
+                    ->where('status', '!=', 'RETURNED')
+                    ->when($search, function ($query) use ($search) {
+                        $query->where(function ($q) use ($search) {
+                            $q->where('loaner_name', 'like', "%{$search}%")
+                                ->orWhere('loan_date', 'like', "%{$search}%")
+                                ->orWhere('return_date', 'like', "%{$search}%")
+                                ->orWhere('status', 'like', "%{$search}%")
+                                ->orWhereHas('items', function ($itemQuery) use ($search) {
+                                    $itemQuery->where('name', 'like', "%{$search}%");
+                                });
+                        });
+                    });
+
+                if (in_array($sortByOutgoing, $allowedSorts)) {
+                    $outgoingLoans->orderBy($sortByOutgoing, $sortDirOutgoing);
+                }
+
+                return [
+                    'incomingLoans' => $incomingLoans->paginate(20),
+                    'outgoingLoans' => $outgoingLoans->paginate(20),
+                ];
+            });
+
+            return view('pages.loan', array_merge($data, [
                 'sortByIncoming' => $sortByIncoming,
                 'sortDirIncoming' => $sortDirIncoming,
                 'sortByOutgoing' => $sortByOutgoing,
                 'sortDirOutgoing' => $sortDirOutgoing,
-            ]);
-
-            return view('pages.loan', compact(
-                'incomingLoans',
-                'outgoingLoans',
-                'sortByIncoming',
-                'sortDirIncoming',
-                'sortByOutgoing',
-                'sortDirOutgoing',
-            ));
+            ]));
         } catch (\Exception $e) {
-            report($e); // atau Log::error($e)
-
+            report($e);
             Log::error('Error fetching loans: ' . $e->getMessage());
             return redirect()->back()->with('toast_error', 'Gagal memuat data pinjaman.Tolong coba lagi.');
         }
     }
-
-
-    /**
-     * Store a newly created resource in storage.
-     */
 
     /**
      * Store a newly created resource in storage.
@@ -149,11 +147,15 @@ class LoanController extends Controller
             }
 
             DB::commit();
+            
+            // Clear relevant caches
+            $this->clearLoansCache();
+
             return response()->json([
                 'message' => 'Pinjaman berhasil dibuat!'
             ], 201);
         } catch (\Exception $e) {
-            report($e); // atau Log::error($e)
+            report($e);
             Log::error('Loan creation failed: ' . $e->getMessage());
             DB::rollBack();
             return response()->json([
@@ -170,36 +172,25 @@ class LoanController extends Controller
         return Excel::download(new HistoryExport($startDate, $endDate), 'loan_history_' . date('Ymd_His') . '.xlsx');
     }
 
-    // public function exportHistory()
-    // {
-    //     try {
-    //         return Excel::download(new HistoryExport, 'loan_history_' . date('Ymd_His') . '.xlsx');
-    //     } catch (\Exception $e) {
-    //         report($e); // atau Log::error($e)
-
-    //         Log::error('Export failed: ' . $e->getMessage());
-    //         return back()->with('toast_error', 'Gagal menghasilkan ekspor.Tolong coba lagi.');
-    //     }
-    // }
-
     public function printPdf(string $id)
     {
         try {
             $loanId = Crypt::decryptString($id);
-            $loan = Loan::with(['items.category', 'user'])->findOrFail($loanId);
+            $cacheKey = self::CACHE_KEY_PREFIX . 'pdf_' . $loanId;
+            
+            $pdf = Cache::remember($cacheKey, self::CACHE_TTL, function () use ($loanId) {
+                $loan = Loan::with(['items.category', 'user'])->findOrFail($loanId);
+                return Pdf::loadView('print.loan-detail', compact('loan'))
+                    ->setPaper('A4', 'portrait');
+            });
 
-            $pdf = Pdf::loadView('print.loan-detail', compact('loan'))
-                ->setPaper('A4', 'portrait');
-
-            return $pdf->stream('loan_form_' . $loan->code_loans . '.pdf');
+            return $pdf->stream('loan_form_' . $loanId . '.pdf');
         } catch (\Exception $e) {
-            report($e); // atau Log::error($e)
-
+            report($e);
             Log::error('Loan PDF stream failed: ' . $e->getMessage());
             return redirect()->back()->with('toast_error', 'Gagal menampilkan PDF');
         }
     }
-
 
     public function search(Request $request)
     {
@@ -213,23 +204,26 @@ class LoanController extends Controller
                 ], 400);
             }
 
-            $items = Item::where('status', 'READY')
-                ->where(function ($query) use ($keyword) {
-                    $query->where('code', 'LIKE', "%$keyword%")
-                        ->orWhere('name', 'LIKE', "%$keyword%")
-                        ->orWhere('brand', 'LIKE', "%$keyword%")
-                        ->orWhere('type', 'LIKE', "%$keyword%");
-                })
-                ->limit(10)
-                ->get();
+            $cacheKey = self::CACHE_KEY_PREFIX . 'search_' . md5($keyword);
+            
+            $items = Cache::remember($cacheKey, self::CACHE_TTL, function () use ($keyword) {
+                return Item::where('status', 'READY')
+                    ->where(function ($query) use ($keyword) {
+                        $query->where('code', 'LIKE', "%$keyword%")
+                            ->orWhere('name', 'LIKE', "%$keyword%")
+                            ->orWhere('brand', 'LIKE', "%$keyword%")
+                            ->orWhere('type', 'LIKE', "%$keyword%");
+                    })
+                    ->limit(10)
+                    ->get();
+            });
 
             return response()->json([
                 'success' => true,
                 'data' => $items
             ]);
         } catch (\Exception $e) {
-            report($e); // atau Log::error($e)
-
+            report($e);
             Log::error('Search failed: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
@@ -244,15 +238,18 @@ class LoanController extends Controller
     public function show(string $id)
     {
         try {
-            $loan = Loan::with(['user', 'items', 'return'])->findOrFail($id);
+            $cacheKey = self::CACHE_KEY_PREFIX . 'show_' . $id;
+            
+            $loan = Cache::remember($cacheKey, self::CACHE_TTL, function () use ($id) {
+                return Loan::with(['user', 'items', 'return'])->findOrFail($id);
+            });
 
             return response()->json([
                 'success' => true,
                 'data' => $loan
             ]);
         } catch (\Exception $e) {
-            report($e); // atau Log::error($e)
-
+            report($e);
             Log::error('Failed to fetch loan: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
@@ -312,7 +309,6 @@ class LoanController extends Controller
                 ], 403);
             }
 
-            // Only update fields that are present in the request
             $updateData = $request->only([
                 'loaner_name',
                 'return_date',
@@ -322,14 +318,17 @@ class LoanController extends Controller
 
             $loan->update($updateData);
 
+            // Clear relevant caches
+            $this->clearLoanCache($id);
+            $this->clearLoansCache();
+
             return response()->json([
                 'success' => true,
                 'message' => 'Pinjaman berhasil diperbarui!',
                 'data' => $loan
             ]);
         } catch (\Exception $e) {
-            report($e); // atau Log::error($e)
-
+            report($e);
             Log::error('Loan update failed: ' . $e->getMessage());
             return response()->json([
                 'success' => false,
@@ -348,7 +347,6 @@ class LoanController extends Controller
         try {
             $loan = Loan::findOrFail($id);
 
-            // Only allow deletion if loan is not already returned
             if ($loan->status === 'RETURNED') {
                 return response()->json([
                     'success' => false,
@@ -356,7 +354,6 @@ class LoanController extends Controller
                 ], 403);
             }
 
-            // Reset item statuses
             $loan->items()->each(function ($item) {
                 $item->update(['status' => 'READY']);
             });
@@ -365,13 +362,16 @@ class LoanController extends Controller
 
             DB::commit();
 
+            // Clear relevant caches
+            $this->clearLoanCache($id);
+            $this->clearLoansCache();
+
             return response()->json([
                 'success' => true,
                 'message' => 'Pinjaman berhasil dihapus!'
             ]);
         } catch (\Exception $e) {
-            report($e); // atau Log::error($e)
-
+            report($e);
             DB::rollBack();
             Log::error('Loan deletion failed: ' . $e->getMessage());
 
@@ -381,5 +381,35 @@ class LoanController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+    /**
+     * Clear all loans cache
+     */
+    protected function clearLoansCache()
+    {
+        $keys = Cache::getStore()->getRedis()->keys(self::CACHE_KEY_PREFIX . '*');
+        foreach ($keys as $key) {
+            // Remove prefix from key
+            $key = str_replace(config('database.redis.options.prefix'), '', $key);
+            Cache::forget($key);
+        }
+    }
+
+    /**
+     * Clear specific loan cache
+     */
+    protected function clearLoanCache($id)
+    {
+        Cache::forget(self::CACHE_KEY_PREFIX . 'show_' . $id);
+        Cache::forget(self::CACHE_KEY_PREFIX . 'pdf_' . $id);
+    }
+
+    /**
+     * Clear all caches when loans are modified (callable from other controllers)
+     */
+    public static function clearAllLoansCache()
+    {
+        (new self)->clearLoansCache();
     }
 }

@@ -14,16 +14,24 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Cache;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ItemController extends Controller
 {
+    // Cache configuration
+    const CACHE_TTL = 3600; // 1 hour
+    const CACHE_KEY_PREFIX = 'items_';
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return response()->json(Item::all(), 200);
+        $cacheKey = self::CACHE_KEY_PREFIX . 'all';
+        return response()->json(Cache::remember($cacheKey, self::CACHE_TTL, function () {
+            return Item::all();
+        }), 200);
     }
 
     public function import(Request $request)
@@ -35,7 +43,6 @@ class ItemController extends Controller
             'file.mimes' => 'Format file harus .xlsx, .xls, .csv, atau .txt.',
         ]);
 
-
         try {
             $importer = new ProductsImport();
             Excel::import($importer, $request->file('file'));
@@ -44,10 +51,13 @@ class ItemController extends Controller
                 return back()->with('error', 'Tidak ada data yang berhasil diimpor. Pastikan file tidak kosong.');
             }
 
+            // Clear relevant caches after import
+            $this->clearItemsCache();
+
             return back()->with('success', 'Data produk berhasil diimpor!');
         } catch (QueryException $e) {
             if ($e->getCode() === '23000') {
-                Log::error('Import error: ' . $e->getMessage()); // <--- Tambahkan ini
+                Log::error('Import error: ' . $e->getMessage());
 
                 preg_match("/Duplicate entry '([^']+)'/", $e->getMessage(), $matches);
                 $duplicate = $matches[1] ?? null;
@@ -80,94 +90,109 @@ class ItemController extends Controller
     public function search(Request $request)
     {
         $keyword = $request->query('q');
-        $items = Item::where('code', 'LIKE', "%$keyword%")
-            ->orWhere('name', 'LIKE', "%$keyword%")
-            ->orWhere('brand', 'LIKE', "%$keyword%")
-            ->orWhere('type', 'LIKE', "%$keyword%")
-            ->orWhere('condition', 'LIKE', "%$keyword%")
-            ->limit(10)
-            ->get();
+        $cacheKey = self::CACHE_KEY_PREFIX . 'search_' . md5($keyword);
 
-        return response()->json($items);
+        return response()->json(Cache::remember($cacheKey, self::CACHE_TTL, function () use ($keyword) {
+            return Item::where('code', 'LIKE', "%$keyword%")
+                ->orWhere('name', 'LIKE', "%$keyword%")
+                ->orWhere('brand', 'LIKE', "%$keyword%")
+                ->orWhere('type', 'LIKE', "%$keyword%")
+                ->orWhere('condition', 'LIKE', "%$keyword%")
+                ->limit(10)
+                ->get();
+        }));
     }
 
     public function getAll()
     {
-        $items = Item::with(['category', 'location'])->get();
-
-        return $items;
+        $cacheKey = self::CACHE_KEY_PREFIX . 'all_with_relations';
+        return Cache::remember($cacheKey, self::CACHE_TTL, function () {
+            return Item::with(['category', 'location'])->get();
+        });
     }
 
     public function getAllItems(Request $request)
     {
-        $sortBy = $request->input('sortBy'); // default
+        $sortBy = $request->input('sortBy');
         $sortDir = $request->input('sortDir', 'asc');
+        $search = $request->input('search-navbar');
 
-        $query = Item::select('items.*')
-            ->join('locations', 'items.location_id', '=', 'locations.id')
-            ->with(['category', 'location']);
-
-        // Filtering
-        if ($request->has('search-navbar') && $request->filled('search-navbar')) {
-            $search = $request->input('search-navbar');
-
-            $query->where(function ($q) use ($search) {
-                $q->where('items.name', 'like', "%{$search}%")
-                    ->orWhere('items.code', 'like', "%{$search}%")
-                    ->orWhere('items.brand', 'like', "%{$search}%")
-                    ->orWhereHas('category', function ($q) use ($search) {
-                        $q->where('name', 'like', "%{$search}%");
-                    })
-                    ->orWhere('locations.name', 'like', "%{$search}%")
-                    ->orWhere('items.type', 'like', "%{$search}%")
-                    ->orWhere('items.condition', 'like', "%{$search}%")
-                    ->orWhere('items.status', 'like', "%{$search}%");
-            });
-        }
-
-        // Sort
-        // Sort
-        $allowedSorts = ['name', 'code', 'type', 'condition', 'status', 'rack', 'created_at'];
-
-        if ($sortBy && in_array($sortBy, $allowedSorts)) {
-            if ($sortBy === 'rack') {
-                $query->orderBy('locations.name', $sortDir);
-            } else {
-                $query->orderBy("items.$sortBy", $sortDir);
-            }
-        } else {
-            // Default sort by newest created
-            $query->orderBy('items.created_at', 'desc');
-        }
-
-
-
-        $items = $query->paginate(20)->appends([
-            'search-navbar' => $request->input('search-navbar'),
+        // Generate unique cache key based on request parameters
+        $cacheKey = self::CACHE_KEY_PREFIX . 'paginated_' . md5(json_encode([
             'sortBy' => $sortBy,
             'sortDir' => $sortDir,
-        ]);
+            'search' => $search,
+            'page' => $request->input('page', 1)
+        ]));
 
-        $locations = Location::all();
-        $categories = Category::all();
+        $data = Cache::remember($cacheKey, self::CACHE_TTL, function () use ($request, $sortBy, $sortDir) {
+            $query = Item::select('items.*')
+                ->join('locations', 'items.location_id', '=', 'locations.id')
+                ->with(['category', 'location']);
 
-        return view('pages.products', compact('items', 'locations', 'categories', 'sortBy', 'sortDir'));
+            // Filtering
+            if ($request->has('search-navbar') && $request->filled('search-navbar')) {
+                $search = $request->input('search-navbar');
+
+                $query->where(function ($q) use ($search) {
+                    $q->where('items.name', 'like', "%{$search}%")
+                        ->orWhere('items.code', 'like', "%{$search}%")
+                        ->orWhere('items.brand', 'like', "%{$search}%")
+                        ->orWhereHas('category', function ($q) use ($search) {
+                            $q->where('name', 'like', "%{$search}%");
+                        })
+                        ->orWhere('locations.name', 'like', "%{$search}%")
+                        ->orWhere('items.type', 'like', "%{$search}%")
+                        ->orWhere('items.condition', 'like', "%{$search}%")
+                        ->orWhere('items.status', 'like', "%{$search}%");
+                });
+            }
+
+            // Sort
+            $allowedSorts = ['name', 'code', 'type', 'condition', 'status', 'rack', 'created_at'];
+
+            if ($sortBy && in_array($sortBy, $allowedSorts)) {
+                if ($sortBy === 'rack') {
+                    $query->orderBy('locations.name', $sortDir);
+                } else {
+                    $query->orderBy("items.$sortBy", $sortDir);
+                }
+            } else {
+                // Default sort by newest created
+                $query->orderBy('items.created_at', 'desc');
+            }
+
+            return [
+                'items' => $query->paginate(20)->appends([
+                    'search-navbar' => $request->input('search-navbar'),
+                    'sortBy' => $sortBy,
+                    'sortDir' => $sortDir,
+                ]),
+                'locations' => Location::all(),
+                'categories' => Category::all()
+            ];
+        });
+
+        return view('pages.products', array_merge($data, [
+            'sortBy' => $sortBy,
+            'sortDir' => $sortDir
+        ]));
     }
-
-
 
     public function filter(Request $request)
     {
-        $items = Item::with('location')
-            ->when($request->brand, fn($q) => $q->where('brand', $request->brand))
-            ->when($request->category, fn($q) => $q->whereHas('category', fn($q) => $q->where('name', $request->category)))
-            ->when($request->location, fn($q) => $q->whereHas('location', fn($q) => $q->where('name', $request->location))) // Changed from description to name
-            ->when($request->type, fn($q) => $q->where('type', $request->type))
-            ->when($request->condition, fn($q) => $q->where('condition', $request->condition))
-            ->when($request->status, fn($q) => $q->where('status', $request->status))
-            ->get();
+        $cacheKey = self::CACHE_KEY_PREFIX . 'filter_' . md5(json_encode($request->all()));
 
-        return response()->json($items);
+        return response()->json(Cache::remember($cacheKey, self::CACHE_TTL, function () use ($request) {
+            return Item::with('location')
+                ->when($request->brand, fn($q) => $q->where('brand', $request->brand))
+                ->when($request->category, fn($q) => $q->whereHas('category', fn($q) => $q->where('name', $request->category)))
+                ->when($request->location, fn($q) => $q->whereHas('location', fn($q) => $q->where('name', $request->location)))
+                ->when($request->type, fn($q) => $q->where('type', $request->type))
+                ->when($request->condition, fn($q) => $q->where('condition', $request->condition))
+                ->when($request->status, fn($q) => $q->where('status', $request->status))
+                ->get();
+        })); // Added closing parenthesis for Cache::remember()
     }
 
     /**
@@ -175,8 +200,11 @@ class ItemController extends Controller
      */
     public function totalItems()
     {
-        $all = Item::all();
-        $totalItems = $all->count();
+        $cacheKey = self::CACHE_KEY_PREFIX . 'total_count';
+        $totalItems = Cache::remember($cacheKey, self::CACHE_TTL, function () {
+            return Item::count();
+        });
+
         return view('pages.dashboard', compact('totalItems'));
     }
 
@@ -186,7 +214,6 @@ class ItemController extends Controller
     public function store(Request $request)
     {
         try {
-            // Validasi input
             $validated = $request->validate([
                 'name' => 'required|string|max:255',
                 'code' => 'required|string|unique:items,code',
@@ -207,33 +234,29 @@ class ItemController extends Controller
             }
 
             $validated['image'] = $path;
-            // Simpan item
             $item = Item::create($validated);
+
+            // Clear relevant caches
+            $this->clearItemsCache();
 
             return response()->json([
                 'message' => 'Item berhasil dibuat',
                 'data' => $item,
             ], 201);
         } catch (ValidationException $e) {
-            report($e); // atau Log::error($e)
-
-            // Tangkap error validasi
+            report($e);
             return response()->json([
                 'message' => 'Validasi gagal',
                 'errors' => $e->errors()
             ], 422);
         } catch (QueryException $e) {
-            report($e); // atau Log::error($e)
-
-            // Tangkap error database
+            report($e);
             return response()->json([
                 'message' => 'Kesalahan database',
                 'error' => $e->getMessage()
             ], 500);
         } catch (Exception $e) {
-            report($e); // atau Log::error($e)
-
-            // Tangkap error umum lainnya
+            report($e);
             return response()->json([
                 'message' => 'Kesalahan server',
                 'error' => $e->getMessage()
@@ -246,7 +269,11 @@ class ItemController extends Controller
      */
     public function show(string $id)
     {
-        $items = Item::with(['category', 'location'])->find($id);
+        $cacheKey = self::CACHE_KEY_PREFIX . 'show_' . $id;
+        $items = Cache::remember($cacheKey, self::CACHE_TTL, function () use ($id) {
+            return Item::with(['category', 'location'])->find($id);
+        });
+
         if (!$items) {
             return response()->json(['message' => 'Item tidak ditemukan'], 404);
         }
@@ -285,20 +312,20 @@ class ItemController extends Controller
 
             // Handle image upload
             if ($request->hasFile('image')) {
-                // Delete old image if it exists and isn't the default
                 if ($item->image && $item->image !== 'default.png' && Storage::disk('public')->exists($item->image)) {
                     Storage::disk('public')->delete($item->image);
                 }
-
-                // Store new image
                 $path = $request->file('image')->store('items', 'public');
                 $validated['image'] = $path;
             } else {
-                // Keep the existing image if no new image is uploaded
                 $validated['image'] = $item->image;
             }
 
             $item->update($validated);
+
+            // Clear relevant caches
+            $this->clearItemsCache();
+            $this->clearItemCache($id);
 
             return response()->json([
                 'success' => true,
@@ -306,16 +333,14 @@ class ItemController extends Controller
                 'data' => $item
             ]);
         } catch (ValidationException $e) {
-            report($e); // atau Log::error($e)
-
+            report($e);
             return response()->json([
                 'success' => false,
                 'message' => 'Validasi gagal',
                 'errors' => $e->errors()
             ], 422);
         } catch (\Exception $e) {
-            report($e); // atau Log::error($e)
-
+            report($e);
             return response()->json([
                 'success' => false,
                 'message' => 'Kesalahan server',
@@ -335,6 +360,64 @@ class ItemController extends Controller
         }
 
         $items->delete();
+
+        // Clear relevant caches
+        $this->clearItemsCache();
+        $this->clearItemCache($id);
+
         return response()->json(['message' => 'Item berhasil dihapus']);
+    }
+
+    /**
+     * Clear all items caches
+     */
+    protected function clearItemsCache()
+    {
+        $keys = [
+            'all',
+            'all_with_relations',
+            'total_count'
+        ];
+
+        foreach ($keys as $key) {
+            Cache::forget(self::CACHE_KEY_PREFIX . $key);
+        }
+
+        // Also clear all paginated/search/filter caches
+        $this->clearItemsListCaches();
+    }
+
+    /**
+     * Clear specific item cache
+     */
+    protected function clearItemCache($id)
+    {
+        Cache::forget(self::CACHE_KEY_PREFIX . 'show_' . $id);
+    }
+
+    /**
+     * Clear all items list caches (search, filter, paginated)
+     */
+    protected function clearItemsListCaches()
+    {
+        // This is a simple implementation that clears all items-related list caches
+        // In production, you might want a more targeted approach
+        $keys = Cache::getStore()->getRedis()->keys(self::CACHE_KEY_PREFIX . '*');
+        foreach ($keys as $key) {
+            // Remove prefix from key
+            $key = str_replace(config('database.redis.options.prefix'), '', $key);
+            if (str_contains($key, 'search_') || str_contains($key, 'filter_') || str_contains($key, 'paginated_')) {
+                Cache::forget($key);
+            }
+        }
+    }
+
+    /**
+     * Clear all caches when items are modified (callable from other controllers)
+     */
+    public static function clearAllItemsCache()
+    {
+        (new self)->clearItemsCache();
+        (new self)->clearItemsListCaches();
     }
 }
