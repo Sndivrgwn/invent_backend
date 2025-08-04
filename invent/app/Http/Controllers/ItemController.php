@@ -10,6 +10,7 @@ use App\Models\Location;
 use Exception;
 use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
@@ -112,72 +113,80 @@ class ItemController extends Controller
     }
 
     public function getAllItems(Request $request)
-    {
-        $sortBy = $request->input('sortBy');
-        $sortDir = $request->input('sortDir', 'asc');
-        $search = $request->input('search-navbar');
+{
+    $sortBy = $request->input('sortBy');
+    $sortDir = $request->input('sortDir', 'asc');
+    $search = $request->input('search-navbar');
+    $perPage = 20;
 
-        // Generate unique cache key based on request parameters
-        $cacheKey = self::CACHE_KEY_PREFIX . 'paginated_' . md5(json_encode([
-            'sortBy' => $sortBy,
-            'sortDir' => $sortDir,
-            'search' => $search,
-            'page' => $request->input('page', 1)
-        ]));
+    // Current page
+    $currentPage = LengthAwarePaginator::resolveCurrentPage();
 
-        $data = Cache::remember($cacheKey, self::CACHE_TTL, function () use ($request, $sortBy, $sortDir) {
-            $query = Item::select('items.*')
-                ->join('locations', 'items.location_id', '=', 'locations.id')
-                ->with(['category', 'location']);
+    // Generate unique cache key based on request filters (tidak termasuk halaman!)
+    $cacheKey = self::CACHE_KEY_PREFIX . 'filtered_items_' . md5(json_encode([
+        'sortBy' => $sortBy,
+        'sortDir' => $sortDir,
+        'search' => $search
+    ]));
 
-            // Filtering
-            if ($request->has('search-navbar') && $request->filled('search-navbar')) {
-                $search = $request->input('search-navbar');
+    // Ambil data hasil filter dan sort dari cache (tanpa pagination)
+    $cachedData = Cache::remember($cacheKey, self::CACHE_TTL, function () use ($request, $sortBy, $sortDir, $search) {
+        $query = Item::select('items.*')
+            ->join('locations', 'items.location_id', '=', 'locations.id')
+            ->with(['category', 'location']);
 
-                $query->where(function ($q) use ($search) {
-                    $q->where('items.name', 'like', "%{$search}%")
-                        ->orWhere('items.code', 'like', "%{$search}%")
-                        ->orWhere('items.brand', 'like', "%{$search}%")
-                        ->orWhereHas('category', function ($q) use ($search) {
-                            $q->where('name', 'like', "%{$search}%");
-                        })
-                        ->orWhere('locations.name', 'like', "%{$search}%")
-                        ->orWhere('items.type', 'like', "%{$search}%")
-                        ->orWhere('items.condition', 'like', "%{$search}%")
-                        ->orWhere('items.status', 'like', "%{$search}%");
-                });
-            }
+        // Filtering
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('items.name', 'like', "%{$search}%")
+                    ->orWhere('items.code', 'like', "%{$search}%")
+                    ->orWhere('items.brand', 'like', "%{$search}%")
+                    ->orWhereHas('category', function ($q) use ($search) {
+                        $q->where('name', 'like', "%{$search}%");
+                    })
+                    ->orWhere('locations.name', 'like', "%{$search}%")
+                    ->orWhere('items.type', 'like', "%{$search}%")
+                    ->orWhere('items.condition', 'like', "%{$search}%")
+                    ->orWhere('items.status', 'like', "%{$search}%");
+            });
+        }
 
-            // Sort
-            $allowedSorts = ['name', 'code', 'type', 'condition', 'status', 'rack', 'created_at'];
-
-            if ($sortBy && in_array($sortBy, $allowedSorts)) {
-                if ($sortBy === 'rack') {
-                    $query->orderBy('locations.name', $sortDir);
-                } else {
-                    $query->orderBy("items.$sortBy", $sortDir);
-                }
+        // Sorting
+        $allowedSorts = ['name', 'code', 'type', 'condition', 'status', 'rack', 'created_at'];
+        if ($sortBy && in_array($sortBy, $allowedSorts)) {
+            if ($sortBy === 'rack') {
+                $query->orderBy('locations.name', $sortDir);
             } else {
-                // Default sort by newest created
-                $query->orderBy('items.created_at', 'desc');
+                $query->orderBy("items.$sortBy", $sortDir);
             }
+        } else {
+            $query->orderBy('items.created_at', 'desc');
+        }
 
-            return [
-                'items' => $query->paginate(20)->appends([
-                    'search-navbar' => $request->input('search-navbar'),
-                    'sortBy' => $sortBy,
-                    'sortDir' => $sortDir,
-                ]),
-                'locations' => Location::all(),
-                'categories' => Category::all()
-            ];
-        });
+        return $query->get(); // Cache hanya data mentah
+    });
 
-        return view('pages.products', array_merge($data, [
-            'sortBy' => $sortBy,
-            'sortDir' => $sortDir
-        ]));
-    }
+    // Lakukan pagination manual dari hasil cache
+    $paginatedItems = new LengthAwarePaginator(
+        collect($cachedData)->forPage($currentPage, $perPage)->values(),
+        count($cachedData),
+        $perPage,
+        $currentPage,
+        [
+            'path' => request()->url(),
+            'query' => request()->query(),
+        ]
+    );
+
+    return view('pages.products', [
+        'items' => $paginatedItems,
+        'locations' => Location::all(),
+        'categories' => Category::all(),
+        'sortBy' => $sortBy,
+        'sortDir' => $sortDir
+    ]);
+}
+
 
     public function filter(Request $request)
     {
