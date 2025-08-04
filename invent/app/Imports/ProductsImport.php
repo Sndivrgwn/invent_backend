@@ -21,7 +21,7 @@ class ProductsImport implements ToCollection, WithHeadingRow
                 continue;
             }
 
-            $requiredKeys = ['product', 'brand', 'type', 'condition', 'category', 'rack', 'code'];
+            $requiredKeys = ['produk', 'brand', 'tipe', 'kondisi', 'kategori', 'rak', 'kode'];
 
             foreach ($requiredKeys as $key) {
                 if (!isset($row[$key]) || trim($row[$key]) === '') {
@@ -30,24 +30,24 @@ class ProductsImport implements ToCollection, WithHeadingRow
             }
 
             $category = Category::firstOrCreate(
-                ['name' => $row['category']],
+                ['name' => $row['kategori']],
                 ['description' => 'Dibuat otomatis dari impor']
             );
 
             $location = Location::firstOrCreate(
-                ['name' => $row['rack']],
+                ['name' => $row['rak']],
                 ['description' => 'Dibuat otomatis dari impor']
             );
 
             Item::create([
-                'name'        => $row['product'],
+                'name'        => $row['produk'],
                 'brand'       => $row['brand'],
-                'type'        => $row['type'],
-                'condition'   => $row['condition'],
+                'type'        => $row['tipe'],
+                'condition'   => $row['kondisi'],
                 'category_id' => $category->id,
                 'location_id' => $location->id,
-                'code'        => $row['code'],
-                'description' => $row['description'] ?? '',
+                'code'        => $row['kode'],
+                'description' => $row['deskripsi'] ?? '',
             ]);
 
             $this->importedRows++;
