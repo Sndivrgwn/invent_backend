@@ -11,10 +11,10 @@ class NewLoanController extends Controller
     public function index()
     {
         // In your controller
-$items = Item::select('id', 'code', 'name', 'type', 'status')
+        $items = Item::select('id', 'code', 'name', 'type', 'status')
             ->where('status', 'READY') // Only load available items
             ->get();
 
-        return View('pages.newLoan' , compact('items'));
+        return View('pages.newLoan', compact('items'));
     }
 }

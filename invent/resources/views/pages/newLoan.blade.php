@@ -215,51 +215,52 @@
     }
 
     function showDropdown() {
-        const inputValue = snInput.value.toLowerCase();
-        dropdown.innerHTML = '';
+    const inputValue = snInput.value.toLowerCase();
+    dropdown.innerHTML = '';
 
-        if (!inputValue) {
-            dropdown.classList.add('hidden');
-            return;
-        }
+    if (!inputValue) {
+        dropdown.classList.add('hidden');
+        return;
+    }
 
-        const filteredOptions = dropdownOptions
-            .filter(option =>{
-                const alreadyAdded = tempItems.some(item => item.code === option.value);
-                const matchesInput = option.value.toLowerCase().includes(inputValue) || option.name.toLowerCase().includes(inputValue);
-                return matchesInput && !alreadyAdded;
-            })
+    const filteredOptions = dropdownOptions
+        .filter(option => {
+            const alreadyAdded = tempItems.some(item => item.code === option.value);
+            const matchesInput = option.value.toLowerCase().includes(inputValue) || 
+                               option.name.toLowerCase().includes(inputValue);
+            return matchesInput && !alreadyAdded;
+        })
         .slice(0, 50);
 
-        if (filteredOptions.length === 0) {
-            dropdown.classList.add('hidden');
-            return;
-        }
-
-        const fragment = document.createDocumentFragment();
-        
-        filteredOptions.forEach(option => {
-            const item = document.createElement('div');
-            item.className = `px-4 py-2 hover:bg-gray-100 cursor-pointer ${option.status === 'NOT READY' ? 'text-red-500' : 'text-gray-900'}`;
-            item.innerHTML = `
-                <div class="font-medium">${option.value}</div>
-                <div class="text-sm">
-                    ${option.name} | ${option.type}
-                    ${option.status === 'NOT READY' ? '<span class="text-red-500 ml-2">(DIPINJAM)</span>' : ''}
-                </div>
-            `;
-            
-            item.addEventListener('click', () => {
-                snInput.value = option.value;
-                dropdown.classList.add('hidden');
-            });
-            
-            fragment.appendChild(item);
-        });
-
-        dropdown.appendChild(fragment);
-        dropdown.classList.remove('hidden');
+    if (filteredOptions.length === 0) {
+        dropdown.classList.add('hidden');
+        return;
     }
+
+    const fragment = document.createDocumentFragment();
+    
+    filteredOptions.forEach(option => {
+        const item = document.createElement('div');
+        item.className = `px-4 py-2 hover:bg-gray-100 cursor-pointer ${option.status === 'NOT READY' ? 'text-red-500' : 'text-gray-900'}`;
+        item.innerHTML = `
+            <div class="font-medium">${option.value}</div>
+            <div class="text-sm">
+                ${option.name} | ${option.type}
+                ${option.status === 'NOT READY' ? '<span class="text-red-500 ml-2">(DIPINJAM)</span>' : ''}
+            </div>
+        `;
+        
+        item.addEventListener('click', () => {
+            snInput.value = option.value;
+            dropdown.classList.add('hidden');
+        });
+        
+        fragment.appendChild(item);
+    });
+
+    dropdown.appendChild(fragment);
+    dropdown.classList.remove('hidden');
+}
 
     function updateTempTable() {
         const tbody = document.getElementById("tempLoanTableBody");
@@ -287,39 +288,40 @@
     }
 
     function handleAddItem() {
-        const sn = document.getElementById("loanSN").value.trim();
-        const qty = parseInt(document.getElementById("loanQty").value);
-        const selectedItem = allItems.find(i => i.code === sn);
+    const sn = document.getElementById("loanSN").value.trim();
+    const qty = parseInt(document.getElementById("loanQty").value);
+    const selectedItem = allItems.find(i => i.code === sn);
 
-        if (!selectedItem || isNaN(qty) || qty < 1) {
-            showToast("Data tidak valid", "error");
-            return;
-        }
-
-        if (selectedItem.status === 'NOT READY') {
-            showToast("Item ini saat ini dipinjam dan tidak dapat ditambahkan", "error");
-            return;
-        }
-
-        // Check if item already exists in temp items
-        const existingIndex = tempItems.findIndex(item => item.item_id === selectedItem.id);
-        if (existingIndex >= 0) {
-            tempItems[existingIndex].quantity += qty;
-        } else {
-            tempItems.push({
-                item_id: selectedItem.id,
-                name: selectedItem.name,
-                type: selectedItem.type,
-                code: selectedItem.code,
-                quantity: qty
-            });
-        }
-
-        updateTempTable();
-        document.getElementById("modalLoanForm").reset();
-        document.getElementById("newLoan").close();
-        showToast("Item berhasil ditambahkan", "success");
+    if (!selectedItem || isNaN(qty) || qty < 1) {
+        showToast("Data tidak valid", "error");
+        return;
     }
+
+    if (selectedItem.status === 'NOT READY') {
+        showToast("Item ini saat ini dipinjam dan tidak dapat ditambahkan", "error");
+        return;
+    }
+
+    // Check if item already exists in temp items
+    const existingIndex = tempItems.findIndex(item => item.code === selectedItem.code);
+    if (existingIndex >= 0) {
+        showToast("Item dengan SN ini sudah ditambahkan", "error");
+        return;
+    }
+
+    tempItems.push({
+        item_id: selectedItem.id,
+        name: selectedItem.name,
+        type: selectedItem.type,
+        code: selectedItem.code,
+        quantity: qty
+    });
+
+    updateTempTable();
+    document.getElementById("modalLoanForm").reset();
+    document.getElementById("newLoan").close();
+    showToast("Item berhasil ditambahkan", "success");
+}
 
     async function submitLoan() {
         if (tempItems.length === 0) {
