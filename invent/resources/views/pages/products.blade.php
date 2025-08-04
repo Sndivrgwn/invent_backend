@@ -274,8 +274,10 @@
                                 <h1 class="text-lg font-semibold mb-2">Lokasi</h1>
                                 <select name="location" class="select select-bordered w-full max-w-xs">
                                     <option value="" selected>Semua Lokasi</option>
-                                    @foreach($locations->pluck('description')->unique() as $location)
-                                    <option value="{{ $location }}" {{ request('location') == $location ? 'selected' : '' }}>{{ $location }}</option>
+                                    @foreach($locations->unique('name') as $location)
+                                    <option value="{{ $location->name }}" {{ request('location') == $location->name ? 'selected' : '' }}>
+                                        {{ $location->name }}
+                                    </option>
                                     @endforeach
                                 </select>
                             </div>
@@ -743,7 +745,7 @@
             document.getElementById("view_brand").textContent = item.brand;
             document.getElementById("view_condition").textContent = item.condition;
             document.getElementById("view_type").textContent = item.type;
-            document.getElementById("view_status").textContent = item.status;
+            document.getElementById("view_status").textContent = item.status === 'READY' ? 'SIAP' : 'TIDAK SIAP';
             document.getElementById("view_serial").textContent = item.code;
             document.getElementById("view_description").textContent = item.description ?? "-";
             document.getElementById("view_category").textContent = item.category?.name ?? "-";  // Fixed
@@ -882,6 +884,7 @@
         const form = document.getElementById('filterForm');
         const formData = new FormData(form);
         const params = new URLSearchParams();
+        
 
         for (const [key, value] of formData.entries()) {
             params.append(key, value);
@@ -901,42 +904,42 @@
                 data.forEach(item => {
                     tbody.innerHTML += `
                     <tr>
-                        <td class="flex justify-center">
-        <img src="${item.image === 'items/default.png' || item.image === 'default.png' ? '/image/default.png' : '/storage/' + item.image}" 
-             alt="Gambar Produk" class="w-12 h-12 object-cover" />
-    </td>
-                        <td class="text-center">${item.name}</td>
-                        <td class="text-center">${item.location.description}</td>
-                        <td class="text-center">${item.code}</td>
-                        <td class="text-center">${item.type}</td>
-                        <td class="text-center">${item.condition}</td>
-                        <td class="text-center">
-                            <div class="badge badge-soft p-4 ${item.status === 'READY' ? 'badge-success' : 'badge-error'}">
-                                ${item.status}
-                            </div>
-                        </td>
-                        <td class="text-center">
-                            <div class="flex justify-center items-center">
-                                    @can('adminFunction')
-                                    <i class="fa fa-trash fa-lg cursor-pointer !leading-none" onclick="deleteItem(${item.id})"></i>
-                                    <i class="fa fa-pen-to-square fa-lg cursor-pointer !leading-none" onclick="openEditModal({
-                                        id:${item.id},
-                                        name: '${item.name}',
-                                        brand: '${item.brand}',
-                                        type: '${item.type}',
-                                        condition: '${item.condition}',
-                                        status: '${item.status}',
-                                        code: '${item.code}',
-                                        description: '${item.description}',
-                                        location_id: ${item.location_id},
-                                        category_id: ${item.category_id},
-                                        image: '${item.image}'
-                                    })"></i>
-                                    @endcan
-                                    <i class="fa-regular mb-2 fa-eye fa-lg cursor-pointer" onclick="openPreviewModal(${item.id})"></i>
-                                </div>
-                        </td>
-                    </tr>
+        <td class="flex justify-center">
+            <img src="${item.image === 'items/default.png' || item.image === 'default.png' ? '/image/default.png' : '/storage/' + item.image}" 
+                 alt="Gambar Produk" class="w-12 h-12 object-cover" />
+        </td>
+        <td class="text-center">${item.name}</td>
+        <td class="text-center">${item.location.name}</td> <!-- Changed from description to name -->
+        <td class="text-center">${item.code}</td>
+        <td class="text-center">${item.type}</td>
+        <td class="text-center">${item.condition}</td>
+        <td class="text-center">
+            <div class="badge badge-soft p-4 ${item.status === 'READY' ? 'badge-success' : 'badge-error'}">
+                ${item.status === 'READY' ? 'SIAP' : 'TIDAK SIAP'}
+            </div>
+        </td>
+        <td class="text-center">
+            <div class="flex justify-center items-center">
+                @can('adminFunction')
+                <i class="fa fa-trash fa-lg cursor-pointer !leading-none" onclick="deleteItem(${item.id})"></i>
+                <i class="fa fa-pen-to-square fa-lg cursor-pointer !leading-none" onclick="openEditModal({
+                    id:${item.id},
+                    name: '${item.name}',
+                    brand: '${item.brand}',
+                    type: '${item.type}',
+                    condition: '${item.condition}',
+                    status: '${item.status}',
+                    code: '${item.code}',
+                    description: '${item.description}',
+                    location_id: ${item.location_id},
+                    category_id: ${item.category_id},
+                    image: '${item.image}'
+                })"></i>
+                @endcan
+                <i class="fa-regular mb-2 fa-eye fa-lg cursor-pointer" onclick="openPreviewModal(${item.id})"></i>
+            </div>
+        </td>
+    </tr>
                 `;
                 });
             })

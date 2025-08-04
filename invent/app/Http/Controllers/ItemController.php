@@ -158,9 +158,10 @@ class ItemController extends Controller
 
     public function filter(Request $request)
     {
-        $items = Item::with('location')->when($request->brand, fn($q) => $q->where('brand', $request->brand))
+        $items = Item::with('location')
+            ->when($request->brand, fn($q) => $q->where('brand', $request->brand))
             ->when($request->category, fn($q) => $q->whereHas('category', fn($q) => $q->where('name', $request->category)))
-            ->when($request->location, fn($q) => $q->whereHas('location', fn($q) => $q->where('description', $request->location)))
+            ->when($request->location, fn($q) => $q->whereHas('location', fn($q) => $q->where('name', $request->location))) // Changed from description to name
             ->when($request->type, fn($q) => $q->where('type', $request->type))
             ->when($request->condition, fn($q) => $q->where('condition', $request->condition))
             ->when($request->status, fn($q) => $q->where('status', $request->status))
