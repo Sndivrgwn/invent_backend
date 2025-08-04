@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ItemController extends Controller
@@ -28,23 +29,34 @@ class ItemController extends Controller
     public function import(Request $request)
     {
         $request->validate([
-            'file' => 'required|mimes:csv,txt'
+            'file' => 'required|mimes:xlsx,csv,xls,txt'
         ], [
-            'file.required' => 'Silakan pilih file CSV terlebih dahulu.',
-            'file.mimes' => 'Format file harus .csv atau .txt.',
+            'file.required' => 'Silakan pilih file terlebih dahulu.',
+            'file.mimes' => 'Format file harus .xlsx, .xls, .csv, atau .txt.',
         ]);
 
+
         try {
-            Excel::import(new ProductsImport, $request->file('file'));
+            $importer = new ProductsImport();
+            Excel::import($importer, $request->file('file'));
+
+            if ($importer->importedRows === 0) {
+                return back()->with('error', 'Tidak ada data yang berhasil diimpor. Pastikan file tidak kosong.');
+            }
 
             return back()->with('success', 'Data produk berhasil diimpor!');
         } catch (QueryException $e) {
             if ($e->getCode() === '23000') {
-                // Ambil kode yang menyebabkan duplikat (jika bisa)
-                preg_match("/Duplicate entry '(.+?)'/", $e->getMessage(), $matches);
-                $duplicate = $matches[1] ?? 'Tidak diketahui';
+                Log::error('Import error: ' . $e->getMessage()); // <--- Tambahkan ini
 
-                return back()->with('error', "Gagal impor: Item dengan kode \"$duplicate\" sudah ada.");
+                preg_match("/Duplicate entry '([^']+)'/", $e->getMessage(), $matches);
+                $duplicate = $matches[1] ?? null;
+
+                $message = $duplicate
+                    ? "Gagal impor: Item dengan kode \"$duplicate\" sudah ada."
+                    : "Gagal impor: Terjadi duplikasi data. Pastikan tidak ada kode produk yang sama.";
+
+                return back()->with('error', $message);
             }
 
             report($e);
@@ -58,6 +70,11 @@ class ItemController extends Controller
     public function downloadTemplate()
     {
         return response()->download(storage_path('app/public/import/template_import_produk.csv'));
+    }
+
+    public function downloadTemplateExcel()
+    {
+        return response()->download(storage_path('app/public/import/template_produk.xlsx'));
     }
 
     public function search(Request $request)
