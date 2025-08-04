@@ -5,22 +5,36 @@ namespace App\Http\Controllers;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 
 class CategoryController extends Controller
 {
+    // Cache configuration
+    const CACHE_TTL = 3600; // 1 hour
+    const ALL_CATEGORIES_KEY = 'categories_all';
+    const CATEGORY_KEY_PREFIX = 'category_';
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        return response()->json(Category::all(), 200);
+        $categories = Cache::remember(self::ALL_CATEGORIES_KEY, self::CACHE_TTL, function () {
+            return Category::all();
+        });
+
+        return response()->json($categories, 200);
     }
 
     public function getAllItems()
     {
-        $categories = Category::all();
+        $categories = Cache::remember(self::ALL_CATEGORIES_KEY . '_items', self::CACHE_TTL, function () {
+            return Category::all();
+        });
+
         return response()->json(['data' => $categories], 200);
     }
+
     /**
      * Store a newly created resource in storage.
      */
@@ -34,9 +48,15 @@ class CategoryController extends Controller
             'name.unique' => 'Nama lokasi sudah digunakan, silakan pilih nama lain.',
         ]);
 
-
         $category = Category::create($validated);
-        return response()->json(['message' => 'Kategori berhasil dibuat', 'data' => $category], 201);
+        
+        // Clear relevant caches
+        $this->clearCategoryCaches();
+        
+        return response()->json([
+            'message' => 'Kategori berhasil dibuat', 
+            'data' => $category
+        ], 201);
     }
 
     /**
@@ -44,7 +64,12 @@ class CategoryController extends Controller
      */
     public function show(string $id)
     {
-        $category = Category::find($id);
+        $cacheKey = self::CATEGORY_KEY_PREFIX . $id;
+        
+        $category = Cache::remember($cacheKey, self::CACHE_TTL, function () use ($id) {
+            return Category::find($id);
+        });
+
         if (!$category) {
             return response()->json(['message' => 'Kategori tidak ditemukan'], 404);
         }
@@ -63,12 +88,19 @@ class CategoryController extends Controller
         }
 
         $validated = $request->validate([
-            'name' => 'required|string|max:255',
+            'name' => 'required|string|max:255|unique:categories,name,' . $id,
             'description' => 'nullable|string',
         ]);
 
         $category->update($validated);
-        return response()->json(['message' => 'Kategori berhasil diperbarui', 'data' => $category], 200);
+        
+        // Clear relevant caches
+        $this->clearCategoryCaches($id);
+        
+        return response()->json([
+            'message' => 'Kategori berhasil diperbarui', 
+            'data' => $category
+        ], 200);
     }
 
     /**
@@ -82,6 +114,25 @@ class CategoryController extends Controller
         }
 
         $category->delete();
+        
+        // Clear relevant caches
+        $this->clearCategoryCaches($id);
+        
         return response()->json(['message' => 'Kategori berhasil dihapus'], 200);
+    }
+
+    /**
+     * Clear all relevant caches
+     */
+    protected function clearCategoryCaches($id = null)
+    {
+        // Clear the all-categories cache
+        Cache::forget(self::ALL_CATEGORIES_KEY);
+        Cache::forget(self::ALL_CATEGORIES_KEY . '_items');
+        
+        // Clear specific category cache if ID provided
+        if ($id) {
+            Cache::forget(self::CATEGORY_KEY_PREFIX . $id);
+        }
     }
 }
