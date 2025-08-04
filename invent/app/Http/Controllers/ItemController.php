@@ -100,7 +100,7 @@ class ItemController extends Controller
 
     public function getAllItems(Request $request)
     {
-        $sortBy = $request->input('sortBy', 'name'); // default
+        $sortBy = $request->input('sortBy'); // default
         $sortDir = $request->input('sortDir', 'asc');
 
         $query = Item::select('items.*')
@@ -126,14 +126,21 @@ class ItemController extends Controller
         }
 
         // Sort
-        $allowedSorts = ['name', 'code', 'type', 'condition', 'status', 'rack'];
-        if (in_array($sortBy, $allowedSorts)) {
+        // Sort
+        $allowedSorts = ['name', 'code', 'type', 'condition', 'status', 'rack', 'created_at'];
+
+        if ($sortBy && in_array($sortBy, $allowedSorts)) {
             if ($sortBy === 'rack') {
                 $query->orderBy('locations.name', $sortDir);
             } else {
                 $query->orderBy("items.$sortBy", $sortDir);
             }
+        } else {
+            // Default sort by newest created
+            $query->orderBy('items.created_at', 'desc');
         }
+
+
 
         $items = $query->paginate(20)->appends([
             'search-navbar' => $request->input('search-navbar'),
