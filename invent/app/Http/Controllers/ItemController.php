@@ -117,6 +117,17 @@ class ItemController extends Controller
         );
     }
 
+
+    public function downloadTemplate()
+    {
+        return response()->download(storage_path('app/public/import/template_import_produk.csv'));
+    }
+
+    public function downloadTemplateExcel()
+    {
+        return response()->download(storage_path('app/public/import/template_produk.xlsx'));
+    }
+
     public function getAll()
     {
         $cacheKey = $this->generateCacheKey('all_with_relations');
