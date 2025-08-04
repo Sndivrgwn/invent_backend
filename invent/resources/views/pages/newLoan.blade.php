@@ -70,7 +70,7 @@
                 <input type="hidden" id="userId" value="{{ auth()->user()->id }}">
                 <input type="hidden" id="codeLoans" value="LN-{{ date('YmdHis') }}">
                 <input type="hidden" id="loanDate" value="{{ now()->toDateString() }}">
-                <input type="hidden" id="status" value="borrowed">
+                <input type="hidden" id="status" value="dipinjam">
 
                 <div class="w-full flex justify-end gap-4 mt-6">
                     <button type="button" class="btn btn-primary" onclick="submitLoan()">Kirim</button>

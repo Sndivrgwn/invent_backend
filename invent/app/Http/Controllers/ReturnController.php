@@ -45,7 +45,7 @@ class ReturnController extends Controller
         try {
             $data = Returns::create($request->all());
             
-            $loan->status = 'returned';
+            $loan->status = 'dikembalikan';
             $loan->save();
             
             $loan->items()->update(['status' => 'READY']);

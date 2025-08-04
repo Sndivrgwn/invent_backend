@@ -19,7 +19,7 @@ class HistoryController extends Controller
         $startDate = $request->input('start_date');
         $endDate = $request->input('end_date');
 
-        $loans = Loan::query()->where('status', 'returned')
+        $loans = Loan::query()->where('status', 'dikembalikan')
             ->with(['items.category', 'items.location', 'return'])
             ->orderBy('created_at', 'desc');  // Add this line to sort by newest date first
 
@@ -62,7 +62,7 @@ class HistoryController extends Controller
     public function filter(Request $request)
     {
         $loans = Loan::with(['items.location', 'items.category', 'return']) // Tambahkan 'return' di eager load
-            ->where('status', 'returned')
+            ->where('status', 'dikembalikan')
             ->whereHas('items', function ($query) use ($request) {
                 $query->when($request->brand, fn($q) => $q->where('brand', $request->brand))
                     ->when($request->type, fn($q) => $q->where('type', $request->type))
@@ -118,7 +118,7 @@ class HistoryController extends Controller
             $loan = Loan::findOrFail($id);
 
             // Check if loan can be deleted (you might add business logic here)
-            if ($loan->status === 'borrowed') {
+            if ($loan->status === 'dipinjam') {
                 return response()->json([
                     'success' => false,
                     'message' => 'Tidak dapat menghapus pinjaman aktif'

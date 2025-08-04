@@ -28,7 +28,7 @@ class ProfilController extends Controller
                 Log::debug('Cache miss for profile stats: ' . $user->id);
                 return [
                     'totalLoans' => $user->loans()->count(),
-                    'totalReturns' => $user->loans()->where('status', 'returned')->count()
+                    'totalReturns' => $user->loans()->where('status', 'dikembalikan')->count()
                 ];
             });
 
