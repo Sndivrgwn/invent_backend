@@ -174,8 +174,8 @@
                             <h1 class="text-lg font-semibold mb-2">Status</h1>
                             <div class="flex flex-wrap gap-1">
                                 <input class="btn btn-square" type="reset" value="×" onclick="resetFilter('status')" />
-                                <input class="btn" type="radio" name="status" value="borrowed" aria-label="dipinjam" />
-                                <input class="btn" type="radio" name="status" value="returned" aria-label="returned" />
+                                <input class="btn" type="radio" name="status" value="dipinjam" aria-label="dipinjam" />
+                                <input class="btn" type="radio" name="status" value="dikembalikan" aria-label="dikembalikan" />
                             </div>
                         </div>
 
@@ -375,7 +375,7 @@
                         </div>
                         <div>
                             <p class="text-gray-600">Status:</p>
-                            <p class="${loan.status === 'returned' ? 'text-green-500' : 'text-yellow-500'}">
+                            <p class="${loan.status === 'dikembalikan' ? 'text-green-500' : 'text-yellow-500'}">
                                 ${loan.status || 'N/A'}
                             </p>
                         </div>

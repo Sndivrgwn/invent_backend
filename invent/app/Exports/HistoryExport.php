@@ -28,7 +28,7 @@ class HistoryExport implements FromCollection, WithHeadings, WithStyles, ShouldA
     public function collection()
     {
         $query = Loan::with(['items.category', 'items.location', 'return', 'user'])
-        ->where('status', 'returned');
+        ->where('status', 'dikembalikan');
 
         if ($this->startDate && $this->endDate) {
             $query->whereHas('return', function ($q) {
@@ -60,7 +60,7 @@ class HistoryExport implements FromCollection, WithHeadings, WithStyles, ShouldA
             $item->name ?? '-',
             $loan->status,
             $item->category->name ?? '-',
-            $item->location->description ?? '-',
+            $item->location->name ?? '-',
             $item->brand ?? '-',
             $item->type ?? '-',
             $item->condition ?? '-',
@@ -97,22 +97,22 @@ class HistoryExport implements FromCollection, WithHeadings, WithStyles, ShouldA
     public function headings(): array
     {
         return [
-            'Loan Date',
-            'Returned At',
-            'Return Date',
-            'Loan Code',
-            'Borrower Name',
+            'Tanggal Pinjaman',
+            'Dikembalikan Pada',
+            'Tanggal Kembali',
+            'Kode Loan',
+            'Nama Peminjam',
             'Admin',
-            'Serial Number',
-            'Product Name',
+            'Nomor Serial',
+            'Nama Produk',
             'Status',
-            'Category',
-            'Location',
+            'Kategori',
+            'Rak',
             'Brand',
-            'Type',
-            'Condition',
-            'Loan Description',
-            'Return Notes',
+            'Tipe',
+            'Kondisi',
+            'Deskripsi Pinjaman',
+            'Catatan',
         ];
     }
 
@@ -168,7 +168,7 @@ class HistoryExport implements FromCollection, WithHeadings, WithStyles, ShouldA
         $sheet->freezePane('A2');
 
         // Set column widths (auto-size plus some additional logic)
-        foreach (range('A', 'O') as $column) {
+        foreach (range('A', 'P') as $column) {
             $sheet->getColumnDimension($column)
                 ->setAutoSize(true)
                 ->setWidth(15);
@@ -181,6 +181,7 @@ class HistoryExport implements FromCollection, WithHeadings, WithStyles, ShouldA
         $sheet->getColumnDimension('D')->setWidth(15); // Loan Code
         $sheet->getColumnDimension('N')->setWidth(20); // Loan Description
         $sheet->getColumnDimension('O')->setWidth(20); // Return Notes
+        $sheet->getColumnDimension('P')->setWidth(20); // Return Notes
 
         return [];
     }

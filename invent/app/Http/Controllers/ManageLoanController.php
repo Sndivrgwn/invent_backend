@@ -21,7 +21,7 @@ class ManageLoanController extends Controller
         $allowedSorts = ['loan_date', 'code_loans', 'loaner_name', 'return_date'];
 
         $myloans = auth()->user()->loans()
-            ->where('status', 'borrowed')
+            ->where('status', 'dipinjam')
             ->when($search, function($query) use ($search) {
                 $query->where(function($q) use ($search) {
                     $q->where('code_loans', 'like', '%'.$search.'%')
@@ -137,7 +137,7 @@ class ManageLoanController extends Controller
             ]);
 
             // 2. Update loan status
-            $loan->status = 'returned';
+            $loan->status = 'dikembalikan';
             $loan->save();
 
             // 3. Update all items status to READY

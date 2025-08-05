@@ -8,28 +8,40 @@ use App\Models\Location;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Log;
 
 class LocationController extends Controller
 {
+    // Cache configuration
+    const DEFAULT_CACHE_TTL = 3600; // 1 hour
+    const SHORT_CACHE_TTL = 600;   // 10 minutes for frequently changing data
+    const CACHE_KEY_PREFIX = 'locations_';
+    const CACHE_VERSION = 'v1_';   // Cache version for easy invalidation
+    const CACHE_TAG = 'locations'; // Cache tag for all locations-related cache
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        // Load all locations with counts and categories in single query
-        $locations = Location::withCount('items')
-            ->with(['items.category' => function ($query) {
-                $query->select('id', 'name')->distinct();
-            }])
-            ->get();
+        $cacheKey = $this->generateCacheKey('index');
+        
+        $formattedData = Cache::tags(self::CACHE_TAG)->remember($cacheKey, self::DEFAULT_CACHE_TTL, function () {
+            Log::debug('Cache miss for locations index');
+            $locations = Location::withCount('items')
+                ->with(['items.category' => function ($query) {
+                    $query->select('id', 'name')->distinct();
+                }])
+                ->get();
 
-        // Process data for view
-        $formattedData = $locations->map(function ($location) {
-            return [
-                'location' => $location,
-                'total_items' => $location->items_count,
-                'categories' => $location->items->pluck('category.name')->filter()->unique()->values()
-            ];
+            return $locations->map(function ($location) {
+                return [
+                    'location' => $location,
+                    'total_items' => $location->items_count,
+                    'categories' => $location->items->pluck('category.name')->filter()->unique()->values()
+                ];
+            });
         });
 
         return view('pages.inventory', ['locations' => $formattedData]);
@@ -41,6 +53,8 @@ class LocationController extends Controller
     public function store(Request $request)
     {
         try {
+            DB::beginTransaction();
+
             $validated = $request->validate([
                 'name' => 'required|string|max:255|unique:locations,name',
                 'description' => 'nullable|string',
@@ -52,7 +66,6 @@ class LocationController extends Controller
                 'image.mimes' => 'Gambar harus berformat: jpeg, png, jpg, atau gif.',
                 'image.max' => 'Ukuran gambar maksimal 2MB.',
             ]);
-
 
             $location = new Location();
             $location->name = $validated['name'];
@@ -67,17 +80,23 @@ class LocationController extends Controller
 
             $location->save();
 
+            DB::commit();
+
+            // Clear all locations cache using tags
+            Cache::tags(self::CACHE_TAG)->flush();
+            Log::debug('Cleared all locations cache after store');
+
             return response()->json([
                 'success' => true,
-                'reload' => true, // This will trigger page reload
+                'reload' => true,
                 'toast' => [
                     'message' => 'Lokasi berhasil dibuat',
                     'type' => 'success'
                 ]
             ]);
         } catch (\Exception $e) {
-            report($e); // atau Log::error($e)
-
+            DB::rollBack();
+            report($e);
             return response()->json([
                 'success' => false,
                 'toast' => [
@@ -93,44 +112,58 @@ class LocationController extends Controller
      */
     public function show(string $id)
     {
+        $cacheKey = $this->generateCacheKey('show_' . $id);
+        
         try {
-            $location = Location::with('items.category')->find($id);
+            $data = Cache::tags(self::CACHE_TAG)->remember($cacheKey, self::DEFAULT_CACHE_TTL, function () use ($id) {
+                Log::debug('Cache miss for location show: ' . $id);
+                $location = Location::with('items.category')->find($id);
 
-            if (!$location) {
+                if (!$location) {
+                    return [
+                        'error' => true,
+                        'message' => 'Lokasi tidak ditemukan'
+                    ];
+                }
+
+                $uniqueCategories = $location->items
+                    ->pluck('category.name')
+                    ->filter()
+                    ->unique()
+                    ->values();
+
+                return [
+                    'location' => $location,
+                    'items' => $location->items->map(function ($item) {
+                        return [
+                            'id' => $item->id,
+                            'name' => $item->name,
+                            'code' => $item->code,
+                            'condition' => $item->condition,
+                            'category' => $item->category?->name,
+                        ];
+                    }),
+                    'categories' => $uniqueCategories
+                ];
+            });
+
+            if (isset($data['error'])) {
                 return response()->json([
                     'toast' => [
-                        'message' => 'Lokasi tidak ditemukan',
+                        'message' => $data['message'],
                         'type' => 'error'
                     ]
                 ], 404);
             }
 
-            $uniqueCategories = $location->items
-                ->pluck('category.name')
-                ->filter()
-                ->unique()
-                ->values();
-
-            return response()->json([
-                'location' => $location,
-                'items' => $location->items->map(function ($item) {
-                    return [
-                        'id' => $item->id,
-                        'name' => $item->name,
-                        'code' => $item->code,
-                        'condition' => $item->condition,
-                        'category' => $item->category?->name,
-                    ];
-                }),
-                'categories' => $uniqueCategories,
+            return response()->json(array_merge($data, [
                 'toast' => [
                     'message' => 'Data lokasi berhasil diambil',
                     'type' => 'success'
                 ]
-            ], 200);
+            ]), 200);
         } catch (\Exception $e) {
-            report($e); // atau Log::error($e)
-
+            report($e);
             return response()->json([
                 'toast' => [
                     'message' => 'Gagal mengambil lokasi: ' . $e->getMessage(),
@@ -146,8 +179,11 @@ class LocationController extends Controller
     public function update(Request $request, string $id)
     {
         try {
+            DB::beginTransaction();
+
             $location = Location::find($id);
             if (!$location) {
+                DB::rollBack();
                 return response()->json([
                     'success' => false,
                     'toast' => [
@@ -158,7 +194,7 @@ class LocationController extends Controller
             }
 
             $validated = $request->validate([
-                'name' => 'required|string|max:255',
+                'name' => 'required|string|max:255|unique:locations,name,' . $id,
                 'description' => 'nullable|string',
                 'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             ]);
@@ -176,6 +212,12 @@ class LocationController extends Controller
 
             $location->save();
 
+            DB::commit();
+
+            // Clear all locations cache using tags
+            Cache::tags(self::CACHE_TAG)->flush();
+            Log::debug('Cleared all locations cache after update');
+
             return response()->json([
                 'success' => true,
                 'reload' => true,
@@ -185,8 +227,8 @@ class LocationController extends Controller
                 ]
             ]);
         } catch (\Exception $e) {
-            report($e); // atau Log::error($e)
-
+            DB::rollBack();
+            report($e);
             return response()->json([
                 'success' => false,
                 'toast' => [
@@ -203,8 +245,11 @@ class LocationController extends Controller
     public function destroy(string $id)
     {
         try {
+            DB::beginTransaction();
+
             $location = Location::find($id);
             if (!$location) {
+                DB::rollBack();
                 return response()->json([
                     'toast' => [
                         'message' => 'Lokasi tidak ditemukan',
@@ -215,6 +260,12 @@ class LocationController extends Controller
 
             $location->delete();
 
+            DB::commit();
+
+            // Clear all locations cache using tags
+            Cache::tags(self::CACHE_TAG)->flush();
+            Log::debug('Cleared all locations cache after delete');
+
             return response()->json([
                 'message' => 'Lokasi berhasil dihapus',
                 'toast' => [
@@ -223,8 +274,8 @@ class LocationController extends Controller
                 ]
             ], 200);
         } catch (\Exception $e) {
-            report($e); // atau Log::error($e)
-
+            DB::rollBack();
+            report($e);
             return response()->json([
                 'toast' => [
                     'message' => 'Failed to delete location: ' . $e->getMessage(),
@@ -232,5 +283,22 @@ class LocationController extends Controller
                 ]
             ], 500);
         }
+    }
+
+    /**
+     * Generate consistent cache key with version prefix
+     */
+    protected function generateCacheKey(string $key): string
+    {
+        return self::CACHE_VERSION . self::CACHE_KEY_PREFIX . $key;
+    }
+
+    /**
+     * Clear all caches when locations are modified (callable from other controllers)
+     */
+    public static function clearAllLocationsCache()
+    {
+        Cache::tags(self::CACHE_TAG)->flush();
+        Log::debug('Cleared all locations cache using tags');
     }
 }

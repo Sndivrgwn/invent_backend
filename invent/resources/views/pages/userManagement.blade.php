@@ -223,7 +223,7 @@ function sortLinkUser($field, $currentSortBy, $currentSortDir) {
                             </tr>
                         </thead>
                         <tbody id="itemTableBody">
-    @foreach ($user as $usr)
+    @foreach ($users as $usr)
         @if(auth()->user()->roles_id == 3 || $usr->roles_id != 3)
         <tr>
             <td class="text-center">{{ $usr->name }}</td>

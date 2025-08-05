@@ -56,20 +56,20 @@
             <span>Produk Baru</span>
         </button>
 
-        <!-- Download Template -->
+        <!-- Unduh Template -->
         <a href="{{ route('products.template') }}"
             class="block px-4 py-2 hover:bg-gray-100 text-left flex items-center gap-2 text-blue-600">
             <i class="fa fa-download !flex"></i>
-            <span>Download Template Csv</span>
+            <span>Unduh Template Csv</span>
         </a>
 
         <a href="{{ route('products.template.excel') }}"
             class="block px-4 py-2 hover:bg-gray-100 text-left flex items-center gap-2 text-blue-600">
             <i class="fa fa-download !flex"></i>
-            <span>Download Template Excel</span>
+            <span>Unduh Template Excel</span>
         </a>
 
-        <!-- Import Produk -->
+        <!-- Impor Produk -->
         <form action="{{ route('products.import') }}" method="POST" enctype="multipart/form-data" class="block">
             @csrf
             <input 
@@ -85,7 +85,7 @@
             <button type="button" onclick="document.getElementById('importFile').click()"
                 class="w-full text-left px-4 py-3 hover:bg-gray-100 flex items-center gap-2 text-green-600">
                 <i class="fa fa-upload !flex"></i>
-                <span>Import Produk</span>
+                <span>Impor Produk</span>
             </button>
         </form>
     </div>
@@ -95,14 +95,14 @@
                     @endcan
 
 
-                {{-- modal new product --}}
+                {{-- modal produk baru --}}
                 <dialog id="newProduct" class="modal">
                     <div class="modal-box">
                         <form method="POST" id="itemForm">
                             <button id="cancel" type="button" onclick="closeModal()" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
                             <h1 class="font-semibold text-2xl mb-4">Produk baru</h1>
 
-                            {{-- image upload --}}
+                            {{-- upload gambar --}}
                             <div class="mb-4 text-gray-600">
                                 <h1 class="font-medium">GAMBAR</h1>
                                 <div class="flex items-center gap-4">
@@ -116,16 +116,16 @@
                             </div>
 
                             <div class="flex gap-5 justify-between text-gray-600">
-                                <!-- Product -->
+                                <!-- Produk -->
                                 <div class="w-[50%]">
                                     <h1 class="font-medium">PRODUK</h1>
                                     <div class="mb-2">
                                         <label class="input flex text-gray-600" style="width: 100%;">
-                                            <input class="w-full" type="text" id="product" placeholder="product" />
+                                            <input class="w-full" type="text" id="product" placeholder="Nama produk" />
                                         </label>
                                     </div>
                                 </div>
-                                <!-- rack -->
+                                <!-- rak -->
                                 <div class="w-[50%]">
                                     <h1 class="font-medium">RAK</h1>
                                     <label class="select">
@@ -140,24 +140,24 @@
                             </div>
 
                             <div class="flex gap-5 justify-between text-gray-600">
-                                <!-- Brand -->
+                                <!-- Merek -->
                                 <div class="w-[50%]">
                                     <h1 class="font-medium">MEREK</h1>
                                     <div class="mb-2">
                                         <label class="input flex text-gray-600" style="width: 100%;">
-                                            <input class="w-full" type="text" id="brand" placeholder="brand" />
+                                            <input class="w-full" type="text" id="brand" placeholder="Merek produk" />
                                         </label>
                                     </div>
                                 </div>
-                                <!-- condition -->
+                                <!-- kondisi -->
                                 <div class="w-[50%]">
                                     <h1 class="font-medium">KONDISI</h1>
                                     <div>
                                         <label class="select">
                                             <select id="condition">
                                                 <option>Pilih Kondisi</option>
-                                                <option value="GOOD">GOOD</option>
-                                                <option value="NOT GOOD">NOT GOOD</option>
+                                                <option value="GOOD">BAIK</option>
+                                                <option value="NOT GOOD">TIDAK BAIK</option>
                                             </select>
                                         </label>
                                     </div>
@@ -165,16 +165,16 @@
                             </div>
 
                             <div class="flex gap-5 justify-between text-gray-600">
-                                <!-- Type -->
+                                <!-- Tipe -->
                                 <div class="w-[50%]">
                                     <h1 class="font-medium">TIPE</h1>
                                     <div class="mb-2">
                                         <label class="input flex text-gray-600" style="width: 100%;">
-                                            <input class="w-full" type="text" id="type" placeholder="type" />
+                                            <input class="w-full" type="text" id="type" placeholder="Tipe produk" />
                                         </label>
                                     </div>
                                 </div>
-                                <!-- category -->
+                                <!-- kategori -->
                                 <div class="w-[50%]">
                                     <h1 class="font-medium">KATEGORI</h1>
                                     <div>
@@ -190,26 +190,26 @@
                                 </div>
                             </div>
 
-                            <!-- SN -->
+                            <!-- Nomor Seri -->
                             <div class="flex w-full mb-2">
                                 <div class="w-full">
                                     <h1 class="font-medium text-gray-600">NOMOR SERIAL</h1>
                                     <label class="input flex text-gray-600" style="width: 100%;">
-                                        <input class="w-full" type="text" id="serialNumber" placeholder="Serial Number" />
+                                        <input class="w-full" type="text" id="serialNumber" placeholder="Nomor Serial" />
                                     </label>
                                 </div>
                             </div>
 
-                            <!-- Description -->
+                            <!-- Deskripsi -->
                             <div class="mb-4">
                                 <h1 class="font-medium text-gray-600">DESKRIPSI</h1>
-                                <textarea id="description" class="textarea text-gray-600" placeholder="Description" style="width: 100%;"></textarea>
+                                <textarea id="description" class="textarea text-gray-600" placeholder="Deskripsi produk" style="width: 100%;"></textarea>
                             </div>
 
-                            <!-- buttons -->
+                            <!-- tombol -->
                             <div class="w-full flex justify-end items-end gap-4">
                                 <button id="cancelButton" type="button" onclick="closeModal()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Batal</button>
-                                <button class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Kirim</button>
+                                <button class="bg-[#2563EB] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Simpan</button>
                             </div>
                         </form>
                     </div>
@@ -219,7 +219,7 @@
 
         <div class="list bg-base-100 rounded-box shadow-md">
             <div class="p-4 pb-2 flex">
-                <!-- search -->
+                <!-- pencarian -->
                 <div class="relative w-full mr-4">
                     <form method="GET" action="{{ route('products') }}" class="relative w-full md:block">
                         <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -243,7 +243,7 @@
                             <div class="mb-4">
                                 <h1 class="text-lg font-semibold mb-2">Merek</h1>
                                 <select name="brand" class="select select-bordered w-full max-w-xs">
-                                    <option value="" selected>semua Merek</option> {{-- Opsi default untuk reset/tidak memilih filter --}}
+                                    <option value="" selected>Semua Merek</option>
                                     @foreach($items->pluck('brand')->unique() as $brand)
                                     <option value="{{ $brand }}" {{ request('brand') == $brand ? 'selected' : '' }}>{{ $brand }}</option>
                                     @endforeach
@@ -253,7 +253,7 @@
                             <div class="mb-4">
                                 <h1 class="text-lg font-semibold mb-2">Kategori</h1>
                                 <select name="category" class="select select-bordered w-full max-w-xs">
-                                    <option value="" selected>semua Kategori</option> {{-- Opsi default untuk reset/tidak memilih filter --}}
+                                    <option value="" selected>Semua Kategori</option>
                                     @foreach($items->pluck('category.name')->unique() as $category)
                                     <option value="{{ $category }}" {{ request('category') == $category ? 'selected' : '' }}>{{ $category }}</option>
                                     @endforeach
@@ -263,7 +263,7 @@
                             <div class="mb-4">
                                 <h1 class="text-lg font-semibold mb-2">Tipe</h1>
                                 <select name="type" class="select select-bordered w-full max-w-xs">
-                                    <option value="" selected>Semua Tipe</option> {{-- Opsi default untuk reset/tidak memilih filter --}}
+                                    <option value="" selected>Semua Tipe</option>
                                     @foreach($items->pluck('type')->unique() as $type)
                                     <option value="{{ $type }}" {{ request('type') == $type ? 'selected' : '' }}>{{ $type }}</option>
                                     @endforeach
@@ -273,9 +273,11 @@
                             <div class="mb-4">
                                 <h1 class="text-lg font-semibold mb-2">Lokasi</h1>
                                 <select name="location" class="select select-bordered w-full max-w-xs">
-                                    <option value="" selected>semua Lokasi</option> {{-- Opsi default untuk reset/tidak memilih filter --}}
-                                    @foreach($locations->pluck('description')->unique() as $location)
-                                    <option value="{{ $location }}" {{ request('location') == $location ? 'selected' : '' }}>{{ $location }}</option>
+                                    <option value="" selected>Semua Lokasi</option>
+                                    @foreach($locations->unique('name') as $location)
+                                    <option value="{{ $location->name }}" {{ request('location') == $location->name ? 'selected' : '' }}>
+                                        {{ $location->name }}
+                                    </option>
                                     @endforeach
                                 </select>
                             </div>
@@ -284,8 +286,8 @@
                                 <h1 class="text-lg font-semibold mb-2">Kondisi</h1>
                                 <div class="flex flex-wrap gap-1">
                                     <input class="btn btn-square" type="reset" value="×" onclick="resetFilter('condition')" />
-                                    <input class="btn" type="radio" name="condition" value="GOOD" aria-label="GOOD" {{ request('condition') == 'GOOD' ? 'checked' : '' }} />
-                                    <input class="btn" type="radio" name="condition" value="NOT GOOD" aria-label="NOT GOOD" {{ request('condition') == 'NOT GOOD' ? 'checked' : '' }} />
+                                    <input class="btn" type="radio" name="condition" value="GOOD" aria-label="BAIK" {{ request('condition') == 'GOOD' ? 'checked' : '' }} />
+                                    <input class="btn" type="radio" name="condition" value="NOT GOOD" aria-label="TIDAK BAIK" {{ request('condition') == 'NOT GOOD' ? 'checked' : '' }} />
                                 </div>
                             </div>
 
@@ -293,8 +295,8 @@
                                 <h1 class="text-lg font-semibold mb-2">Status</h1>
                                 <div class="flex flex-wrap gap-1">
                                     <input class="btn btn-square" type="reset" value="×" onclick="resetFilter('status')" />
-                                    <input class="btn" type="radio" name="status" value="READY" aria-label="READY" {{ request('status') == 'READY' ? 'checked' : '' }} />
-                                    <input class="btn" type="radio" name="status" value="NOT READY" aria-label="NOT READY" {{ request('status') == 'NOT READY' ? 'checked' : '' }} />
+                                    <input class="btn" type="radio" name="status" value="READY" aria-label="SIAP" {{ request('status') == 'READY' ? 'checked' : '' }} />
+                                    <input class="btn" type="radio" name="status" value="NOT READY" aria-label="TIDAK SIAP" {{ request('status') == 'NOT READY' ? 'checked' : '' }} />
                                 </div>
                             </div>
 
@@ -304,7 +306,7 @@
                 </dialog>
             </div>
 
-            <!-- table -->
+            <!-- tabel -->
             <div id="itemTableContainer" class="overflow-x-auto px-2">
                 <table class="table w-full">
                     <thead>
@@ -319,7 +321,7 @@
                                         </a>
                                     </th>
                                     <th class="text-center font-semibold">
-                                        RAK {{-- atau tambahkan logic sorting location.name jika mau --}}
+                                        RAK
                                     </th>
                                     <th class="text-center font-semibold">
                                         <a href="{{ route('products', ['sortBy' => 'code', 'sortDir' => ($sortBy === 'code' && $sortDir === 'asc') ? 'desc' : 'asc', 'search-navbar' => request('search-navbar')]) }}">
@@ -345,7 +347,7 @@
                                             @if($sortBy === 'status') {{ $sortDir === 'asc' ? '↑' : '↓' }} @endif
                                         </a>
                                     </th>
-                                    <th class="text-center font-semibold">TINDAKAN</th>
+                                    <th class="text-center font-semibold">AKSI</th>
                                 </tr>
                             </thead>
 
@@ -355,7 +357,7 @@
                         @forelse ($items as $item)
                         <tr>
                             <td class="flex justify-center">
-                                <img src="{{ $item->image === 'items/default.png' || $item->image === 'default.png' ? asset('image/default.png') : asset('storage/' . $item->image) }}" alt="Product Image" class="w-12 h-12 object-cover" />
+                                <img src="{{ $item->image === 'items/default.png' || $item->image === 'default.png' ? asset('image/default.png') : asset('storage/' . $item->image) }}" alt="Gambar Produk" class="w-12 h-12 object-cover" />
                             </td>
                             <td class="text-center">{{ $item->name }}</td>
                             <td class="text-center">{{ $item->location->name }}</td>
@@ -364,7 +366,7 @@
                             <td class="text-center">{{ $item->condition }}</td>
                             <td class="text-center">
                                 <div class="badge badge-soft p-4 {{ $item->status === 'READY' ? 'badge-success' : 'badge-error' }}">
-                                    {{ $item->status }}
+                                    {{ $item->status === 'READY' ? 'SIAP' : 'TIDAK SIAP' }}
                                 </div>
                             </td>
                             <td class="">
@@ -398,13 +400,13 @@
                 </table>
             </div>
 
-            {{-- Delete Confirmation Dialog --}}
+            {{-- Dialog Konfirmasi Hapus --}}
             <dialog id="confirmDeleteDialog" class="modal">
                 <div class="modal-box">
                     <form method="dialog">
                         <button type="button" class="btn btn-sm btn-circle btn-ghost absolute right-2 top-2" onclick="closeDeleteDialog()">✕</button>
-                        <h1 class="text-xl font-bold text-center mb-4">Hapus item?</h1>
-                        <p class="text-center text-gray-600">Apakah Anda yakin ingin menghapus item ini? Tindakan ini tidak bisa dibatalkan.</p>
+                        <h1 class="text-xl font-bold text-center mb-4">Hapus produk?</h1>
+                        <p class="text-center text-gray-600">Apakah Anda yakin ingin menghapus produk ini? Tindakan ini tidak bisa dibatalkan.</p>
                         <div class="flex justify-end gap-3 mt-6">
                             <button type="button" onclick="closeDeleteDialog()" class="bg-gray-300 text-gray-800 rounded-lg px-4 py-2 hover:bg-gray-400">Batal</button>
                             <button type="button" onclick="confirmDelete()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-red-600">Ya, Hapus</button>
@@ -413,7 +415,7 @@
                 </div>
             </dialog>
 
-            {{-- Edit Product Dialog --}}
+            {{-- Dialog Edit Produk --}}
             <dialog id="editProduct" class="modal">
                 <div class="modal-box">
                     <form method="dialog">
@@ -422,7 +424,7 @@
                     <h1 class="font-semibold text-2xl mb-4">Edit Produk</h1>
 
                     <div class="mb-4 text-gray-600">
-                        <h1 class="font-medium">IMAGE</h1>
+                        <h1 class="font-medium">GAMBAR</h1>
                         <div class="flex items-center gap-4">
                             <div class="avatar">
                                 <div class="w-24 rounded-lg bg-gray-200">
@@ -438,7 +440,7 @@
                             <h1 class="font-medium">PRODUK</h1>
                             <div class="mb-2">
                                 <label class="input flex text-gray-600" style="width: 100%;">
-                                    <input class="w-full" type="text" id="edit_product" placeholder="product" />
+                                    <input class="w-full" type="text" id="edit_product" placeholder="Nama produk" />
                                 </label>
                             </div>
                         </div>
@@ -460,7 +462,7 @@
                             <h1 class="font-medium">MEREK</h1>
                             <div class="mb-2">
                                 <label class="input flex text-gray-600" style="width: 100%;">
-                                    <input class="w-full" type="text" id="edit_brand" placeholder="brand" />
+                                    <input class="w-full" type="text" id="edit_brand" placeholder="Merek produk" />
                                 </label>
                             </div>
                         </div>
@@ -470,8 +472,8 @@
                                 <label class="select">
                                     <select id="edit_condition">
                                         <option>Pilih Kondisi</option>
-                                        <option value="GOOD">GOOD</option>
-                                        <option value="NOT GOOD">NOT GOOD</option>
+                                        <option value="GOOD">BAIK</option>
+                                        <option value="NOT GOOD">TIDAK BAIK</option>
                                     </select>
                                 </label>
                             </div>
@@ -480,10 +482,10 @@
 
                     <div class="flex gap-5 justify-between text-gray-600">
                         <div class="w-[50%]">
-                            <h1 class="font-medium">Tipe</h1>
+                            <h1 class="font-medium">TIPE</h1>
                             <div class="mb-2">
                                 <label class="input flex text-gray-600" style="width: 100%;">
-                                    <input class="w-full" type="text" id="edit_type" placeholder="type" />
+                                    <input class="w-full" type="text" id="edit_type" placeholder="Tipe produk" />
                                 </label>
                             </div>
                         </div>
@@ -493,7 +495,7 @@
                                 <label class="select">
                                     <select id="edit_status">
                                         <option value="READY">SIAP DIGUNAKAN</option>
-                                        <option value="NOT READY">BELUM SIAP </option>
+                                        <option value="NOT READY">BELUM SIAP</option>
                                     </select>
                                 </label>
                             </div>
@@ -501,7 +503,7 @@
                     </div>
 
                     <div class="w-[50%]">
-                        <h1 class="font-medium">Kategori</h1>
+                        <h1 class="font-medium">KATEGORI</h1>
                         <div>
                             <label class="select">
                                 <select id="edit_category" class="input w-full">
@@ -518,14 +520,14 @@
                         <div class="w-full">
                             <h1 class="font-medium text-gray-600">NOMOR SERIAL</h1>
                             <label class="input flex text-gray-600" style="width: 100%;">
-                                <input class="w-full" type="text" id="edit_serialNumber" placeholder="Serial Number" />
+                                <input class="w-full" type="text" id="edit_serialNumber" placeholder="Nomor Serial" />
                             </label>
                         </div>
                     </div>
 
                     <div class="mb-4">
                         <h1 class="font-medium text-gray-600">DESKRIPSI</h1>
-                        <textarea id="edit_description" class="textarea text-gray-600" placeholder="Description" style="width: 100%;"></textarea>
+                        <textarea id="edit_description" class="textarea text-gray-600" placeholder="Deskripsi produk" style="width: 100%;"></textarea>
                     </div>
 
                     <div class="w-full flex justify-end items-end gap-4">
@@ -535,7 +537,7 @@
                 </div>
             </dialog>
 
-            {{-- Preview Product Dialog --}}
+            {{-- Dialog Pratinjau Produk --}}
             <dialog id="viewProduct" class="modal">
                 <div class="modal-box">
                     <form method="dialog" id="viewForm">
@@ -544,8 +546,8 @@
                         </div>
                         <dialog id="imageZoomModal" class="modal">
                             <div class="modal-box w-11/12 max-w-2xl p-0 flex justify-center items-center bg-transparent shadow-none">
-                                {{-- Image yang akan diperbesar --}}
-                                <img id="modalZoomImage" src="" alt="Zoomed Image" class="max-w-full max-h-[90vh] object-contain rounded-lg shadow-xl" />
+                                {{-- Gambar yang akan diperbesar --}}
+                                <img id="modalZoomImage" src="" alt="Gambar Diperbesar" class="max-w-full max-h-[90vh] object-contain rounded-lg shadow-xl" />
                             </div>
                         </dialog>
 
@@ -602,7 +604,7 @@
                         </div>
 
                         <div class="w-full flex justify-end items-end gap-4 mt-4">
-                            <button type="button" onclick="document.getElementById('viewProduct').close()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Close</button>
+                            <button type="button" onclick="document.getElementById('viewProduct').close()" class="bg-[#eb2525] text-white rounded-lg px-4 py-2 hover:bg-blue-400 cursor-pointer">Tutup</button>
                         </div>
                     </form>
                 </div>
@@ -638,7 +640,7 @@
     let deleteTargetId = null;
     let currentEditId = null;
 
-    // Image preview for new product
+    // Pratinjau gambar untuk produk baru
     document.getElementById("imageUpload").addEventListener("change", function() {
         const file = this.files[0];
         const preview = document.getElementById("imagePreview");
@@ -653,7 +655,7 @@
         }
     });
 
-    // Image preview for edit product
+    // Pratinjau gambar untuk edit produk
     document.getElementById("edit_imageUpload").addEventListener("change", function() {
         const file = this.files[0];
         const preview = document.getElementById("edit_imagePreview");
@@ -664,14 +666,14 @@
             };
             reader.readAsDataURL(file);
         } else {
-            // When no file is selected, check if current image is default
+            // Ketika tidak ada file yang dipilih, periksa apakah gambar saat ini default
             if (preview.src.includes('image/default.png')) {
                 preview.src = "{{ asset('image/default.png') }}";
             }
         }
     });
 
-    // New product form submission
+    // Pengiriman form produk baru
     document.getElementById("itemForm").addEventListener("submit", function(e) {
         e.preventDefault();
 
@@ -679,11 +681,11 @@
         const imageInput = document.getElementById("imageUpload");
         const preview = document.getElementById("imagePreview");
 
-        // Only include image if a new one was selected and it's not the default
+        // Hanya sertakan gambar jika yang baru dipilih dan bukan default
         if (imageInput.files.length > 0 && !preview.src.includes('image/default.png')) {
             formData.append("image", imageInput.files[0]);
         } else {
-            // Explicitly set image to null if no image was selected
+            // Secara eksplisit setel gambar ke null jika tidak ada gambar yang dipilih
             formData.append("image", "");
         }
 
@@ -716,7 +718,7 @@
                 if (data.errors) {
                     showToast("Harap isi semua bidang dengan benar", "error");
                 } else {
-                    showToast("Item berhasil dibuat", "success");
+                    showToast("Produk berhasil dibuat", "success");
                     document.getElementById("itemForm").reset();
                     document.getElementById("imagePreview").src = "{{ asset('image/default.png') }}";
                     document.getElementById("newProduct").close();
@@ -732,7 +734,7 @@
     function openPreviewModal(id) {
     fetch(`/api/items/${id}`)
         .then(res => {
-            if (!res.ok) throw new Error("Product not found");
+            if (!res.ok) throw new Error("Produk tidak ditemukan");
             return res.json();
         })
         .then(response => {
@@ -743,12 +745,12 @@
             document.getElementById("view_brand").textContent = item.brand;
             document.getElementById("view_condition").textContent = item.condition;
             document.getElementById("view_type").textContent = item.type;
-            document.getElementById("view_status").textContent = item.status;
+            document.getElementById("view_status").textContent = item.status === 'READY' ? 'SIAP' : 'TIDAK SIAP';
             document.getElementById("view_serial").textContent = item.code;
             document.getElementById("view_description").textContent = item.description ?? "-";
             document.getElementById("view_category").textContent = item.category?.name ?? "-";  // Fixed
 
-            // Image URL logic
+            // Logika URL gambar
             const imageUrl = (item.image === 'items/default.png' || item.image === 'default.png' || !item.image) ?
                 '/image/default.png' :
                 `/storage/${item.image}`;
@@ -757,16 +759,16 @@
             document.getElementById("viewProduct").showModal();
         })
         .catch(error => {
-            console.error("Failed to fetch product:", error);
+            console.error("Gagal memuat produk:", error);
             showToast("Gagal memuat data produk", "error");
         });
 }
 
-    // Edit modal functions
+    // Fungsi modal edit
     function openEditModal(item) {
         currentEditId = item.id;
 
-        // Set form values
+        // Setel nilai form
         document.getElementById("edit_product").value = item.name || "";
         document.getElementById("edit_brand").value = item.brand || "";
         document.getElementById("edit_type").value = item.type || "";
@@ -777,7 +779,7 @@
         document.getElementById("edit_rack").value = item.location_id || "";
         document.getElementById("edit_category").value = item.category_id || "";
 
-        // Updated image preview logic
+        // Logika pratinjau gambar yang diperbarui
         const imageUrl = (item.image === 'items/default.png' || item.image === 'default.png' || !item.image) ?
             '/image/default.png' :
             `/storage/${item.image}`;
@@ -797,12 +799,12 @@
         const formData = new FormData();
         const imageInput = document.getElementById("edit_imageUpload");
 
-        // Always append the image if a file is selected
+        // Selalu lampirkan gambar jika file dipilih
         if (imageInput.files.length > 0) {
             formData.append("image", imageInput.files[0]);
         }
 
-        // Append other form data
+        // Lampirkan data form lainnya
         formData.append("name", document.getElementById("edit_product").value);
         formData.append("brand", document.getElementById("edit_brand").value);
         formData.append("type", document.getElementById("edit_type").value);
@@ -819,7 +821,7 @@
                 , body: formData
                 , headers: {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    // Don't set Content-Type header - let the browser set it with the boundary
+                    // Jangan setel header Content-Type - biarkan browser yang menentukannya dengan boundary
                 }
             })
             .then(response => {
@@ -831,17 +833,17 @@
                 return response.json();
             })
             .then(data => {
-                showToast("Item berhasil diperbarui", "success");
+                showToast("Produk berhasil diperbarui", "success");
                 closeEditModal();
                 window.location.reload();
             })
             .catch(error => {
-                console.error("Error updating item:", error);
-                showToast(error.errors ? Object.values(error.errors).join(', ') : "Gagal memperbarui item", "error");
+                console.error("Error memperbarui produk:", error);
+                showToast(error.errors ? Object.values(error.errors).join(', ') : "Gagal memperbarui produk", "error");
             });
     }
 
-    // Delete functions
+    // Fungsi hapus
     function deleteItem(id) {
         deleteTargetId = id;
         document.getElementById("confirmDeleteDialog").showModal();
@@ -859,15 +861,15 @@
             })
             .then(res => {
                 if (res.ok) {
-                    showToast("Item berhasil dihapus", "success");
+                    showToast("Produk berhasil dihapus", "success");
                     window.location.reload();
                 } else {
-                    throw new Error("Hapus gagal");
+                    throw new Error("Gagal menghapus");
                 }
             })
             .catch(error => {
                 console.error(error);
-                showToast("Item tidak dihapus", "error");
+                showToast("Produk tidak terhapus", "error");
             });
 
         closeDeleteDialog();
@@ -882,6 +884,7 @@
         const form = document.getElementById('filterForm');
         const formData = new FormData(form);
         const params = new URLSearchParams();
+        
 
         for (const [key, value] of formData.entries()) {
             params.append(key, value);
@@ -894,49 +897,49 @@
                 tbody.innerHTML = ""; // Kosongkan isi lama
 
                 if (data.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="8" class="text-center text-gray-500">No items found</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="8" class="text-center text-gray-500">Tidak ada produk ditemukan</td></tr>`;
                     return;
                 }
 
                 data.forEach(item => {
                     tbody.innerHTML += `
                     <tr>
-                        <td class="flex justify-center">
-        <img src="${item.image === 'items/default.png' || item.image === 'default.png' ? '/image/default.png' : '/storage/' + item.image}" 
-             alt="Product Image" class="w-12 h-12 object-cover" />
-    </td>
-                        <td class="text-center">${item.name}</td>
-                        <td class="text-center">${item.location.description}</td>
-                        <td class="text-center">${item.code}</td>
-                        <td class="text-center">${item.type}</td>
-                        <td class="text-center">${item.condition}</td>
-                        <td class="text-center">
-                            <div class="badge badge-soft p-4 ${item.status === 'READY' ? 'badge-success' : 'badge-error'}">
-                                ${item.status}
-                            </div>
-                        </td>
-                        <td class="text-center">
-                            <div class="flex justify-center items-center">
-                                    @can('adminFunction')
-                                    <i class="fa fa-trash fa-lg cursor-pointer !leading-none" onclick="deleteItem(${item.id})"></i>
-                                    <i class="fa fa-pen-to-square fa-lg cursor-pointer !leading-none" onclick="openEditModal({
-                                        id:${item.id},
-                                        name: '${item.name}',
-                                        brand: '${item.brand}',
-                                        type: '${item.type}',
-                                        condition: '${item.condition}',
-                                        status: '${item.status}',
-                                        code: '${item.code}',
-                                        description: '${item.description}',
-                                        location_id: ${item.location_id},
-                                        category_id: ${item.category_id},
-                                        image: '${item.image}'
-                                    })"></i>
-                                    @endcan
-                                    <i class="fa-regular mb-2 fa-eye fa-lg cursor-pointer" onclick="openPreviewModal(${item.id})"></i>
-                                </div>
-                        </td>
-                    </tr>
+        <td class="flex justify-center">
+            <img src="${item.image === 'items/default.png' || item.image === 'default.png' ? '/image/default.png' : '/storage/' + item.image}" 
+                 alt="Gambar Produk" class="w-12 h-12 object-cover" />
+        </td>
+        <td class="text-center">${item.name}</td>
+        <td class="text-center">${item.location.name}</td> <!-- Changed from description to name -->
+        <td class="text-center">${item.code}</td>
+        <td class="text-center">${item.type}</td>
+        <td class="text-center">${item.condition}</td>
+        <td class="text-center">
+            <div class="badge badge-soft p-4 ${item.status === 'READY' ? 'badge-success' : 'badge-error'}">
+                ${item.status === 'READY' ? 'SIAP' : 'TIDAK SIAP'}
+            </div>
+        </td>
+        <td class="text-center">
+            <div class="flex justify-center items-center">
+                @can('adminFunction')
+                <i class="fa fa-trash fa-lg cursor-pointer !leading-none" onclick="deleteItem(${item.id})"></i>
+                <i class="fa fa-pen-to-square fa-lg cursor-pointer !leading-none" onclick="openEditModal({
+                    id:${item.id},
+                    name: '${item.name}',
+                    brand: '${item.brand}',
+                    type: '${item.type}',
+                    condition: '${item.condition}',
+                    status: '${item.status}',
+                    code: '${item.code}',
+                    description: '${item.description}',
+                    location_id: ${item.location_id},
+                    category_id: ${item.category_id},
+                    image: '${item.image}'
+                })"></i>
+                @endcan
+                <i class="fa-regular mb-2 fa-eye fa-lg cursor-pointer" onclick="openPreviewModal(${item.id})"></i>
+            </div>
+        </td>
+    </tr>
                 `;
                 });
             })
@@ -950,7 +953,7 @@
         inputs.forEach(input => input.checked = false);
     }
 
-    // Toast notification
+    // Notifikasi toast
     function showToast(message, type) {
         const toast = document.createElement('div');
         toast.className = `toast toast-top toast-end`;
@@ -967,7 +970,7 @@
 @endpush
 
 <script>
-    // image preview zoom
+    // pratinjau gambar zoom
     document.addEventListener('DOMContentLoaded', function() {
         const imagePreview = document.getElementById('view_image');
         const imageZoomModal = document.getElementById('imageZoomModal');
@@ -982,7 +985,7 @@
             }
         });
 
-        // Close diluar dialog
+        // Tutup di luar dialog
         imageZoomModal.addEventListener('click', (event) => {
             if (event.target === imageZoomModal) {
                 imageZoomModal.close();
@@ -990,14 +993,14 @@
         });
     });
 
-    // dropdown 3 button 
+    // dropdown 3 tombol 
 function toggleDropdown() {
     const dropdown = document.getElementById('dropdownMenu');
     dropdown.classList.toggle('hidden');
     dropdown.classList.toggle('block');
 }
 
-// Optional: Click outside to close dropdown
+// Opsional: Klik di luar untuk menutup dropdown
 window.addEventListener('click', function(e) {
     const btn = document.getElementById('dropdownBtn');
     const menu = document.getElementById('dropdownMenu');

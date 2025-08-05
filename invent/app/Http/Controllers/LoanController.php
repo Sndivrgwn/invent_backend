@@ -33,7 +33,7 @@ class LoanController extends Controller
             $allowedSorts = ['loaner_name', 'loan_date', 'return_date', 'status'];
 
             $incomingLoans = Loan::with('items')
-                ->where('status', 'RETURNED')
+                ->where('status', 'dikembalikan')
                 ->when($search, function ($query) use ($search) {
                     $query->where(function ($q) use ($search) {
                         $q->where('loaner_name', 'like', "%{$search}%")
@@ -58,7 +58,7 @@ class LoanController extends Controller
             ]);
 
             $outgoingLoans = Loan::with('items')
-                ->where('status', '!=', 'RETURNED')
+                ->where('status', '!=', 'dikembalikan')
                 ->when($search, function ($query) use ($search) {
                     $query->where(function ($q) use ($search) {
                         $q->where('loaner_name', 'like', "%{$search}%")
@@ -305,7 +305,7 @@ class LoanController extends Controller
         try {
             $loan = Loan::findOrFail($id);
 
-            if ($loan->status === 'RETURNED') {
+            if ($loan->status === 'dikembalikan') {
                 return response()->json([
                     'success' => false,
                     'message' => 'Tidak dapat memperbarui pinjaman yang dikembalikan'
@@ -349,7 +349,7 @@ class LoanController extends Controller
             $loan = Loan::findOrFail($id);
 
             // Only allow deletion if loan is not already returned
-            if ($loan->status === 'RETURNED') {
+            if ($loan->status === 'dikembalikan') {
                 return response()->json([
                     'success' => false,
                     'message' => 'Tidak dapat menghapus pinjaman yang dikembalikan'

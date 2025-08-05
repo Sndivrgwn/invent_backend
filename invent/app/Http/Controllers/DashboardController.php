@@ -25,18 +25,18 @@ class DashboardController extends Controller
         $totalLoans = Loan::count();
 
         // Peminjaman aktif
-        $activeLoans = Loan::where('status', 'borrowed')->orWhereNull('return_date')->get();
+        $activeLoans = Loan::where('status', 'dipinjam')->orWhereNull('return_date')->get();
         $totalActiveLoans = $activeLoans->count();
 
         // Jumlah barang yang sedang dipinjam
         $totalLoanedItems = $activeLoans->sum(fn($loan) => $loan->items->count());
 
         // Jumlah peminjaman yang sudah dikembalikan
-        $returnedLoans = Loan::where('status', 'returned')->count();
+        $returnedLoans = Loan::where('status', 'dikembalikan')->count();
 
         // 10 peminjaman terbaru
         $latestLoans = Loan::with('items')
-            ->orderBy('loan_date', 'desc')
+            ->orderBy('created_at', 'desc')
             ->take(10)
             ->get();
 

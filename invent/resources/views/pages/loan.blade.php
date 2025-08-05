@@ -571,7 +571,7 @@
                     </div>
                     <div>
                         <p class="text-gray-600">Status:</p>
-                        <p class="${loan.status === 'returned' ? 'text-green-500' : 'text-yellow-500'}">
+                        <p class="${loan.status === 'dikembalikan' ? 'text-green-500' : 'text-yellow-500'}">
                             ${loan.status || 'N/A'}
                         </p>
                     </div>
@@ -728,7 +728,7 @@
                     </div>
                     <div>
                         <p class="text-gray-600">Tanggal kembali:</p>
-                        <p>${loan.return_date || 'Not returned yet'}</p>
+                        <p>${loan.return_date || 'belum dikembalikan'}</p>
                     </div>
                     <div>
                         <p class="text-gray-600">Deskripsi:</p>
@@ -736,7 +736,7 @@
                     </div>
                     <div>
                         <p class="text-gray-600">Status:</p>
-                        <p class="${loan.status === 'returned' ? 'text-green-500' : 'text-yellow-500'}">
+                        <p class="${loan.status === 'dikembalikan' ? 'text-green-500' : 'text-yellow-500'}">
                             ${loan.status || 'N/A'}
                         </p>
                     </div>

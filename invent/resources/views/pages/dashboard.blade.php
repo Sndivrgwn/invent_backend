@@ -140,10 +140,10 @@
                                 </td>
                                 <td>
                                     <span class="px-2 py-1 rounded-full text-xs 
-                                          {{ $loan->status === 'borrowed' ? 'bg-yellow-100 text-yellow-800' : 
-                                             ($loan->status === 'returned' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800') }}">
-                                        {{ $loan->status === 'borrowed' ? 'Dipinjam' : 
-                                           ($loan->status === 'returned' ? 'Dikembalikan' : 'Menunggu') }}
+                                          {{ $loan->status === 'dipinjam' ? 'bg-yellow-100 text-yellow-800' : 
+                                             ($loan->status === 'dikembalikan' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800') }}">
+                                        {{ $loan->status === 'dipinjam' ? 'Dipinjam' : 
+                                           ($loan->status === 'dikembalikan' ? 'Dikembalikan' : 'Menunggu') }}
                                     </span>
                                 </td>
                             </tr>
