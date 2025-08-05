@@ -156,10 +156,10 @@
         <dialog id="allItemsModal" class="modal">
             <div class="modal-box max-w-2xl h-[80vh] overflow-y-auto">
                 <form method="dialog">
-                    <h2 class="font-semibold text-2xl mb-4">All Items in This Location</h2>
+                    <h2 class="font-semibold text-2xl mb-4">Semua item di lokasi ini</h2>
                     <ul id="allItemList" class="space-y-2"></ul>
                     <div class="text-center mt-6">
-                        <button type="button" class="btn" onclick="document.getElementById('allItemsModal').close()">Close</button>
+                        <button type="button" class="btn" onclick="document.getElementById('allItemsModal').close()">Tutup</button>
                     </div>
                 </form>
             </div>
@@ -415,8 +415,8 @@ function submitForm(form, url) {
             : currentItems.map(item => `
                 <li class="border border-gray-200 p-3 rounded-lg">
                     <strong>${item.name}</strong> (${item.code})<br>
-                    Condition: ${item.condition}<br>
-                    ${item.category ? `Category: ${item.category}` : ''}
+                    Kondisi: ${item.condition}<br>
+                    ${item.category ? `Kategori: ${item.category}` : ''}
                 </li>
             `).join('');
 
