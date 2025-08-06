@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Auth;
 use App\Models\User;
 use Illuminate\Http\Request;
+use App\Http\Controllers\UserManagementController; // Tambahkan ini
 
 class GuestLoginController extends Controller
 {
@@ -26,6 +27,9 @@ class GuestLoginController extends Controller
 
         DeleteGuestAfterDelay::dispatch($user->id)->delay(now()->addHour());
 
+        // Refresh cache
+        UserManagementController::clearAllUsersCache();
+
         return redirect('/dashboard')->with('toast', [
             'type' => 'success',
             'message' => 'Berhasil masuk sebagai tamu.'
@@ -43,6 +47,8 @@ class GuestLoginController extends Controller
 
         if ($user->is_guest) {
             $user->delete();
+            // Refresh cache
+            UserManagementController::clearAllUsersCache();
         }
 
         return redirect()->route('login')->with('toast', [
@@ -55,6 +61,9 @@ class GuestLoginController extends Controller
     public function destroyAll()
     {
         $deleted = User::where('is_guest', true)->delete();
+
+        // Refresh cache
+        UserManagementController::clearAllUsersCache();
 
         return redirect()->back()->with('toast', [
             'type' => 'success',
