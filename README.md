@@ -57,4 +57,4 @@ npm run dev
 
 ## Demo
 
-http://invents.httpstjktsatu.my.id/dashboard
+https://pinlat.tkjsmkn5bdg.my.id/login
